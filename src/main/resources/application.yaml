@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    password: password
+    url: jdbc:h2:./h2-test
+    username: sa
+  h2:
+    console:
+      enabled: false
+      settings:
+        web-admin-password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  liquibase:
+    enabled: false

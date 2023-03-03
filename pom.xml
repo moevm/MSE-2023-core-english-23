@@ -15,8 +15,7 @@
     <description>MSE-2023-core-english</description>
     <properties>
         <java.version>17</java.version>
-        <lombok.version>1.18.20</lombok.version>
-        <telegram-api.version>6.0.0</telegram-api.version>
+        <enforce.plugin.version>3.0.0-M2</enforce.plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -45,27 +44,49 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots</artifactId>
-            <version>${telegram-api.version}</version>
-        </dependency>
-
     </dependencies>
 
     <build>
         <plugins>
+
+            <!--      ENFORCE: Во время сборки обеспечиваем выполнение правил-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${enforce.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <!--Версия maven не должна быть ниже 3.0-->
+                                <requireMavenVersion>
+                                    <version>[3.0,)</version>
+                                    <message>Invalid Maven version. It should, at least, be 3.0</message>
+                                </requireMavenVersion>
+                                <!--Версия java не ниже 17-->
+                                <requireJavaVersion>
+                                    <version>[17, 18)</version>
+                                    <message>Invalid Java version. It should be 17</message>
+                                </requireJavaVersion>
+                                <!--Запрещаем дублирование зависимостей в рамках одного pom-->
+                                <banDuplicatePomDependencyVersions/>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -79,6 +100,23 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <!-- Компиляции исходников -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
     </build>
 
 </project>

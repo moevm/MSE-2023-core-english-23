@@ -46,7 +46,7 @@ public abstract class User {
     private String password; // password hash
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "registration_timestamp")
     private Date registrationTimestamp;
 

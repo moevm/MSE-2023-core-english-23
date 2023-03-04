@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    password: password
+    url: jdbc:h2:./h2-test
+    username: sa
+  h2:
+    console:
+      enabled: false
+      settings:
+        web-admin-password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  liquibase:
+    enabled: false
+
+bot:
+  name: core_english_test_bot
+  token: 5962810244:AAG0QSUXQi0etiagdEDI4mkuXrvRSpH70yo
+  chatId: 5962810244

@@ -9,7 +9,10 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @PropertySource("application.yaml")
 public class BotConfig {
-    @Value("${bot.name}") private final String botName;
-    @Value("${bot.token}") private final String token;
-    @Value("${bot.chatId}") private final String chatId;
+    @Value("${bot.name}")
+    private final String botName;
+    @Value("${bot.token}")
+    private final String token;
+    @Value("${bot.chatId}")
+    private final String chatId;
 }

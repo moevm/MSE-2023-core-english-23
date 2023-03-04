@@ -2,6 +2,7 @@ package core.english.mse2023.tgbot;
 
 import core.english.mse2023.config.BotConfig;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -11,14 +12,17 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CounterTelegramBot extends TelegramLongPollingBot {
-    final BotConfig config;
-
-    public CounterTelegramBot(BotConfig config) { this.config = config; }
+    private final BotConfig config;
     @Override
-    public String getBotUsername() { return config.getBotName(); }
+    public String getBotUsername() {
+        return config.getBotName();
+    }
     @Override
-    public String getBotToken() { return config.getToken(); }
+    public String getBotToken() {
+        return config.getToken();
+    }
     @Override
     public void onUpdateReceived(@NotNull Update update) {
         if(update.hasMessage() && update.getMessage().hasText()){

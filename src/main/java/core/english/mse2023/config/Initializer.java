@@ -1,6 +1,7 @@
 package core.english.mse2023.config;
 
 import core.english.mse2023.tgbot.CounterTelegramBot;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -13,9 +14,9 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class Initializer {
-    @Autowired
-    CounterTelegramBot bot;
+    private final CounterTelegramBot bot;
 
     @EventListener({ContextRefreshedEvent.class})
     public void init() {

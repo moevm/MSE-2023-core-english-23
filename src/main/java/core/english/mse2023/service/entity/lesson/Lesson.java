@@ -3,15 +3,7 @@ package core.english.mse2023.service.entity.lesson;
 import core.english.mse2023.service.entity.Subscription;
 import core.english.mse2023.service.entity.user.Student;
 import core.english.mse2023.service.entity.user.Teacher;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +26,10 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
+
+    @OneToOne
+    @JoinColumn(name = "lesson_info_id")
+    private LessonInfo lessonInfo;
 
     @ManyToOne
     @JoinColumn(name = "subscription_id")

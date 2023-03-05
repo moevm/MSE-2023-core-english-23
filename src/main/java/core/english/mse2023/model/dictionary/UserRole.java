@@ -1,4 +1,4 @@
-package core.english.mse2023.service.enums;
+package core.english.mse2023.model.dictionary;
 
 public enum UserRole {
     STUDENT,

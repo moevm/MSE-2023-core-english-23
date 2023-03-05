@@ -1,4 +1,4 @@
-package core.english.mse2023.service.tables;
+package core.english.mse2023.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;

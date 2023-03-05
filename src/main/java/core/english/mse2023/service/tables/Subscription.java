@@ -7,24 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "subscription")
-public class Subscription {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private UUID id;
+public class Subscription extends BaseEntity {
 
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -46,20 +37,10 @@ public class Subscription {
     private int lessonsRest;
 
     @Column(name = "start_date", nullable = false, updatable = false)
-    @Temporal(TemporalType.DATE)
-    private Date startDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Timestamp startDate;
 
     @Column(name = "end_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date endDate;
-
-    @Column(name = "created_when", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
-    private Timestamp createdWhen;
-
-    @Column(name = "modified_when", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @UpdateTimestamp
-    private Timestamp modifiedWhen;
+    private Timestamp endDate;
 }

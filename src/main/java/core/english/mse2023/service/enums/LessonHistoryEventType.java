@@ -1,6 +1,6 @@
 package core.english.mse2023.service.enums;
 
-public enum LessonHistoryType {
+public enum LessonHistoryEventType {
     CREATED,
     UPDATED,
     CANCELLED

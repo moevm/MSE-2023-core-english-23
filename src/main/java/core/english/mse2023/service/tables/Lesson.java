@@ -43,7 +43,7 @@ public class Lesson {
     @Column(name = "link", nullable = false)
     private String link;
 
-    @Column(name = "created_when", nullable = false)
+    @Column(name = "created_when", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Timestamp createdWhen;

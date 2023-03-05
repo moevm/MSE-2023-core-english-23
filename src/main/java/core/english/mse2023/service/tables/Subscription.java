@@ -53,7 +53,7 @@ public class Subscription {
     @Temporal(TemporalType.DATE)
     private Date endDate;
 
-    @Column(name = "created_when", nullable = false)
+    @Column(name = "created_when", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Timestamp createdWhen;

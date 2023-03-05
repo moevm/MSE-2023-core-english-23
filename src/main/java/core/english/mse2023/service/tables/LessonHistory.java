@@ -33,7 +33,7 @@ public class LessonHistory {
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
-    @Column(name = "timestamp", nullable = false)
+    @Column(name = "timestamp", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Timestamp timestamp;

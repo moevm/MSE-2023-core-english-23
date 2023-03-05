@@ -33,7 +33,7 @@ public class Family {
     @JoinColumn(name = "parent_id")
     private User parent;
 
-    @Column(name = "created_when", nullable = false)
+    @Column(name = "created_when", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Timestamp createdWhen;

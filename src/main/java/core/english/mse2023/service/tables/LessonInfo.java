@@ -43,7 +43,7 @@ public class LessonInfo {
     @Column(name = "teacher_comment")
     private String teacherComment;
 
-    @Column(name = "created_when", nullable = false)
+    @Column(name = "created_when", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Timestamp createdWhen;

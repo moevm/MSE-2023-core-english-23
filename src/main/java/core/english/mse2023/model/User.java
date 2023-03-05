@@ -1,6 +1,6 @@
-package core.english.mse2023.service.tables;
+package core.english.mse2023.model;
 
-import core.english.mse2023.service.enums.UserRole;
+import core.english.mse2023.model.dictionary.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

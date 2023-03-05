@@ -1,6 +1,6 @@
-package core.english.mse2023.service.tables;
+package core.english.mse2023.model;
 
-import core.english.mse2023.service.enums.LessonHistoryEventType;
+import core.english.mse2023.model.dictionary.LessonHistoryEventType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

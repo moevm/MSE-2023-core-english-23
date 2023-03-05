@@ -6,8 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Getter
@@ -23,6 +26,7 @@ public class LessonHistory {
     private UUID id;
 
     @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private LessonHistoryType type;
 
     @ManyToOne
@@ -30,6 +34,8 @@ public class LessonHistory {
     private Lesson lesson;
 
     @Column(name = "timestamp", nullable = false)
-    private Date timestamp;
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    private Timestamp timestamp;
 }
 

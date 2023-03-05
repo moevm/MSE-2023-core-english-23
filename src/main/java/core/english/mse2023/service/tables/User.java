@@ -6,8 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Getter
@@ -21,6 +24,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private UUID id;
+
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     @Column(name = "system_id", nullable = false)
     private String systemId;
@@ -37,16 +44,17 @@ public class User {
     @Column(name = "lastname", nullable = false)
     private String lastName;
 
-    @Column(name = "role", nullable = false)
-    private UserRole role;
-
     @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "created_when", nullable = false)
-    private Date createdWhen;
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    private Timestamp createdWhen;
 
     @Column(name = "modified_when", nullable = false)
-    private Date modifiedWhen;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Timestamp modifiedWhen;
 
 }

@@ -6,8 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Getter
@@ -23,6 +26,7 @@ public class LessonInfo {
     private UUID id;
 
     @Column(name = "attendance", nullable = false)
+    @Enumerated(EnumType.STRING)
     private AttendanceType attendance;
 
     @OneToOne
@@ -33,16 +37,20 @@ public class LessonInfo {
     @JoinColumn(name = "family_id")
     private Family family;
 
-    @Column(name = "family_comment", nullable = false)
+    @Column(name = "family_comment")
     private String familyComment;
 
-    @Column(name = "teacher_comment", nullable = false)
+    @Column(name = "teacher_comment")
     private String teacherComment;
 
     @Column(name = "created_when", nullable = false)
-    private Date createdWhen;
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    private Timestamp createdWhen;
 
     @Column(name = "modified_when", nullable = false)
-    private Date modifiedWhen;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Timestamp modifiedWhen;
 
 }

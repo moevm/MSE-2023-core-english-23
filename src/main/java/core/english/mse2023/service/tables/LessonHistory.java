@@ -25,7 +25,6 @@ public class LessonHistory extends BaseEntity {
     private Lesson lesson;
 
     @Column(name = "timestamp", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Timestamp timestamp;
 }

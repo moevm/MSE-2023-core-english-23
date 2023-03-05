@@ -37,10 +37,8 @@ public class Subscription extends BaseEntity {
     private int lessonsRest;
 
     @Column(name = "start_date", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private Timestamp startDate;
 
     @Column(name = "end_date", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private Timestamp endDate;
 }

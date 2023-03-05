@@ -25,7 +25,6 @@ public class Lesson extends BaseEntity {
     private Subscription subscription;
 
     @Column(name = "date", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private Timestamp date;
 
     @Column(name = "topic", nullable = false)

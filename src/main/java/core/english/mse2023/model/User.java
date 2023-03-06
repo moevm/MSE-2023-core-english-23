@@ -9,6 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,13 +23,10 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name = "system_id", nullable = false)
-    private String systemId;
+    @Column(name = "telegram_id", nullable = false, unique = true)
+    private UUID telegramId;
 
-    @Column(name = "telegram_id", nullable = false)
-    private String telegramId;
-
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "name", nullable = false)

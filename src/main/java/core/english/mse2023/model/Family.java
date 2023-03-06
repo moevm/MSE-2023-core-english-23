@@ -17,11 +17,11 @@ import lombok.Setter;
 public class Family extends BaseEntity {
 
     @OneToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id", nullable = false)
     private User student;
 
     @ManyToOne
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent_id", nullable = false)
     private User parent;
 
 }

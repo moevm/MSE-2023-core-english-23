@@ -26,19 +26,19 @@ public class Subscription extends BaseEntity {
     private SubscriptionStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
+    @JoinColumn(name = "teacher_id", nullable = false)
     private User teacher;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id", nullable = false)
     private User student;
 
-    @Column(name = "lessons_rest", nullable = false)
+    @Column(name = "lessons_rest")
     private int lessonsRest;
 
-    @Column(name = "start_date", nullable = false, updatable = false)
+    @Column(name = "start_date")
     private Timestamp startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private Timestamp endDate;
 }

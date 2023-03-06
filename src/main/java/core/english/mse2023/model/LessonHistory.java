@@ -21,10 +21,10 @@ public class LessonHistory extends BaseEntity {
     private LessonHistoryEventType type;
 
     @ManyToOne
-    @JoinColumn(name = "lesson_id")
+    @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
 
-    @Column(name = "timestamp", nullable = false, updatable = false)
+    @Column(name = "timestamp")
     @CreationTimestamp
     private Timestamp timestamp;
 }

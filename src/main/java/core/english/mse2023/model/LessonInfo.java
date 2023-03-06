@@ -19,12 +19,11 @@ public class LessonInfo extends BaseEntity {
     private AttendanceType attendance;
 
     @OneToOne
-    @JoinColumn(name = "lesson_id")
+    @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
 
-    @OneToOne
-    @JoinColumn(name = "family_id")
-    private Family family;
+    @Column(name="score", nullable = false)
+    private int score;
 
     @Column(name = "family_comment")
     private String familyComment;

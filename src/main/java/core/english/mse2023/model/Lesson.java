@@ -27,9 +27,9 @@ public class Lesson extends BaseEntity {
     @Column(name = "date", nullable = false)
     private Timestamp date;
 
-    @Column(name = "topic", nullable = false)
+    @Column(name = "topic")
     private String topic;
 
-    @Column(name = "link", nullable = false)
+    @Column(name = "link")
     private String link;
 }

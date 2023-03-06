@@ -23,9 +23,6 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name = "system_id", nullable = false, unique = true)
-    private UUID systemId;
-
     @Column(name = "telegram_id", nullable = false, unique = true)
     private UUID telegramId;
 

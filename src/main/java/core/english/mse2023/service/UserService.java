@@ -35,8 +35,4 @@ public class UserService {
         return user;
     }
 
-    public User getUserByTelegramId(String telegramId) {
-        return repository.findByTelegramId(telegramId);
-    }
-
 }

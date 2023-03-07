@@ -18,19 +18,11 @@ public class StartHandler implements Handler {
 
     @Override
     public List<SendMessage> handle(Update update) {
-        User user = service.getUserByTelegramId(update.getMessage().getFrom().getId().toString());
+        User user = service.create(update);
 
         SendMessage message = new SendMessage();
-
-        if (user == null) {
-            user = service.create(update);
-
-            message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            message.setText("User successfully created! " + user.getName() + " " + user.getLastName() + " " + user.getTelegramId() + " " + user.getRole());
-        } else {
-            message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            message.setText("User has been found! " + user.getName() + " " + user.getLastName() + " " + user.getTelegramId() + " " + user.getRole());
-        }
+        message.setChatId(String.valueOf(update.getMessage().getChatId()));
+        message.setText("Добро пожаловать, " + user.getName() + ". Ваша роль: " + user.getRole());
 
         return List.of(message);
     }

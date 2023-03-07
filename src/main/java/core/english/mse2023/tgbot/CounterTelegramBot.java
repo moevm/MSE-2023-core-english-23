@@ -33,31 +33,34 @@ public class CounterTelegramBot extends TelegramLongPollingBot {
     public String getBotUsername() {
         return config.getBotName();
     }
+
     @Override
     public String getBotToken() {
         return config.getToken();
     }
+
     @Override
     public void onUpdateReceived(@NotNull Update update) {
-        if(update.hasMessage() && update.getMessage().hasText()){
+        if (update.hasMessage() && update.getMessage().hasText()) {
             String command = update.getMessage().getText();
 
             Handler handler = handlers.get(command);
 
             if (handler != null) {
-                List<SendMessage> messages = handler.handle(update);
-
-                for (SendMessage message :
-                        messages) {
-                    try {
-                        execute(message);
-                        log.info("Reply sent");
-                    } catch (TelegramApiException e){
-                        log.error(e.getMessage());
-                    }
-                }
+                sendMessages(handler.handle(update));
             }
 
+        }
+    }
+
+    public void sendMessages(List<SendMessage> messages) {
+        for (SendMessage message : messages) {
+            try {
+                execute(message);
+                log.info("Reply sent");
+            } catch (TelegramApiException e) {
+                log.error(e.getMessage());
+            }
         }
     }
 }

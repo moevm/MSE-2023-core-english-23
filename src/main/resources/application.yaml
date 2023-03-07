@@ -15,7 +15,7 @@ spring:
       ddl-auto: none
     show-sql: true
   liquibase:
-    change-log: classpath:db/changelog/v1/changelog.sql
+    change-log: db/changelog/changelog.yml
     enabled: true
     password: password
     user: sa

@@ -20,11 +20,15 @@ public class StartHandler implements Handler {
     public List<SendMessage> handle(Update update) {
         User user = service.create(update);
 
+        return List.of(createMessage(update, "Добро пожаловать, " + user.getName() + ". Ваша роль: " + user.getRole()));
+    }
+
+    private SendMessage createMessage(Update update, String msg) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(update.getMessage().getChatId()));
-        message.setText("Добро пожаловать, " + user.getName() + ". Ваша роль: " + user.getRole());
+        message.setText(msg);
 
-        return List.of(message);
+        return message;
     }
 
     @Override

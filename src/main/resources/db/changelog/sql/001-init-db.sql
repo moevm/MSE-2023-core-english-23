@@ -73,7 +73,7 @@ create table users
     name          varchar(255) not null,
     password      varchar(255) not null,
     role          varchar(255) not null,
-    telegram_id   varchar(255) not null,
+    telegram_id   bigint not null,
     primary key (id)
 );
 alter table if exists users

@@ -14,13 +14,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StartHandler implements Handler {
 
+    private static final String GREETING = "Добро пожаловать, %s. Ваша роль: %s";
+
+
     private final UserService service;
 
     @Override
     public List<SendMessage> handle(Update update) {
         User user = service.create(update);
 
-        return List.of(createMessage(update, "Добро пожаловать, " + user.getName() + ". Ваша роль: " + user.getRole()));
+        return List.of(createMessage(update, String.format(GREETING, user.getName(), user.getRole())));
     }
 
     private SendMessage createMessage(Update update, String msg) {

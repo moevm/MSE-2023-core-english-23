@@ -50,6 +50,9 @@ public class CounterTelegramBot extends TelegramLongPollingBot {
                 sendMessages(handler.handle(update));
             }
 
+        } else if (update.hasCallbackQuery()) {
+            // TODO - make some logic for handling callback queries
+
         }
     }
 

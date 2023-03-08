@@ -37,8 +37,8 @@ public class UserService {
         return user;
     }
 
-    public List<User> getAllStudents() {
-        return repository.findAllByRole(UserRole.STUDENT);
+    public List<User> getAllUsersOneType(UserRole role) {
+        return repository.findAllByRole(role);
     }
 
 }

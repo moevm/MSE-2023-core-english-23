@@ -2,6 +2,7 @@ package core.english.mse2023.hadler;
 
 import core.english.mse2023.constant.Command;
 import core.english.mse2023.model.User;
+import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class GetAllStudentHandler implements Handler {
     @Override
     public List<SendMessage> handle(Update update) {
 
-        List<User> students = service.getAllStudents();
+        List<User> students = service.getAllUsersOneType(UserRole.STUDENT);
 
         return List.of(createMessage(update, START_TEXT + "\n" + getStudentsDataText(students)));
     }

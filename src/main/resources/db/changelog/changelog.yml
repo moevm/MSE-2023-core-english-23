@@ -10,7 +10,7 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
   - changeSet:
-      id: 002-insert-test-data.sql
+      id: 002-insert-test-data
       author: Lyubava0382
       changes:
         - sqlFile:

@@ -1,5 +1,15 @@
 databaseChangeLog:
   - changeSet:
+      id: 001-init-db
+      author: PashaThrowsException78
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            path: classpath:db/changelog/sql/001-init-db.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+  - changeSet:
       id: 002-insert-test-data.sql
       author: Lyubava0382
       changes:

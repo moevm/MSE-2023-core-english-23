@@ -40,8 +40,26 @@ public class UserService {
     public List<User> getAllStudents() {
         return repository.findAllByRole(UserRole.STUDENT);
     }
+
     public List<User> getAllTeachers() {
         return repository.findAllByRole(UserRole.TEACHER);
+    }
+
+    public boolean changeUserRole(Update update, UserRole role) {
+        boolean roleHasBeenChanged = false;
+
+        String telegramId = update.getMessage().getFrom().getId().toString();
+
+        User user = repository.findByTelegramId(telegramId);
+
+        if (user.getRole() != role) {
+            user.setRole(role);
+            repository.save(user);
+
+            roleHasBeenChanged = true;
+        }
+
+        return roleHasBeenChanged;
     }
 
 }

@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "lessonHistory")
+@Entity(name = "lesson_history")
 public class LessonHistory extends BaseEntity {
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)

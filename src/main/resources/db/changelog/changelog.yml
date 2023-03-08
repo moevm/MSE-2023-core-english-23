@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 14-заполнить-бд-тестовыми-данными
+      author: Lyubava0382
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            path: classpath:db/changelog/sql/14-test-db.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false

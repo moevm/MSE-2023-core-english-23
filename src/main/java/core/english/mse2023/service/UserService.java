@@ -40,5 +40,8 @@ public class UserService {
     public List<User> getAllStudents() {
         return repository.findAllByRole(UserRole.STUDENT);
     }
+    public List<User> getAllTeachers() {
+        return repository.findAllByRole(UserRole.TEACHER);
+    }
 
 }

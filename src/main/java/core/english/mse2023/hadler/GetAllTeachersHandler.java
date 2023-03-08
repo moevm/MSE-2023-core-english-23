@@ -2,7 +2,6 @@ package core.english.mse2023.hadler;
 
 import core.english.mse2023.constant.Command;
 import core.english.mse2023.model.User;
-import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,10 +12,10 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class GetAllStudentsHandler implements Handler {
+public class GetAllTeachersHandler implements Handler {
 
-    private static final String START_TEXT = "Список зарегистрированных студентов:\n%s";
-    private static final String NO_STUDENTS_TEXT = "Зарегистрированные студенты отсутствуют в системе.";
+    private static final String START_TEXT = "Список зарегистрированных преподавателей:\n%s";
+    private static final String NO_TEACHERS_TEXT = "Зарегистрированные преподаватели отсутствуют в системе.";
     private static final String USER_DATA_PATTERN = " - %s%s";
 
     private final UserService service;
@@ -24,28 +23,28 @@ public class GetAllStudentsHandler implements Handler {
     @Override
     public List<SendMessage> handle(Update update) {
 
-        List<User> students = service.getAllStudents();
+        List<User> teachers = service.getAllTeachers();
 
         SendMessage sendMessage;
 
-        if (students.isEmpty()) {
-            sendMessage = createMessage(update, NO_STUDENTS_TEXT);
+        if (teachers.isEmpty()) {
+            sendMessage = createMessage(update, NO_TEACHERS_TEXT);
         } else {
-            sendMessage = createMessage(update, String.format(START_TEXT, getStudentsDataText(students)));
+            sendMessage = createMessage(update, String.format(START_TEXT, getTeachersDataText(teachers)));
         }
 
         return List.of(sendMessage);
     }
 
-    private String getStudentsDataText(List<User> students) {
+    private String getTeachersDataText(List<User> teachers) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (User student : students) {
+        for (User teacher : teachers) {
 
             stringBuilder.append(
                     String.format(USER_DATA_PATTERN,
-                            (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
-                            student.getName() // Student's name (always present)
+                            (teacher.getLastName() != null) ? (teacher.getLastName() + " ") : "", // Teacher's last name if present
+                            teacher.getName() // Teacher's name (always present)
                     )
             );
             stringBuilder.append("\n");
@@ -56,6 +55,6 @@ public class GetAllStudentsHandler implements Handler {
 
     @Override
     public String getCommand() {
-        return Command.GET_ALL_STUDENTS;
+        return Command.GET_ALL_TEACHERS;
     }
 }

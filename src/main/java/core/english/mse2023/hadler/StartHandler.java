@@ -26,14 +26,6 @@ public class StartHandler implements Handler {
         return List.of(createMessage(update, String.format(GREETING, user.getName(), user.getRole())));
     }
 
-    private SendMessage createMessage(Update update, String msg) {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(update.getMessage().getChatId()));
-        message.setText(msg);
-
-        return message;
-    }
-
     @Override
     public String getCommand() {
         return Command.START;

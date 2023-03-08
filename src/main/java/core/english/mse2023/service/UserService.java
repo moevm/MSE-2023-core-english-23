@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,10 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public List<User> getAllStudents() {
+        return repository.findAllByRole(UserRole.STUDENT);
     }
 
 }

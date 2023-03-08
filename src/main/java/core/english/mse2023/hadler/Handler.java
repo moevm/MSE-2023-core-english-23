@@ -9,4 +9,12 @@ public interface Handler {
     List<SendMessage> handle(Update update);
 
     String getCommand();
+
+    default SendMessage createMessage(Update update, String msg) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(update.getMessage().getChatId()));
+        message.setText(msg);
+
+        return message;
+    }
 }

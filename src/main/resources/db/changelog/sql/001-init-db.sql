@@ -68,10 +68,10 @@ create table users
     id            uuid         not null,
     created_when  timestamp(6) not null,
     modified_when timestamp(6) not null,
-    email         varchar(255) not null,
-    lastname      varchar(255) not null,
+    email         varchar(255),
+    lastname      varchar(255),
     name          varchar(255) not null,
-    password      varchar(255) not null,
+    password      varchar(255),
     role          varchar(255) not null,
     telegram_id   varchar(255) not null,
     primary key (id)

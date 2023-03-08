@@ -4,5 +4,6 @@ public interface Command {
 
     String START = "/start";
     String GET_ALL_STUDENTS = "/getAllStudents";
+    String GET_ALL_TEACHERS = "/getAllTeachers";
 
 }

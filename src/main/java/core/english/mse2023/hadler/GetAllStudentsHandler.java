@@ -13,19 +13,19 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class GetAllStudentHandler implements Handler {
+public class GetAllStudentsHandler implements Handler {
 
-    private static final String START_TEXT = "Список зарегестрированных студентов:";
-    private static final String USER_DATA_PATTERN = " - %s";
+    private static final String START_TEXT = "Список зарегистрированных студентов:\n%s";
+    private static final String USER_DATA_PATTERN = " - %s%s";
 
     private final UserService service;
 
     @Override
     public List<SendMessage> handle(Update update) {
 
-        List<User> students = service.getAllUsersOneType(UserRole.STUDENT);
+        List<User> students = service.getAllStudents();
 
-        return List.of(createMessage(update, START_TEXT + "\n" + getStudentsDataText(students)));
+        return List.of(createMessage(update, String.format(START_TEXT, getStudentsDataText(students))));
     }
 
     private String getStudentsDataText(List<User> students) {
@@ -34,7 +34,10 @@ public class GetAllStudentHandler implements Handler {
         for (User student : students) {
 
             stringBuilder.append(
-                    String.format(USER_DATA_PATTERN, (student.getLastName() != null) ? (student.getLastName() + " ") : "" + student.getName())
+                    String.format(USER_DATA_PATTERN,
+                            (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
+                            student.getName() // Student's name (always present)
+                    )
             );
             stringBuilder.append("\n");
         }
@@ -42,16 +45,8 @@ public class GetAllStudentHandler implements Handler {
         return stringBuilder.toString();
     }
 
-    private SendMessage createMessage(Update update, String msg) {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(update.getMessage().getChatId()));
-        message.setText(msg);
-
-        return message;
-    }
-
     @Override
     public String getCommand() {
-        return Command.GET_ALL_STUDENT;
+        return Command.GET_ALL_STUDENTS;
     }
 }

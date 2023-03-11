@@ -41,7 +41,7 @@ public class CacheData {
             } else if (update.hasCallbackQuery()) {
                 message.setChatId(String.valueOf(update.getMessage().getChatId()));
             }
-            message.setText("You have entered something wrong. Check parameters and try again.");
+            message.setText("Вы ввели что-то не то. Попробуйте снова.");
 
             sendMessageList = List.of(message);
         }

@@ -22,6 +22,9 @@ spring:
     url: jdbc:h2:./h2-test
 
 bot:
-  name: core_english_test_bot
-  token: 5962810244:AAG0QSUXQi0etiagdEDI4mkuXrvRSpH70yo
-  chatId: 5962810244
+#  name: core_english_test_bot
+#  token: 5962810244:AAG0QSUXQi0etiagdEDI4mkuXrvRSpH70yo
+#  chatId: 5962810244
+  name: java_test_private_bot
+  token: 5911814557:AAHL4e11T9E8Lo9PRnuRdHJERjbGHkSu-_U
+  chatId: 291891029

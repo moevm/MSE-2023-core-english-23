@@ -19,6 +19,7 @@
         <telegram-api.version>6.0.0</telegram-api.version>
         <enforce.plugin.version>3.0.0-M2</enforce.plugin.version>
         <h2-driver.version>1.4.200</h2-driver.version>
+        <caffeine.version>2.5.5</caffeine.version>
     </properties>
     <dependencies>
         <dependency>
@@ -63,6 +64,11 @@
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
             <version>${telegram-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
         </dependency>
     </dependencies>
 

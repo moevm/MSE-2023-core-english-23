@@ -9,5 +9,6 @@ public interface Command {
     String CHANGE_ROLE_TO_PARENT = "/changeRoleToParent";
     String CHANGE_ROLE_TO_STUDENT = "/changeRoleToStudent";
     String CHANGE_ROLE_TO_TEACHER = "/changeRoleToTeacher";
+    String CREATE_SUBSCRIPTION = "/createSubscription";
 
 }

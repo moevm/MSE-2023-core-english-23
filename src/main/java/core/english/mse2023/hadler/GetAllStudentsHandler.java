@@ -4,6 +4,7 @@ import core.english.mse2023.constant.Command;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
+import core.english.mse2023.state.State;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -35,9 +36,9 @@ public class GetAllStudentsHandler implements Handler {
         SendMessage sendMessage;
 
         if (students.isEmpty()) {
-            sendMessage = createMessage(update, NO_STUDENTS_TEXT);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_STUDENTS_TEXT);
         } else {
-            sendMessage = createMessage(update, START_TEXT);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), START_TEXT);
             sendMessage.setReplyMarkup(getStudentsButtons(students));
         }
 
@@ -74,5 +75,25 @@ public class GetAllStudentsHandler implements Handler {
     @Override
     public String getCommand() {
         return Command.GET_ALL_STUDENTS;
+    }
+
+    @Override
+    public List<SendMessage> update(Update update, State state) {
+        throw new RuntimeException("The " + getClass() + " doesn't support update method.");
+    }
+
+    @Override
+    public boolean needsUserInteraction() {
+        return false;
+    }
+
+    @Override
+    public State getInitialState() {
+        throw new RuntimeException("The " + getClass() + " doesn't support states.");
+    }
+
+    @Override
+    public void cleanUp(String id) {
+        throw new RuntimeException("The " + getClass() + " doesn't support cleanup method.");
     }
 }

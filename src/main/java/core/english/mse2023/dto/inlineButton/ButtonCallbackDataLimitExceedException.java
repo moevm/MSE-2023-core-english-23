@@ -2,8 +2,12 @@ package core.english.mse2023.dto.inlineButton;
 
 public class ButtonCallbackDataLimitExceedException extends RuntimeException {
 
-    public ButtonCallbackDataLimitExceedException(String msg) {
-        super(msg);
+    private static final String MESSAGE = "Data package is too big. " +
+            "Consider using smaller command name or/and data strings. " +
+            "Current package size: %s";
+
+    public ButtonCallbackDataLimitExceedException(int size) {
+        super(String.format(MESSAGE, size));
     }
 
 }

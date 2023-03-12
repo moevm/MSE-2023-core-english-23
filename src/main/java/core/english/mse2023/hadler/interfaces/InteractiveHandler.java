@@ -1,7 +1,6 @@
 package core.english.mse2023.hadler.interfaces;
 
 import core.english.mse2023.cache.IllegalUserInputException;
-import core.english.mse2023.state.IllegalStateException;
 import core.english.mse2023.state.State;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -30,5 +29,5 @@ public interface InteractiveHandler extends Handler {
      * Removes user's data from the handler
      * @param id User's telegram id
      */
-    void cleanUp(String id);
+    void removeFromCacheBy(String id);
 }

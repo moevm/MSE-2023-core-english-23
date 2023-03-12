@@ -4,18 +4,14 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.cache.IllegalUserInputException;
 import core.english.mse2023.constant.Command;
-import core.english.mse2023.dto.inlineButton.InlineBtnDTO;
+import core.english.mse2023.dto.inlineButton.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
-import core.english.mse2023.dto.inlineButton.InlineBtnDTOEncoder;
-import core.english.mse2023.hadler.interfaces.Handler;
+import core.english.mse2023.dto.inlineButton.InlineButtonDTOEncoder;
 import core.english.mse2023.hadler.interfaces.InteractiveHandler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.SubscriptionType;
 import core.english.mse2023.service.SubscriptionService;
-import core.english.mse2023.service.SubscriptionServiceInterface;
 import core.english.mse2023.service.UserService;
-import core.english.mse2023.service.UserServiceInterface;
-import core.english.mse2023.state.IllegalStateException;
 import core.english.mse2023.state.State;
 import core.english.mse2023.state.subcriptionCreate.InitializedState;
 import core.english.mse2023.state.subcriptionCreate.PartiallyCreatedState;
@@ -54,12 +50,12 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     private static final String SUCCESS_TEXT = "Новая подписка и требуемые уроки созданы.";
 
     // This cache works in manual mode. It means - no evictions was configured
-    private final Cache<String, SubscriptionCreationDTO> subscriptionCreationDTOCache = Caffeine.newBuilder()
+    private final Cache<String, SubscriptionCreationDTO> subscriptionCreationCache = Caffeine.newBuilder()
             .build();
 
-    private final UserServiceInterface userService;
+    private final UserService userService;
 
-    private final SubscriptionServiceInterface subscriptionService;
+    private final SubscriptionService subscriptionService;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -72,7 +68,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
                 .teacherTelegramId(update.getMessage().getFrom().getId().toString())
                 .build();
 
-        subscriptionCreationDTOCache.put(update.getMessage().getFrom().getId().toString(), dto);
+        subscriptionCreationCache.put(update.getMessage().getFrom().getId().toString(), dto);
 
         // Sending start message
         SendMessage message;
@@ -92,10 +88,10 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             // Data comes from Message field
 
             // Getting current DTO
-            SubscriptionCreationDTO dto = subscriptionCreationDTOCache.getIfPresent(update.getMessage().getFrom().getId().toString());
+            SubscriptionCreationDTO dto = subscriptionCreationCache.getIfPresent(update.getMessage().getFrom().getId().toString());
 
             if (dto == null) {
-                log.error("DTO instance wasn't created yet! Cannot continue. User id: " + update.getMessage().getFrom().getId() + "; Current state: " + state.getClass().getName());
+                log.error("DTO instance wasn't created yet! Cannot continue. User id: {}; Current state: {}", update.getMessage().getFrom().getId(), state.getClass().getName());
                 throw new IllegalStateException("There's no DTO created to continue building Subscription.");
             }
 
@@ -115,19 +111,19 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             // Data comes from Data field of CallbackQuery
 
             // Getting current DTO
-            SubscriptionCreationDTO dto = subscriptionCreationDTOCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
+            SubscriptionCreationDTO dto = subscriptionCreationCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
             if (dto == null) {
-                log.error("DTO instance wasn't created yet! Cannot continue. User id: " + update.getMessage().getFrom().getId() + "; Current state: " + state.getClass().getName());
+                log.error("DTO instance wasn't created yet! Cannot continue. User id: {}; Current state: {}", update.getCallbackQuery().getFrom().getId(), state.getClass().getName());
                 throw new IllegalStateException("There's no DTO created to continue building Subscription.");
             }
 
-            InlineBtnDTO buttonData = InlineBtnDTOEncoder.decode(update.getCallbackQuery().getData());
+            InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
             dto.setStudentTelegramId(buttonData.getData());
 
             // Since DTO is completely full - it's time to pass creation of the Subscription object to its service
-            subscriptionService.create(dto);
+            subscriptionService.createSubscription(dto);
 
-            cleanUp(update.getCallbackQuery().getFrom().getId().toString());
+            removeFromCacheBy(update.getCallbackQuery().getFrom().getId().toString());
 
             SendMessage sendMessage = createMessage(update.getCallbackQuery().getMessage().getChatId().toString(), SUCCESS_TEXT);
             messages.add(sendMessage);
@@ -186,7 +182,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
 
-            button.setCallbackData(InlineBtnDTOEncoder.encode(new InlineBtnDTO(getCommand(), state.getStateIndex(), student.getTelegramId())));
+            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommand(), state.getStateIndex(), student.getTelegramId())));
 
             button.setText(String.format(USER_DATA_PATTERN,
                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
@@ -209,9 +205,9 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public void cleanUp(String id) {
-        if (subscriptionCreationDTOCache.getIfPresent(id) != null)
-            subscriptionCreationDTOCache.invalidate(id);
+    public void removeFromCacheBy(String id) {
+        if (subscriptionCreationCache.getIfPresent(id) != null)
+            subscriptionCreationCache.invalidate(id);
     }
 
     @Override

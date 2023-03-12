@@ -6,8 +6,8 @@ import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import core.english.mse2023.cache.CacheData;
 import core.english.mse2023.config.BotConfig;
-import core.english.mse2023.dto.inlineButton.InlineBtnDTO;
-import core.english.mse2023.dto.inlineButton.InlineBtnDTOEncoder;
+import core.english.mse2023.dto.inlineButton.InlineButtonDTO;
+import core.english.mse2023.dto.inlineButton.InlineButtonDTOEncoder;
 import core.english.mse2023.hadler.interfaces.Handler;
 import core.english.mse2023.hadler.interfaces.InteractiveHandler;
 import jakarta.validation.constraints.NotNull;
@@ -26,50 +26,15 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class TelegramBotMainClass extends TelegramLongPollingBot {
+public class TelegramBot extends TelegramLongPollingBot {
     private final BotConfig config;
 
     private final Map<String, Handler> handlers;
 
     // Cache for storing last used commands with require users input
-    private final Cache<String, CacheData> cache = Caffeine.newBuilder()
-            // Setting rule for checking if Command was finished or lifetime ran out
-            .expireAfter(new Expiry<String, CacheData>() {
+    private final Cache<String, CacheData> cache = createCache();
 
-                // Expire time in nanoseconds
-                //                      min   sec   ms      ns
-                final long expireTime = 20L * 60 * 1000 * 1000000;
-
-                @Override
-                public long expireAfterCreate(@Nonnull String s, @Nonnull CacheData cacheData, long l) {
-                    return Long.MAX_VALUE;
-                }
-
-                @Override
-                public long expireAfterUpdate(@Nonnull String s, @Nonnull CacheData cacheData, long l, long l1) {
-                    return Long.MAX_VALUE;
-                }
-
-                @Override
-                public long expireAfterRead(@Nonnull String s, @Nonnull CacheData cacheData, long l, long l1) {
-
-                    if (!cacheData.getState().hasNext()) {
-                        return 10;
-                    }
-                    return expireTime;
-                }
-            })
-            // Making sure handler's inner cache clears users data when command finishes/deletes
-            .removalListener(((key, value, cause) -> {
-                if (cause == RemovalCause.EXPIRED) {
-                    if (value != null) {
-                        value.getHandler().cleanUp(key);
-                    }
-                }
-            }))
-            .build();
-
-    public TelegramBotMainClass(BotConfig config, List<Handler> handlers) {
+    public TelegramBot(BotConfig config, List<Handler> handlers) {
         this.config = config;
         this.handlers = handlers
                 .stream()
@@ -137,11 +102,11 @@ public class TelegramBotMainClass extends TelegramLongPollingBot {
 
             // Checking if user who pressed the button has any ongoing processes
             if (cacheData != null) {
-                InlineBtnDTO inlineBtnDTO = InlineBtnDTOEncoder.decode(update.getCallbackQuery().getData());
+                InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
                 // Checking if data from the button corresponds with the expected data
-                if (cacheData.getHandler().getCommand().equals(inlineBtnDTO.getCommand()) &&
-                        (cacheData.getState().getStateIndex() - 1) == inlineBtnDTO.getStateIndex()) {
+                if (cacheData.getHandler().getCommand().equals(inlineButtonDTO.getCommand()) &&
+                        (cacheData.getState().getStateIndex() - 1) == inlineButtonDTO.getStateIndex()) {
 
                     // If everything is ok - proceed the command
                     sendMessages(cacheData.updateData(update));
@@ -175,5 +140,46 @@ public class TelegramBotMainClass extends TelegramLongPollingBot {
     private void triggerTimeBasedEvictionChecker(String id) {
         cache.getIfPresent(id);
         cache.cleanUp();
+    }
+
+    private Cache<String, CacheData> createCache() {
+        return Caffeine.newBuilder()
+                .expireAfter(createTimeExpireRule())
+                .removalListener(((key, value, cause) -> {
+                    if (cause == RemovalCause.EXPIRED) {
+                        if (value != null) {
+                            value.getHandler().removeFromCacheBy(key);
+                        }
+                    }
+                }))
+                .build();
+    }
+
+    private Expiry<String, CacheData> createTimeExpireRule() {
+        return new Expiry<>() {
+
+            // Expire time in nanoseconds
+            //                      min   sec   ms      ns
+            final long expireTime = 20L * 60 * 1000 * 1000000;
+
+            @Override
+            public long expireAfterCreate(@Nonnull String s, @Nonnull CacheData cacheData, long l) {
+                return Long.MAX_VALUE;
+            }
+
+            @Override
+            public long expireAfterUpdate(@Nonnull String s, @Nonnull CacheData cacheData, long l, long l1) {
+                return Long.MAX_VALUE;
+            }
+
+            @Override
+            public long expireAfterRead(@Nonnull String s, @Nonnull CacheData cacheData, long l, long l1) {
+
+                if (!cacheData.getState().hasNext()) {
+                    return 10;
+                }
+                return expireTime;
+            }
+        };
     }
 }

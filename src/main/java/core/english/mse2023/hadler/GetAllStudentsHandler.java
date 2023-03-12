@@ -4,8 +4,6 @@ import core.english.mse2023.constant.Command;
 import core.english.mse2023.hadler.interfaces.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
-import core.english.mse2023.service.UserServiceInterface;
-import core.english.mse2023.state.State;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -24,7 +22,7 @@ public class GetAllStudentsHandler implements Handler {
     private static final String NO_STUDENTS_TEXT = "Зарегистрированные студенты отсутствуют в системе.";
     private static final String USER_DATA_PATTERN = "%s%s";
 
-    private final UserServiceInterface service;
+    private final UserService service;
 
     @Override
     public List<SendMessage> handle(Update update) {

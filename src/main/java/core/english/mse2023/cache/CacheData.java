@@ -1,7 +1,6 @@
 package core.english.mse2023.cache;
 
 import core.english.mse2023.hadler.interfaces.InteractiveHandler;
-import core.english.mse2023.state.IllegalStateException;
 import core.english.mse2023.state.State;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,30 +37,33 @@ public class CacheData {
 
         } catch (IllegalUserInputException exception) {
             SendMessage message = new SendMessage();
-            if (update.hasMessage()) {
-                message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            } else if (update.hasCallbackQuery()) {
-                message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            }
+            setChatId(message, update);
+
             message.setText("Вы ввели что-то не то. Попробуйте снова.");
 
             sendMessageList = List.of(message);
         } catch (IllegalStateException exception) {
             SendMessage message = new SendMessage();
-            if (update.hasMessage()) {
-                message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            } else if (update.hasCallbackQuery()) {
-                message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            }
+            setChatId(message, update);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS");
 
-            message.setText("Произошла внутренняя ошибка. Свяжитесь со службой технической поддержки и сообщите им время ошибки: " + dateFormat.format(new Date()));
+            message.setText("Произошла внутренняя ошибка. " +
+                    "Свяжитесь со службой технической поддержки и сообщите им время ошибки: " +
+                    dateFormat.format(new Date()));
 
             sendMessageList = List.of(message);
         }
 
         return sendMessageList;
+    }
+
+    private void setChatId(SendMessage message, Update update) {
+        if (update.hasMessage()) {
+            message.setChatId(String.valueOf(update.getMessage().getChatId()));
+        } else if (update.hasCallbackQuery()) {
+            message.setChatId(String.valueOf(update.getMessage().getChatId()));
+        }
     }
 
 }

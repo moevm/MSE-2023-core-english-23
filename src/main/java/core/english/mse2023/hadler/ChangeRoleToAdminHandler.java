@@ -4,8 +4,6 @@ import core.english.mse2023.constant.Command;
 import core.english.mse2023.hadler.interfaces.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
-import core.english.mse2023.service.UserServiceInterface;
-import core.english.mse2023.state.State;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,7 +18,7 @@ public class ChangeRoleToAdminHandler implements Handler {
     private static final String SUCCESS_TEXT = "Ваша роль изменена на: %s";
     private static final String FAIL_TEXT = "Невозможно сменить роль на такую же, как у вас.";
 
-    private final UserServiceInterface service;
+    private final UserService service;
 
     @Override
     public List<SendMessage> handle(Update update) {

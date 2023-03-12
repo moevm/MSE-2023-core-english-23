@@ -3,9 +3,12 @@ package core.english.mse2023.dto;
 
 import core.english.mse2023.model.dictionary.SubscriptionType;
 import core.english.mse2023.state.subcriptionCreate.InitializedState;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.sql.Timestamp;
 
 /**
  * POJO for storing temporary subscription data
@@ -13,6 +16,7 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
+@Builder
 public class SubscriptionCreationDTO {
 
     private String teacherTelegramId;
@@ -23,8 +27,8 @@ public class SubscriptionCreationDTO {
 
     private int lessonsRest;
 
-    private String startDate;
+    private Timestamp startDate;
 
-    private String endDate;
+    private Timestamp endDate;
 
 }

@@ -1,13 +1,15 @@
 package core.english.mse2023.cache;
 
-import core.english.mse2023.constant.Command;
-import core.english.mse2023.hadler.Handler;
+import core.english.mse2023.hadler.interfaces.InteractiveHandler;
+import core.english.mse2023.state.IllegalStateException;
 import core.english.mse2023.state.State;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,13 +18,13 @@ import java.util.List;
 public class CacheData {
 
     @Getter
-    private final Handler handler;
+    private final InteractiveHandler handler;
 
     @Getter
     @Setter
     private State state;
 
-    public CacheData(Handler handler) {
+    public CacheData(InteractiveHandler handler) {
         this.handler = handler;
         state = handler.getInitialState();
     }
@@ -34,7 +36,7 @@ public class CacheData {
 
             state.next(this);
 
-        } catch (IllegalArgumentException exception) {
+        } catch (IllegalUserInputException exception) {
             SendMessage message = new SendMessage();
             if (update.hasMessage()) {
                 message.setChatId(String.valueOf(update.getMessage().getChatId()));
@@ -42,6 +44,19 @@ public class CacheData {
                 message.setChatId(String.valueOf(update.getMessage().getChatId()));
             }
             message.setText("Вы ввели что-то не то. Попробуйте снова.");
+
+            sendMessageList = List.of(message);
+        } catch (IllegalStateException exception) {
+            SendMessage message = new SendMessage();
+            if (update.hasMessage()) {
+                message.setChatId(String.valueOf(update.getMessage().getChatId()));
+            } else if (update.hasCallbackQuery()) {
+                message.setChatId(String.valueOf(update.getMessage().getChatId()));
+            }
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS");
+
+            message.setText("Произошла внутренняя ошибка. Свяжитесь со службой технической поддержки и сообщите им время ошибки: " + dateFormat.format(new Date()));
 
             sendMessageList = List.of(message);
         }

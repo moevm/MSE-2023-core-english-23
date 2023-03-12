@@ -2,17 +2,25 @@ package core.english.mse2023.hadler;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import core.english.mse2023.cache.IllegalUserInputException;
 import core.english.mse2023.constant.Command;
-import core.english.mse2023.dto.InlineBtnDTO;
+import core.english.mse2023.dto.inlineButton.InlineBtnDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
+import core.english.mse2023.dto.inlineButton.InlineBtnDTOEncoder;
+import core.english.mse2023.hadler.interfaces.Handler;
+import core.english.mse2023.hadler.interfaces.InteractiveHandler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.SubscriptionType;
 import core.english.mse2023.service.SubscriptionService;
+import core.english.mse2023.service.SubscriptionServiceInterface;
 import core.english.mse2023.service.UserService;
+import core.english.mse2023.service.UserServiceInterface;
+import core.english.mse2023.state.IllegalStateException;
 import core.english.mse2023.state.State;
 import core.english.mse2023.state.subcriptionCreate.InitializedState;
 import core.english.mse2023.state.subcriptionCreate.PartiallyCreatedState;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,12 +28,16 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class CreateSubscriptionHandler implements Handler {
+public class CreateSubscriptionHandler implements InteractiveHandler {
     private static final String START_TEXT = "Для создания новой подписки заполните и отправьте форму с данными " +
             "\\(каждое поле на новой строке в одном сообщении в том же порядке\\)\\. Пример:\n%s";
 
@@ -45,17 +57,20 @@ public class CreateSubscriptionHandler implements Handler {
     private final Cache<String, SubscriptionCreationDTO> subscriptionCreationDTOCache = Caffeine.newBuilder()
             .build();
 
-    private final UserService userService;
+    private final UserServiceInterface userService;
 
-    private final SubscriptionService subscriptionService;
+    private final SubscriptionServiceInterface subscriptionService;
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 
     @Override
     public List<SendMessage> handle(Update update) {
 
         // Creating new DTO for this user
-        SubscriptionCreationDTO dto = new SubscriptionCreationDTO();
-        dto.setTeacherTelegramId(update.getMessage().getFrom().getId().toString());
+        SubscriptionCreationDTO dto = SubscriptionCreationDTO.builder()
+                .teacherTelegramId(update.getMessage().getFrom().getId().toString())
+                .build();
 
         subscriptionCreationDTOCache.put(update.getMessage().getFrom().getId().toString(), dto);
 
@@ -70,7 +85,7 @@ public class CreateSubscriptionHandler implements Handler {
     }
 
     @Override
-    public List<SendMessage> update(Update update, State state) {
+    public List<SendMessage> update(Update update, State state) throws IllegalUserInputException, IllegalStateException {
         ArrayList<SendMessage> messages = new ArrayList<>();
 
         if (state instanceof InitializedState) {
@@ -79,8 +94,10 @@ public class CreateSubscriptionHandler implements Handler {
             // Getting current DTO
             SubscriptionCreationDTO dto = subscriptionCreationDTOCache.getIfPresent(update.getMessage().getFrom().getId().toString());
 
-            if (dto == null)
-                throw new RuntimeException("There's no DTO created to continue building Subscription.");
+            if (dto == null) {
+                log.error("DTO instance wasn't created yet! Cannot continue. User id: " + update.getMessage().getFrom().getId() + "; Current state: " + state.getClass().getName());
+                throw new IllegalStateException("There's no DTO created to continue building Subscription.");
+            }
 
             // Parsing data from user
             parseInput(update.getMessage().getText(), dto);
@@ -99,10 +116,12 @@ public class CreateSubscriptionHandler implements Handler {
 
             // Getting current DTO
             SubscriptionCreationDTO dto = subscriptionCreationDTOCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
-            if (dto == null)
-                throw new RuntimeException("There's no DTO created to continue building Subscription.");
+            if (dto == null) {
+                log.error("DTO instance wasn't created yet! Cannot continue. User id: " + update.getMessage().getFrom().getId() + "; Current state: " + state.getClass().getName());
+                throw new IllegalStateException("There's no DTO created to continue building Subscription.");
+            }
 
-            InlineBtnDTO buttonData = InlineBtnDTO.createFromString(update.getCallbackQuery().getData());
+            InlineBtnDTO buttonData = InlineBtnDTOEncoder.decode(update.getCallbackQuery().getData());
             dto.setStudentTelegramId(buttonData.getData());
 
             // Since DTO is completely full - it's time to pass creation of the Subscription object to its service
@@ -117,36 +136,47 @@ public class CreateSubscriptionHandler implements Handler {
         return messages;
     }
 
-    /**
-     * Parses user input to fill some data into SubscriptionCreationDTO
-     * @param input Input string
-     * @param dto SubscriptionCreationDTO to fill data into
-     *
-     * @throws IllegalArgumentException If user entered something that wasn't supposed to be in the form
-     */
-    private void parseInput(String input, SubscriptionCreationDTO dto) {
+    private void parseInput(String input, SubscriptionCreationDTO dto) throws IllegalUserInputException {
         Map<String, String> data = Arrays.stream(input.split("\n"))
                 .map(field -> field.split(" "))
                 .collect(Collectors.toMap(e -> e[0].toLowerCase().substring(0, e[0].length() - 1), e -> e[1]));
 
+        if (data.size() != 3) {
+            throw new IllegalUserInputException("Wrong amount of parameters present");
+        }
 
         for (String key :
                 data.keySet()) {
             switch (key) {
-                case "startdate" -> dto.setStartDate(data.get(key));
-                case "enddate" -> dto.setEndDate(data.get(key));
+                case "startdate" -> {
+                    try {
+                        Date parsedDate = dateFormat.parse(data.get(key));
+                        dto.setStartDate(new Timestamp(parsedDate.getTime()));
+                    } catch (ParseException e) {
+                        log.error("Failed to parse date format on StartDate parameter. Raw data: " + data.get(key));
+                        throw new IllegalUserInputException("Failed to parse date format on StartDate parameter");
+                    }
+                }
+                case "enddate" -> {
+                    try {
+                        Date parsedDate = dateFormat.parse(data.get(key));
+                        dto.setEndDate(new Timestamp(parsedDate.getTime()));
+                    } catch (ParseException e) {
+                        log.error("Failed to parse date format on EndDate parameter. Raw data: " + data.get(key));
+                        throw new IllegalUserInputException("Failed to parse date format on EndDate parameter");
+                    }
+
+                }
                 case "lessonamount" -> dto.setLessonsRest(Integer.parseInt(data.get(key)));
-                default -> throw new IllegalArgumentException("Wrong parameters!");
+                default -> throw new IllegalUserInputException("Wrong parameters!");
             }
+        }
+
+        if (dto.getStartDate().after(dto.getEndDate())) {
+            throw new IllegalUserInputException("Start date cannot go after the end date.");
         }
     }
 
-    /**
-     * Generates inline buttons based on list of students
-     * @param students List of student where data will be taken from
-     * @param state Current handler's state for button data
-     * @return Markup with all the buttons
-     */
     private InlineKeyboardMarkup getStudentsButtons(List<User> students, State state) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
@@ -156,7 +186,7 @@ public class CreateSubscriptionHandler implements Handler {
             List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
 
-            button.setCallbackData(new InlineBtnDTO(getCommand(), state.getStateIndex(), student.getTelegramId()).toString());
+            button.setCallbackData(InlineBtnDTOEncoder.encode(new InlineBtnDTO(getCommand(), state.getStateIndex(), student.getTelegramId())));
 
             button.setText(String.format(USER_DATA_PATTERN,
                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
@@ -171,11 +201,6 @@ public class CreateSubscriptionHandler implements Handler {
 
         inlineKeyboardMarkup.setKeyboard(keyboard);
         return inlineKeyboardMarkup;
-    }
-
-    @Override
-    public boolean needsUserInteraction() {
-        return true;
     }
 
     @Override

@@ -6,8 +6,10 @@ import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import core.english.mse2023.cache.CacheData;
 import core.english.mse2023.config.BotConfig;
-import core.english.mse2023.dto.InlineBtnDTO;
-import core.english.mse2023.hadler.Handler;
+import core.english.mse2023.dto.inlineButton.InlineBtnDTO;
+import core.english.mse2023.dto.inlineButton.InlineBtnDTOEncoder;
+import core.english.mse2023.hadler.interfaces.Handler;
+import core.english.mse2023.hadler.interfaces.InteractiveHandler;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -95,22 +97,23 @@ public class TelegramBotMainClass extends TelegramLongPollingBot {
 
             if (handler != null) {
 
-                if (!handler.needsUserInteraction()) {
-                    // If chosen handler doesn't need user input
-
-                    sendMessages(handler.handle(update));
-                } else {
+                if (handler instanceof InteractiveHandler interactiveHandler) {
                     // If it needs user input
 
                     // This sends the initial message and initialise the handler for new user
-                    sendMessages(handler.handle(update));
+                    sendMessages(interactiveHandler.handle(update));
 
                     // Creating cache data object with chosen handler
-                    CacheData data = new CacheData(handler);
+                    CacheData data = new CacheData(interactiveHandler);
 
                     // Adding newly created data object to cache
                     cache.put(update.getMessage().getFrom().getId().toString(), data);
+                } else {
+                    // If chosen handler doesn't need user input
+
+                    sendMessages(handler.handle(update));
                 }
+
             } else {
                 // If the message is not a command
 
@@ -134,7 +137,7 @@ public class TelegramBotMainClass extends TelegramLongPollingBot {
 
             // Checking if user who pressed the button has any ongoing processes
             if (cacheData != null) {
-                InlineBtnDTO inlineBtnDTO = InlineBtnDTO.createFromString(update.getCallbackQuery().getData());
+                InlineBtnDTO inlineBtnDTO = InlineBtnDTOEncoder.decode(update.getCallbackQuery().getData());
 
                 // Checking if data from the button corresponds with the expected data
                 if (cacheData.getHandler().getCommand().equals(inlineBtnDTO.getCommand()) &&

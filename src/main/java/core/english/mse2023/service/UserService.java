@@ -14,11 +14,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserServiceInterface {
 
     private final UserRepository repository;
 
     @Transactional
+    @Override
     public User create(Update update) {
         String telegramId = update.getMessage().getFrom().getId().toString();
 
@@ -37,14 +38,17 @@ public class UserService {
         return user;
     }
 
+    @Override
     public List<User> getAllStudents() {
         return repository.findAllByRole(UserRole.STUDENT);
     }
 
+    @Override
     public List<User> getAllTeachers() {
         return repository.findAllByRole(UserRole.TEACHER);
     }
 
+    @Override
     public boolean changeUserRole(Update update, UserRole role) {
         boolean roleHasBeenChanged = false;
 

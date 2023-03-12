@@ -1,8 +1,10 @@
 package core.english.mse2023.hadler;
 
 import core.english.mse2023.constant.Command;
+import core.english.mse2023.hadler.interfaces.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
+import core.english.mse2023.service.UserServiceInterface;
 import core.english.mse2023.state.State;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,7 +20,7 @@ public class StartHandler implements Handler {
     private static final String GREETING = "Добро пожаловать, %s. Ваша роль: %s";
 
 
-    private final UserService service;
+    private final UserServiceInterface service;
 
     @Override
     public List<SendMessage> handle(Update update) {
@@ -30,25 +32,5 @@ public class StartHandler implements Handler {
     @Override
     public String getCommand() {
         return Command.START;
-    }
-
-    @Override
-    public List<SendMessage> update(Update update, State state) {
-        throw new RuntimeException("The " + getClass() + " doesn't support update method.");
-    }
-
-    @Override
-    public boolean needsUserInteraction() {
-        return false;
-    }
-
-    @Override
-    public State getInitialState() {
-        throw new RuntimeException("The " + getClass() + " doesn't support states.");
-    }
-
-    @Override
-    public void cleanUp(String id) {
-        throw new RuntimeException("The " + getClass() + " doesn't support cleanup method.");
     }
 }

@@ -8,7 +8,9 @@ import core.english.mse2023.model.dictionary.SubscriptionStatus;
 import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.repository.SubscriptionRepository;
 import core.english.mse2023.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -18,36 +20,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class SubscriptionService {
+public class SubscriptionService implements SubscriptionServiceInterface {
 
     private final SubscriptionRepository subscriptionRepository;
     private final LessonRepository lessonRepository;
     private final UserRepository userRepository;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
-
+    @Transactional
+    @Override
     public void create(SubscriptionCreationDTO creationDTO) {
 
         Subscription subscription = new Subscription();
 
-
-
-        try {
-            Date parsedDate = dateFormat.parse(creationDTO.getStartDate());
-            subscription.setStartDate(new Timestamp(parsedDate.getTime()));
-        } catch (ParseException e) {
-            System.out.println("Failed to parse date format on StartDate parameter");
-        }
-
-        try {
-            Date parsedDate = dateFormat.parse(creationDTO.getEndDate());
-            subscription.setEndDate(new Timestamp(parsedDate.getTime()));
-        } catch (ParseException e) {
-            System.out.println("Failed to parse date format on StartDate parameter");
-        }
+        subscription.setStartDate(creationDTO.getStartDate());
+        subscription.setEndDate(creationDTO.getEndDate());
 
         subscription.setType(creationDTO.getType());
 

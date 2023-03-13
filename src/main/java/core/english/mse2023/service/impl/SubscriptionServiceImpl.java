@@ -1,4 +1,4 @@
-package core.english.mse2023.service;
+package core.english.mse2023.service.impl;
 
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.model.Lesson;
@@ -8,6 +8,7 @@ import core.english.mse2023.model.dictionary.SubscriptionStatus;
 import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.repository.SubscriptionRepository;
 import core.english.mse2023.repository.UserRepository;
+import core.english.mse2023.service.SubscriptionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

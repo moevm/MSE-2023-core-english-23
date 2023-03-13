@@ -1,6 +1,6 @@
-package core.english.mse2023.hadler.interfaces;
+package core.english.mse2023.hadler;
 
-import core.english.mse2023.cache.IllegalUserInputException;
+import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.state.State;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;

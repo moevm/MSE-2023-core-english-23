@@ -2,7 +2,6 @@ package core.english.mse2023.dto;
 
 
 import core.english.mse2023.model.dictionary.SubscriptionType;
-import core.english.mse2023.state.subcriptionCreate.InitializedState;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

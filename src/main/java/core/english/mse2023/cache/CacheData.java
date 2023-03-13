@@ -1,6 +1,7 @@
 package core.english.mse2023.cache;
 
-import core.english.mse2023.hadler.interfaces.InteractiveHandler;
+import core.english.mse2023.exception.IllegalUserInputException;
+import core.english.mse2023.hadler.InteractiveHandler;
 import core.english.mse2023.state.State;
 import lombok.Getter;
 import lombok.Setter;

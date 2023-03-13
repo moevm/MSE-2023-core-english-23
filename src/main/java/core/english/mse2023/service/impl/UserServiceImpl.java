@@ -1,9 +1,10 @@
-package core.english.mse2023.service;
+package core.english.mse2023.service.impl;
 
 
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.repository.UserRepository;
+import core.english.mse2023.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

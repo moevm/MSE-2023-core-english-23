@@ -1,4 +1,4 @@
-package core.english.mse2023.dto.inlineButton;
+package core.english.mse2023.exception;
 
 public class ButtonCallbackDataLimitExceedException extends RuntimeException {
 

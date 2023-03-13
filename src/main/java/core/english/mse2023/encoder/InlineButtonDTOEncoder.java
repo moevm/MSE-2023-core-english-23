@@ -1,5 +1,8 @@
-package core.english.mse2023.dto.inlineButton;
+package core.english.mse2023.encoder;
 
+import core.english.mse2023.dto.InlineButtonDTO;
+import core.english.mse2023.exception.ButtonCallbackDataLimitExceedException;
+import core.english.mse2023.exception.InlineButtonCallbackDataParseException;
 import lombok.experimental.UtilityClass;
 
 import java.nio.charset.StandardCharsets;
@@ -16,10 +19,10 @@ public class InlineButtonDTOEncoder {
      * @throws ButtonCallbackDataLimitExceedException If packed data exceeds size limit
      */
     public String encode(InlineButtonDTO buttonData) throws ButtonCallbackDataLimitExceedException {
-        String dataString = buttonData.command + DELIMITER + buttonData.stateIndex + DELIMITER + buttonData.data;
+        String dataString = buttonData.getCommand() + DELIMITER + buttonData.getStateIndex() + DELIMITER + buttonData.getData();
 
         if (doesDataStringExceedSizeLimit(dataString)) {
-            throw new ButtonCallbackDataLimitExceedException(dataString.getBytes(StandardCharsets.UTF_8).length);
+            throw new ButtonCallbackDataLimitExceedException(getDataStringByteSize(dataString));
         }
 
         return dataString;
@@ -53,6 +56,10 @@ public class InlineButtonDTOEncoder {
 
 
     private boolean doesDataStringExceedSizeLimit(String data) {
-        return data.getBytes(StandardCharsets.UTF_8).length > MAX_BIT_SIZE;
+        return getDataStringByteSize(data) > MAX_BIT_SIZE;
+    }
+
+    private int getDataStringByteSize(String data) {
+        return data.getBytes(StandardCharsets.UTF_8).length;
     }
 }

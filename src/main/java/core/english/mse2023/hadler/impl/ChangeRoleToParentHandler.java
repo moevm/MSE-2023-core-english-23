@@ -1,7 +1,7 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.hadler.impl;
 
 import core.english.mse2023.constant.Command;
-import core.english.mse2023.hadler.interfaces.Handler;
+import core.english.mse2023.hadler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class ChangeRoleToAdminHandler implements Handler {
+public class ChangeRoleToParentHandler implements Handler {
 
     private static final String SUCCESS_TEXT = "Ваша роль изменена на: %s";
     private static final String FAIL_TEXT = "Невозможно сменить роль на такую же, как у вас.";
@@ -23,14 +23,14 @@ public class ChangeRoleToAdminHandler implements Handler {
     @Override
     public List<SendMessage> handle(Update update) {
 
-        boolean result = service.changeUserRole(update, UserRole.ADMIN);
+        boolean result = service.changeUserRole(update, UserRole.PARENT);
 
         SendMessage message;
 
         if (!result) {
             message = createMessage(update.getMessage().getChatId().toString(), FAIL_TEXT);
         } else {
-            message = createMessage(update.getMessage().getChatId().toString(), String.format(SUCCESS_TEXT, UserRole.ADMIN));
+            message = createMessage(update.getMessage().getChatId().toString(), String.format(SUCCESS_TEXT, UserRole.PARENT));
         }
 
         return List.of(message);
@@ -38,6 +38,6 @@ public class ChangeRoleToAdminHandler implements Handler {
 
     @Override
     public String getCommand() {
-        return Command.CHANGE_ROLE_TO_ADMIN;
+        return Command.CHANGE_ROLE_TO_PARENT;
     }
 }

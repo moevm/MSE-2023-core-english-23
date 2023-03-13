@@ -1,7 +1,7 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.hadler.impl;
 
 import core.english.mse2023.constant.Command;
-import core.english.mse2023.hadler.interfaces.Handler;
+import core.english.mse2023.hadler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;

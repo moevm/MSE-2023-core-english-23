@@ -1,4 +1,4 @@
-package core.english.mse2023.hadler.interfaces;
+package core.english.mse2023.hadler;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;

@@ -1,4 +1,4 @@
-package core.english.mse2023.state.subcriptionCreate;
+package core.english.mse2023.state.subcription;
 
 import core.english.mse2023.cache.CacheData;
 import core.english.mse2023.state.State;

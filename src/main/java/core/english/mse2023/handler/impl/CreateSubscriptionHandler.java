@@ -1,4 +1,4 @@
-package core.english.mse2023.hadler.impl;
+package core.english.mse2023.handler.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -7,7 +7,7 @@ import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
-import core.english.mse2023.hadler.InteractiveHandler;
+import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.SubscriptionType;
 import core.english.mse2023.service.SubscriptionService;

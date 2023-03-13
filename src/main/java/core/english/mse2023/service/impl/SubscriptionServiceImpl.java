@@ -63,6 +63,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    public List<Subscription> getAllSubscriptions() {
+        return subscriptionRepository.findAll();
+    }
+
+    @Override
     public Lesson createLesson(Subscription subscription) {
         Lesson lesson = new Lesson();
 

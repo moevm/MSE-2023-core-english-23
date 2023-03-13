@@ -1,4 +1,4 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.handler;
 
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.state.State;

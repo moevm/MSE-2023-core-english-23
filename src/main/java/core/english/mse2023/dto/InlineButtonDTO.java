@@ -1,9 +1,6 @@
 package core.english.mse2023.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * This class represents data package for content of Data parameter of an inlineButton
@@ -13,6 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class InlineButtonDTO {
 
     String command;

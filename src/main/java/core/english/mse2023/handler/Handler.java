@@ -1,4 +1,4 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.handler;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -27,10 +27,9 @@ public interface Handler {
      * @return Created SendMessage object
      */
     default SendMessage createMessage(String chatId, String messageText) {
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(messageText);
-
-        return message;
+        return SendMessage.builder()
+                .chatId(chatId)
+                .text(messageText)
+                .build();
     }
 }

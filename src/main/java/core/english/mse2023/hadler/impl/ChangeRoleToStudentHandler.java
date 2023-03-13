@@ -1,17 +1,14 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.hadler.impl;
 
 import core.english.mse2023.constant.Command;
-import core.english.mse2023.model.User;
+import core.english.mse2023.hadler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -31,9 +28,9 @@ public class ChangeRoleToStudentHandler implements Handler {
         SendMessage message;
 
         if (!result) {
-            message = createMessage(update, FAIL_TEXT);
+            message = createMessage(update.getMessage().getChatId().toString(), FAIL_TEXT);
         } else {
-            message = createMessage(update, String.format(SUCCESS_TEXT, UserRole.STUDENT));
+            message = createMessage(update.getMessage().getChatId().toString(), String.format(SUCCESS_TEXT, UserRole.STUDENT));
         }
 
         return List.of(message);

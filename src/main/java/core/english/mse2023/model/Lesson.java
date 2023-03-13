@@ -24,7 +24,7 @@ public class Lesson extends BaseEntity {
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date")
     private Timestamp date;
 
     @Column(name = "topic")

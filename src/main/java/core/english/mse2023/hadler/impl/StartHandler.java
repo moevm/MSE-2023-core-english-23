@@ -1,6 +1,7 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.hadler.impl;
 
 import core.english.mse2023.constant.Command;
+import core.english.mse2023.hadler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class StartHandler implements Handler {
     public List<SendMessage> handle(Update update) {
         User user = service.create(update);
 
-        return List.of(createMessage(update, String.format(GREETING, user.getName(), user.getRole())));
+        return List.of(createMessage(update.getMessage().getChatId().toString(), String.format(GREETING, user.getName(), user.getRole())));
     }
 
     @Override

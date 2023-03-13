@@ -1,22 +1,19 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.hadler.impl;
 
 import core.english.mse2023.constant.Command;
-import core.english.mse2023.model.User;
+import core.english.mse2023.hadler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class ChangeRoleToTeacherHandler implements Handler {
+public class ChangeRoleToAdminHandler implements Handler {
 
     private static final String SUCCESS_TEXT = "Ваша роль изменена на: %s";
     private static final String FAIL_TEXT = "Невозможно сменить роль на такую же, как у вас.";
@@ -26,14 +23,14 @@ public class ChangeRoleToTeacherHandler implements Handler {
     @Override
     public List<SendMessage> handle(Update update) {
 
-        boolean result = service.changeUserRole(update, UserRole.TEACHER);
+        boolean result = service.changeUserRole(update, UserRole.ADMIN);
 
         SendMessage message;
 
         if (!result) {
-            message = createMessage(update, FAIL_TEXT);
+            message = createMessage(update.getMessage().getChatId().toString(), FAIL_TEXT);
         } else {
-            message = createMessage(update, String.format(SUCCESS_TEXT, UserRole.TEACHER));
+            message = createMessage(update.getMessage().getChatId().toString(), String.format(SUCCESS_TEXT, UserRole.ADMIN));
         }
 
         return List.of(message);
@@ -41,6 +38,6 @@ public class ChangeRoleToTeacherHandler implements Handler {
 
     @Override
     public String getCommand() {
-        return Command.CHANGE_ROLE_TO_TEACHER;
+        return Command.CHANGE_ROLE_TO_ADMIN;
     }
 }

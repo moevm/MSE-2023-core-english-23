@@ -1,18 +1,15 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.hadler.impl;
 
 import core.english.mse2023.constant.Command;
+import core.english.mse2023.hadler.Handler;
 import core.english.mse2023.model.User;
-import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +32,9 @@ public class GetAllStudentsHandler implements Handler {
         SendMessage sendMessage;
 
         if (students.isEmpty()) {
-            sendMessage = createMessage(update, NO_STUDENTS_TEXT);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_STUDENTS_TEXT);
         } else {
-            sendMessage = createMessage(update, START_TEXT);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), START_TEXT);
             sendMessage.setReplyMarkup(getStudentsButtons(students));
         }
 

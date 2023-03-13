@@ -1,6 +1,7 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.hadler.impl;
 
 import core.english.mse2023.constant.Command;
+import core.english.mse2023.hadler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,9 @@ public class GetAllTeachersHandler implements Handler {
         SendMessage sendMessage;
 
         if (teachers.isEmpty()) {
-            sendMessage = createMessage(update, NO_TEACHERS_TEXT);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_TEACHERS_TEXT);
         } else {
-            sendMessage = createMessage(update, String.format(START_TEXT, getTeachersDataText(teachers)));
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, getTeachersDataText(teachers)));
         }
 
         return List.of(sendMessage);
@@ -57,4 +58,5 @@ public class GetAllTeachersHandler implements Handler {
     public String getCommand() {
         return Command.GET_ALL_TEACHERS;
     }
+
 }

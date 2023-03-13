@@ -20,7 +20,7 @@ create table lesson
     id              uuid         not null,
     created_when    timestamp(6) not null,
     modified_when   timestamp(6) not null,
-    date            timestamp(6) not null,
+    date            timestamp(6),
     link            varchar(255),
     status          varchar(255) not null,
     topic           varchar(255),

@@ -1,6 +1,7 @@
-package core.english.mse2023.hadler;
+package core.english.mse2023.hadler.impl;
 
 import core.english.mse2023.constant.Command;
+import core.english.mse2023.hadler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +28,9 @@ public class ChangeRoleToParentHandler implements Handler {
         SendMessage message;
 
         if (!result) {
-            message = createMessage(update, FAIL_TEXT);
+            message = createMessage(update.getMessage().getChatId().toString(), FAIL_TEXT);
         } else {
-            message = createMessage(update, String.format(SUCCESS_TEXT, UserRole.PARENT));
+            message = createMessage(update.getMessage().getChatId().toString(), String.format(SUCCESS_TEXT, UserRole.PARENT));
         }
 
         return List.of(message);

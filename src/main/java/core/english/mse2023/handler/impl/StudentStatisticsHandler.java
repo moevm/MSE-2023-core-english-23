@@ -2,11 +2,8 @@ package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.components.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
-import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
-import core.english.mse2023.model.User;
-import core.english.mse2023.service.UserService;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,27 +12,22 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class StartHandler implements Handler {
+@AllArgsConstructor
+public class StudentStatisticsHandler implements Handler {
 
-    private static final String GREETING = "Добро пожаловать, %s. Ваша роль: %s";
-
-
-    private final UserService service;
-
+    private static final String MESSAGE = "Вы перешли в раздел СТАТИСТИКА ПО УЧЕНИКУ";
     private final ReplyKeyboardMaker replyKeyboardMaker;
-
 
     @Override
     public List<SendMessage> handle(Update update) {
-        User user = service.create(update);
 
         return List.of(createMessage(update.getMessage().getChatId().toString(),
-                String.format(GREETING, user.getName(), user.getRole()), replyKeyboardMaker.getMainMenuKeyboard()));
+                MESSAGE, replyKeyboardMaker.getStudentStatisticsKeyboard()));
     }
 
     @Override
     public BotCommand getCommand() {
-        return ButtonCommand.START;
+        return ButtonCommand.STUDENT_STATISTICS;
     }
 }
+

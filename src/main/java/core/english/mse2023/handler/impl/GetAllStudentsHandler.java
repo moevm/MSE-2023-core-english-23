@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -32,9 +33,9 @@ public class GetAllStudentsHandler implements Handler {
         SendMessage sendMessage;
 
         if (students.isEmpty()) {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_STUDENTS_TEXT);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_STUDENTS_TEXT, null);
         } else {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), START_TEXT);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), START_TEXT, null);
             sendMessage.setReplyMarkup(getStudentsButtons(students));
         }
 
@@ -69,7 +70,7 @@ public class GetAllStudentsHandler implements Handler {
     }
 
     @Override
-    public String getCommand() {
-        return Command.GET_ALL_STUDENTS;
+    public BotCommand getCommand() {
+        return new BotCommand(Command.GET_ALL_STUDENTS, "");
     }
 }

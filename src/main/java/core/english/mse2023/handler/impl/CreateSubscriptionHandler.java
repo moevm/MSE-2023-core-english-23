@@ -2,6 +2,7 @@ package core.english.mse2023.handler.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -73,7 +75,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
         // Sending start message
         SendMessage message;
 
-        message = createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, DATA_FORM_TEXT));
+        message = createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, DATA_FORM_TEXT), null);
 
         message.setParseMode(ParseMode.MARKDOWNV2);
 
@@ -102,7 +104,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             dto.setType(SubscriptionType.QUANTITY_BASED);
 
             // Sending buttons with students. Data from them will be used in the next state
-            SendMessage sendMessage = createMessage(update.getMessage().getChatId().toString(), USER_CHOOSE_TEXT);
+            SendMessage sendMessage = createMessage(update.getMessage().getChatId().toString(), USER_CHOOSE_TEXT, null);
             sendMessage.setReplyMarkup(getStudentsButtons(userService.getAllStudents(), state));
 
             messages.add(sendMessage);
@@ -125,7 +127,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
             removeFromCacheBy(update.getCallbackQuery().getFrom().getId().toString());
 
-            SendMessage sendMessage = createMessage(update.getCallbackQuery().getMessage().getChatId().toString(), SUCCESS_TEXT);
+            SendMessage sendMessage = createMessage(update.getCallbackQuery().getMessage().getChatId().toString(), SUCCESS_TEXT, null);
             messages.add(sendMessage);
         }
 
@@ -182,7 +184,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
 
-            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommand(), state.getStateIndex(), student.getTelegramId())));
+            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommand().getCommand(), state.getStateIndex(), student.getTelegramId())));
 
             button.setText(String.format(USER_DATA_PATTERN,
                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
@@ -211,8 +213,8 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public String getCommand() {
-        return Command.CREATE_SUBSCRIPTION;
+    public BotCommand getCommand() {
+        return ButtonCommand.CREATE_SUBSCRIPTION;
     }
 
 }

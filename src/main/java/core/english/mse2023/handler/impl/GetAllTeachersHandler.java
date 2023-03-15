@@ -1,7 +1,6 @@
 package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.constant.ButtonCommand;
-import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
@@ -31,9 +30,9 @@ public class GetAllTeachersHandler implements Handler {
         SendMessage sendMessage;
 
         if (teachers.isEmpty()) {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_TEACHERS_TEXT, null);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_TEACHERS_TEXT);
         } else {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, getTeachersDataText(teachers)), null);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, getTeachersDataText(teachers)));
         }
 
         return List.of(sendMessage);
@@ -58,7 +57,7 @@ public class GetAllTeachersHandler implements Handler {
 
     @Override
     public BotCommand getCommand() {
-        return new BotCommand(Command.GET_ALL_TEACHERS, "");
+        return ButtonCommand.GET_ALL_TEACHERS;
     }
 
 }

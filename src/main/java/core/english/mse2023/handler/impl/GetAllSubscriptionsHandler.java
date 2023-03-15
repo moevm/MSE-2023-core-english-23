@@ -1,13 +1,11 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.constant.Command;
+import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Subscription;
-import core.english.mse2023.model.User;
 import core.english.mse2023.service.SubscriptionService;
-import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -58,13 +56,13 @@ public class GetAllSubscriptionsHandler implements Handler {
 
     @Override
     public BotCommand getCommand() {
-        return new BotCommand(Command.GET_ALL_SUBSCRIPTIONS, "");
+        return ButtonCommand.GET_ALL_SUBSCRIPTIONS;
     }
 
     private List<SendMessage> createMessagesWithButton(List<Subscription> subscriptions, String chatId) {
         List<SendMessage> messages = new ArrayList<>();
 
-        messages.add(createMessage(chatId, WELCOME_TEXT, null));
+        messages.add(createMessage(chatId, WELCOME_TEXT));
 
         for (Subscription subscription : subscriptions) {
             SendMessage message = createMessage(

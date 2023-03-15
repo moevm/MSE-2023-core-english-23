@@ -36,9 +36,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     public TelegramBot(BotConfig config, Resolver resolver) { // , List<Handler> handlers) {
         this.config = config;
-//        this.handlers = handlers
-//                .stream()
-//                .collect(Collectors.toMap(Handler::getCommand, Function.identity()));
         this.resolver = resolver;
     }
 

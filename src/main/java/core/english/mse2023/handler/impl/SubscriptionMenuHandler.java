@@ -1,6 +1,6 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.components.ReplyKeyboardMaker;
+import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import lombok.AllArgsConstructor;
@@ -13,21 +13,20 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class StudentStatisticsHandler implements Handler {
+public class SubscriptionMenuHandler implements Handler {
 
-    private static final String MESSAGE = "Вы перешли в раздел СТАТИСТИКА ПО УЧЕНИКУ";
+    private static final String MESSAGE = "Вы перешли в раздел АБОНЕМЕНТ (ПОДПИСКА)";
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override
     public List<SendMessage> handle(Update update) {
 
         return List.of(createMessage(update.getMessage().getChatId().toString(),
-                MESSAGE, replyKeyboardMaker.getStudentStatisticsKeyboard()));
+                MESSAGE, replyKeyboardMaker.getSubscriptionKeyboard()));
     }
 
     @Override
     public BotCommand getCommand() {
-        return ButtonCommand.STUDENT_STATISTICS;
+        return ButtonCommand.SUBSCRIPTION;
     }
 }
-

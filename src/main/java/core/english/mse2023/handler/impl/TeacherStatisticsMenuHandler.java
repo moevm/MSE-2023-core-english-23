@@ -1,6 +1,6 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.components.ReplyKeyboardMaker;
+import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class TeacherStatisticsHandler implements Handler {
+public class TeacherStatisticsMenuHandler implements Handler {
 
     private static final String MESSAGE = "Вы перешли в раздел СТАТИСТИКА ПО ПРЕПОДАВАТЕЛЮ";
     private final ReplyKeyboardMaker replyKeyboardMaker;

@@ -1,6 +1,6 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.constant.Command;
+import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
@@ -33,9 +33,9 @@ public class GetAllStudentsHandler implements Handler {
         SendMessage sendMessage;
 
         if (students.isEmpty()) {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_STUDENTS_TEXT, null);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_STUDENTS_TEXT);
         } else {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), START_TEXT, null);
+            sendMessage = createMessage(update.getMessage().getChatId().toString(), START_TEXT);
             sendMessage.setReplyMarkup(getStudentsButtons(students));
         }
 
@@ -71,6 +71,6 @@ public class GetAllStudentsHandler implements Handler {
 
     @Override
     public BotCommand getCommand() {
-        return new BotCommand(Command.GET_ALL_STUDENTS, "");
+        return ButtonCommand.GET_ALL_STUDENTS;
     }
 }

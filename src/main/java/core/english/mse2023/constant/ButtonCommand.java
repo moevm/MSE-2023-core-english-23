@@ -31,7 +31,6 @@ public interface ButtonCommand {
     BotCommand CANCEL_LESSON = new BotCommand("/cancelLesson", "Отменить занятие");
     BotCommand CANCEL_SUBSCRIPTION = new BotCommand("/cancelSubscription", "Отменить подписку");
     BotCommand CREATE_SUBSCRIPTION = new BotCommand("/createSubscription", "Создать подписку");
-    BotCommand GET_ALL_STUDENTS = new BotCommand("/getAllStudents", "Все студенты");
 
     BotCommand ASSIGN_ROLE = new BotCommand("/assignRole", "Назначить роль");
     BotCommand CHANGE_ROLE_TO_ADMIN = new BotCommand("/changeRoleToAdmin", "Назначить администратором");
@@ -39,4 +38,7 @@ public interface ButtonCommand {
     BotCommand CHANGE_ROLE_TO_STUDENT = new BotCommand("/changeRoleToStudent", "Назначить роль студента");
     BotCommand CHANGE_ROLE_TO_TEACHER = new BotCommand("/changeRoleToTeacher", "Назначить роль учителя");
 
+    BotCommand GET_ALL_STUDENTS = new BotCommand("/getAllStudents", "Все студенты");
+    BotCommand GET_ALL_TEACHERS = new BotCommand("/getAllTeachers", "Все учителя");
+    BotCommand GET_ALL_SUBSCRIPTIONS = new BotCommand("/getAllSubscriptions", "Все абонементы");
 }

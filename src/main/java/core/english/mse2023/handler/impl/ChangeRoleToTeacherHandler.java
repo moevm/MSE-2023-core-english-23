@@ -1,7 +1,6 @@
 package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.constant.ButtonCommand;
-import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
@@ -30,9 +29,9 @@ public class ChangeRoleToTeacherHandler implements Handler {
         SendMessage message;
 
         if (!result) {
-            message = createMessage(update.getMessage().getChatId().toString(), FAIL_TEXT, null);
+            message = createMessage(update.getMessage().getChatId().toString(), FAIL_TEXT);
         } else {
-            message = createMessage(update.getMessage().getChatId().toString(), String.format(SUCCESS_TEXT, UserRole.TEACHER), null);
+            message = createMessage(update.getMessage().getChatId().toString(), String.format(SUCCESS_TEXT, UserRole.TEACHER));
         }
 
         return List.of(message);

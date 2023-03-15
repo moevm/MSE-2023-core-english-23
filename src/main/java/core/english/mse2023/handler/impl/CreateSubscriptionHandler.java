@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.exception.IllegalUserInputException;
-import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -75,7 +74,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
         // Sending start message
         SendMessage message;
 
-        message = createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, DATA_FORM_TEXT), null);
+        message = createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, DATA_FORM_TEXT));
 
         message.setParseMode(ParseMode.MARKDOWNV2);
 
@@ -104,7 +103,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             dto.setType(SubscriptionType.QUANTITY_BASED);
 
             // Sending buttons with students. Data from them will be used in the next state
-            SendMessage sendMessage = createMessage(update.getMessage().getChatId().toString(), USER_CHOOSE_TEXT, null);
+            SendMessage sendMessage = createMessage(update.getMessage().getChatId().toString(), USER_CHOOSE_TEXT);
             sendMessage.setReplyMarkup(getStudentsButtons(userService.getAllStudents(), state));
 
             messages.add(sendMessage);
@@ -127,7 +126,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
             removeFromCacheBy(update.getCallbackQuery().getFrom().getId().toString());
 
-            SendMessage sendMessage = createMessage(update.getCallbackQuery().getMessage().getChatId().toString(), SUCCESS_TEXT, null);
+            SendMessage sendMessage = createMessage(update.getCallbackQuery().getMessage().getChatId().toString(), SUCCESS_TEXT);
             messages.add(sendMessage);
         }
 

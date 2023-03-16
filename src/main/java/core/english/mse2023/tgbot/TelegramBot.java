@@ -10,6 +10,7 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.handler.InteractiveHandler;
+import core.english.mse2023.resolver.Resolver;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,25 +21,22 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     private final BotConfig config;
 
-    private final Map<String, Handler> handlers;
+//    private final Map<BotCommand, Handler> handlers;
 
     // Cache for storing last used commands with require users input
     private final Cache<String, CacheData> cache = createCache();
 
-    public TelegramBot(BotConfig config, List<Handler> handlers) {
+    private final Resolver resolver;
+
+    public TelegramBot(BotConfig config, Resolver resolver) { // , List<Handler> handlers) {
         this.config = config;
-        this.handlers = handlers
-                .stream()
-                .collect(Collectors.toMap(Handler::getCommand, Function.identity()));
+        this.resolver = resolver;
     }
 
     @Override
@@ -58,7 +56,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             String command = update.getMessage().getText();
 
-            Handler handler = handlers.get(command);
+            Handler handler = resolver.getHandler(command);
 
             if (handler != null) {
 

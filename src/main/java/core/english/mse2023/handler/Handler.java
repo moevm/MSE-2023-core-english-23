@@ -2,6 +2,8 @@ package core.english.mse2023.handler;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
 import java.util.List;
 
@@ -18,8 +20,22 @@ public interface Handler {
      * Returns handler's command
      * @return Handler's command
      */
-    String getCommand();
+    BotCommand getCommand();
 
+    /**
+     * Creates SendMessage object
+     * @param chatId Telegram chat id to put message to
+     * @param messageText Text to send by this message
+     * @param replyKeyboardMarkup Keyboard to send with this message
+     * @return Created SendMessage object
+     */
+    default SendMessage createMessage(String chatId, String messageText, ReplyKeyboardMarkup replyKeyboardMarkup) {
+        return SendMessage.builder()
+                .chatId(chatId)
+                .text(messageText)
+                .replyMarkup(replyKeyboardMarkup)
+                .build();
+    }
     /**
      * Creates SendMessage object
      * @param chatId Telegram chat id to put message to

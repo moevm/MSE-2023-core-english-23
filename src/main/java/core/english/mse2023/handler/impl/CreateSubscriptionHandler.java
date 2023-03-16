@@ -2,8 +2,8 @@ package core.english.mse2023.handler.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.exception.IllegalUserInputException;
-import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -182,7 +183,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
 
-            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommand(), state.getStateIndex(), student.getTelegramId())));
+            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommand().getCommand(), state.getStateIndex(), student.getTelegramId())));
 
             button.setText(String.format(USER_DATA_PATTERN,
                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
@@ -211,8 +212,8 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public String getCommand() {
-        return Command.CREATE_SUBSCRIPTION;
+    public BotCommand getCommand() {
+        return ButtonCommand.CREATE_SUBSCRIPTION;
     }
 
 }

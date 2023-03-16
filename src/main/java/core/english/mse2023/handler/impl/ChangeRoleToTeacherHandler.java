@@ -1,6 +1,6 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.constant.Command;
+import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class ChangeRoleToTeacherHandler implements Handler {
     }
 
     @Override
-    public String getCommand() {
-        return Command.CHANGE_ROLE_TO_TEACHER;
+    public BotCommand getCommand() {
+        return ButtonCommand.CHANGE_ROLE_TO_TEACHER;
     }
 }

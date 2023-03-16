@@ -1,17 +1,16 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.constant.Command;
+import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Subscription;
-import core.english.mse2023.model.User;
 import core.english.mse2023.service.SubscriptionService;
-import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -56,8 +55,8 @@ public class GetAllSubscriptionsHandler implements Handler {
     }
 
     @Override
-    public String getCommand() {
-        return Command.GET_ALL_SUBSCRIPTIONS;
+    public BotCommand getCommand() {
+        return ButtonCommand.GET_ALL_SUBSCRIPTIONS;
     }
 
     private List<SendMessage> createMessagesWithButton(List<Subscription> subscriptions, String chatId) {
@@ -82,7 +81,8 @@ public class GetAllSubscriptionsHandler implements Handler {
                             ),
                             dateFormat.format(subscription.getStartDate()),
                             dateFormat.format(subscription.getEndDate())
-                    )
+                    ),
+                    null
             );
 
             message.setReplyMarkup(getMarkupWithInlineButton(subscription.getId()));
@@ -102,7 +102,7 @@ public class GetAllSubscriptionsHandler implements Handler {
         InlineKeyboardButton button = InlineKeyboardButton.builder()
                 // TODO: set appropriate data for callback
                 .callbackData(InlineButtonDTOEncoder.encode(InlineButtonDTO.builder()
-                        .command(getCommand())
+                        .command(getCommand().getCommand())
                         .data(subscriptionId.toString())
                         .stateIndex(0)
                         .build()))

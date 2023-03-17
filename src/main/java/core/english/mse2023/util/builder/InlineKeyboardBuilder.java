@@ -13,7 +13,6 @@ public final class InlineKeyboardBuilder {
 
     private InlineKeyboardBuilder() {
         buttons = new ArrayList<>();
-        row();
     }
 
     public static InlineKeyboardBuilder instance() {
@@ -32,6 +31,10 @@ public final class InlineKeyboardBuilder {
     }
 
     public InlineKeyboardBuilder button(InlineKeyboardButton button) {
+        if (buttons.isEmpty()) {
+            row();
+        }
+
         buttons.get(buildableRow).add(button);
 
         return this;

@@ -26,7 +26,7 @@ public class ToStatisticsMenuHandler  implements Handler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.TO_STATISTICS_MENU;
     }
 }

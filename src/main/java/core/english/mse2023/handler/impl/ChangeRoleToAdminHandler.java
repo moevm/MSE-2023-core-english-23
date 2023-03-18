@@ -38,7 +38,7 @@ public class ChangeRoleToAdminHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.CHANGE_ROLE_TO_ADMIN;
     }
 }

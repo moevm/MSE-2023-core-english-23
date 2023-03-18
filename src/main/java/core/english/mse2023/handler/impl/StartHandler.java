@@ -34,7 +34,7 @@ public class StartHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.START;
     }
 }

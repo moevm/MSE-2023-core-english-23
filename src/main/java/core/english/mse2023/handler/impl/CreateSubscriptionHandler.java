@@ -183,7 +183,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
 
-            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommand().getCommand(), state.getStateIndex(), student.getTelegramId())));
+            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommandObject().getCommand(), state.getStateIndex(), student.getTelegramId())));
 
             button.setText(String.format(USER_DATA_PATTERN,
                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
@@ -212,7 +212,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.CREATE_SUBSCRIPTION;
     }
 

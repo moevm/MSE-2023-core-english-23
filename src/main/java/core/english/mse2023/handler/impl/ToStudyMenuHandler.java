@@ -26,7 +26,7 @@ public class ToStudyMenuHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.TO_STUDY_MENU;
     }
 }

@@ -26,7 +26,7 @@ public class FullStatisticsHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.SCHOOL_STATISTICS;
     }
 }

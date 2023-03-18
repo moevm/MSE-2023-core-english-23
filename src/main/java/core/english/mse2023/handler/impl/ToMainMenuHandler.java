@@ -26,7 +26,7 @@ public class ToMainMenuHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.TO_MAIN_MENU;
     }
 }

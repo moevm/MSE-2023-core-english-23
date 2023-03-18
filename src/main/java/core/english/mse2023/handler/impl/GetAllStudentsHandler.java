@@ -70,7 +70,7 @@ public class GetAllStudentsHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.GET_ALL_STUDENTS;
     }
 }

@@ -26,7 +26,7 @@ public class AssignRoleHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.ASSIGN_ROLE;
     }
 }

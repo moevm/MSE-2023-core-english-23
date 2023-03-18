@@ -1,6 +1,7 @@
 package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
@@ -55,7 +56,7 @@ public class GetAllSubscriptionsHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.GET_ALL_SUBSCRIPTIONS;
     }
 
@@ -102,7 +103,7 @@ public class GetAllSubscriptionsHandler implements Handler {
         InlineKeyboardButton button = InlineKeyboardButton.builder()
                 // TODO: set appropriate data for callback
                 .callbackData(InlineButtonDTOEncoder.encode(InlineButtonDTO.builder()
-                        .command(getCommand().getCommand())
+                        .command(InlineButtonCommand.SUBSCRIPTION_GET_MORE_DATA)
                         .data(subscriptionId.toString())
                         .stateIndex(0)
                         .build()))

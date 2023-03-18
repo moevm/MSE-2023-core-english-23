@@ -1,11 +1,14 @@
 package core.english.mse2023.handler.impl;
 
+import core.english.mse2023.aop.annotation.handler.AdminHandler;
+import core.english.mse2023.aop.annotation.handler.TextCommandHeader;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -16,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@TextCommandHeader
 @RequiredArgsConstructor
 public class GetAllStudentsHandler implements Handler {
 
@@ -26,7 +30,7 @@ public class GetAllStudentsHandler implements Handler {
     private final UserService service;
 
     @Override
-    public List<SendMessage> handle(Update update) {
+    public List<BotApiMethod<?>> handle(Update update) {
 
         List<User> students = service.getAllStudents();
 

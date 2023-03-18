@@ -1,5 +1,7 @@
 package core.english.mse2023.handler.impl;
 
+import core.english.mse2023.aop.annotation.handler.AdminHandler;
+import core.english.mse2023.aop.annotation.handler.TextCommandHeader;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -9,6 +11,7 @@ import core.english.mse2023.model.Subscription;
 import core.english.mse2023.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
+@TextCommandHeader
 @RequiredArgsConstructor
 public class GetAllSubscriptionsHandler implements Handler {
 
@@ -48,7 +52,7 @@ public class GetAllSubscriptionsHandler implements Handler {
     private final SubscriptionService subscriptionService;
 
     @Override
-    public List<SendMessage> handle(Update update) {
+    public List<BotApiMethod<?>> handle(Update update) {
 
         List<Subscription> subscriptions = subscriptionService.getAllSubscriptions();
 
@@ -60,8 +64,8 @@ public class GetAllSubscriptionsHandler implements Handler {
         return ButtonCommand.GET_ALL_SUBSCRIPTIONS;
     }
 
-    private List<SendMessage> createMessagesWithButton(List<Subscription> subscriptions, String chatId) {
-        List<SendMessage> messages = new ArrayList<>();
+    private List<BotApiMethod<?>> createMessagesWithButton(List<Subscription> subscriptions, String chatId) {
+        List<BotApiMethod<?>> messages = new ArrayList<>();
 
         messages.add(createMessage(chatId, WELCOME_TEXT));
 

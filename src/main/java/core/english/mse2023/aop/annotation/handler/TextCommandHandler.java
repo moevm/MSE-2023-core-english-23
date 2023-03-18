@@ -7,5 +7,5 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Qualifier
-public @interface TextCommandHeader {
+public @interface TextCommandHandler {
 }

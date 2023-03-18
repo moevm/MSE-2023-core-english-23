@@ -1,7 +1,6 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.aop.annotation.handler.AdminHandler;
-import core.english.mse2023.aop.annotation.handler.TextCommandHeader;
+import core.english.mse2023.aop.annotation.handler.TextCommandHandler;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-@TextCommandHeader
+@TextCommandHandler
 @RequiredArgsConstructor
 public class GetAllSubscriptionsHandler implements Handler {
 

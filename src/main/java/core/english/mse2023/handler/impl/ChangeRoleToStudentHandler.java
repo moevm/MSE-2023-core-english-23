@@ -1,7 +1,7 @@
 package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.aop.annotation.handler.AdminHandler;
-import core.english.mse2023.aop.annotation.handler.TextCommandHeader;
+import core.english.mse2023.aop.annotation.handler.TextCommandHandler;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Component
 @AdminHandler
-@TextCommandHeader
+@TextCommandHandler
 @RequiredArgsConstructor
 public class ChangeRoleToStudentHandler implements Handler {
 

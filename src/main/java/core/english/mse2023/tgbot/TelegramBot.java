@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.RemovalCause;
+import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.cache.CacheData;
 import core.english.mse2023.config.BotConfig;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -15,28 +16,34 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     private final BotConfig config;
 
-//    private final Map<BotCommand, Handler> handlers;
+    private final Map<String, Handler> inlineButtonHandlers;
 
     // Cache for storing last used commands with require users input
     private final Cache<String, CacheData> cache = createCache();
 
     private final Resolver resolver;
 
-    public TelegramBot(BotConfig config, Resolver resolver) { // , List<Handler> handlers) {
+    public TelegramBot(BotConfig config, Resolver resolver, @InlineButtonType List<Handler> inlineButtonHandlers) {
         this.config = config;
         this.resolver = resolver;
+        this.inlineButtonHandlers = inlineButtonHandlers
+                .stream()
+                .collect(Collectors.toMap((handler -> handler.getCommandObject().getCommand()), Function.identity()));
     }
 
     @Override
@@ -64,7 +71,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     // If it needs user input
 
                     // This sends the initial message and initialise the handler for new user
-                    sendMessages(interactiveHandler.handle(update));
+                    executeBotApiMethods(interactiveHandler.handle(update));
 
                     // Creating cache data object with chosen handler
                     CacheData data = new CacheData(interactiveHandler);
@@ -74,7 +81,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 } else {
                     // If chosen handler doesn't need user input
 
-                    sendMessages(handler.handle(update));
+                    executeBotApiMethods(handler.handle(update));
                 }
 
             } else {
@@ -85,7 +92,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 // If command found - proceed the command
                 if (commandData != null) {
-                    sendMessages(commandData.updateData(update));
+                    executeBotApiMethods(commandData.updateData(update));
                 }
 
                 // By this if the command finished it work it can be deleted from cache
@@ -103,14 +110,22 @@ public class TelegramBot extends TelegramLongPollingBot {
                 InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
                 // Checking if data from the button corresponds with the expected data
-                if (cacheData.getHandler().getCommand().equals(inlineButtonDTO.getCommand()) &&
+                if (cacheData.getHandler().getCommandObject().getCommand().equals(inlineButtonDTO.getCommand()) &&
                         (cacheData.getState().getStateIndex() - 1) == inlineButtonDTO.getStateIndex()) {
 
                     // If everything is ok - proceed the command
-                    sendMessages(cacheData.updateData(update));
+                    executeBotApiMethods(cacheData.updateData(update));
 
                     // By this if the command finished it work it can be deleted from cache
                     triggerTimeBasedEvictionChecker(update.getCallbackQuery().getFrom().getId().toString());
+                }
+            } else {
+                InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
+
+                Handler handler = inlineButtonHandlers.get(buttonData.getCommand());
+
+                if (handler != null) {
+                    executeBotApiMethods(handler.handle(update));
                 }
             }
         }
@@ -118,12 +133,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     /**
      * Sends all the messages from the list
-     * @param messages - list of messages to send
+     *
+     * @param methods - list of bot api methods to execute
      */
-    public void sendMessages(List<SendMessage> messages) {
-        for (SendMessage message : messages) {
+    public void executeBotApiMethods(List<? extends BotApiMethod<?>> methods) {
+        for (BotApiMethod<?> method : methods) {
             try {
-                execute(message);
+                execute(method);
                 log.info("Reply sent");
             } catch (TelegramApiException e) {
                 log.error(e.getMessage());
@@ -133,6 +149,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     /**
      * This function gets cache's element to trigger time based eviction checker
+     *
      * @param id - id of needed item from the cache
      */
     private void triggerTimeBasedEvictionChecker(String id) {

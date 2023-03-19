@@ -17,11 +17,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
+
+    private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
 
     private final SubscriptionRepository subscriptionRepository;
     private final LessonRepository lessonRepository;
@@ -51,7 +54,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         List<Lesson> lessons = new ArrayList<>();
 
         for (int i = 0; i < creationDTO.getLessonsRest(); i++) {
-            lessons.add(createLesson(subscription));
+            lessons.add(createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1))));
         }
 
         lessons.get(0).setDate(subscription.getStartDate());
@@ -68,11 +71,17 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public Lesson createLesson(Subscription subscription) {
+    public List<Lesson> getAllLessonsForSubscription(UUID subscriptionId) {
+        return lessonRepository.getAllBySubscriptionId(subscriptionId);
+    }
+
+    @Override
+    public Lesson createLesson(Subscription subscription, String topic) {
         Lesson lesson = new Lesson();
 
         lesson.setStatus(LessonStatus.NOT_STARTED_YET);
         lesson.setSubscription(subscription);
+        lesson.setTopic(topic);
 
         return lesson;
     }

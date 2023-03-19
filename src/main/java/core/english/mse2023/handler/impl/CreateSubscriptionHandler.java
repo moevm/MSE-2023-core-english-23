@@ -2,6 +2,7 @@ package core.english.mse2023.handler.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -18,6 +19,7 @@ import core.english.mse2023.state.subcription.PartiallyCreatedState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+@TextCommandType
 @RequiredArgsConstructor
 public class CreateSubscriptionHandler implements InteractiveHandler {
     private static final String START_TEXT = "Для создания новой подписки заполните и отправьте форму с данными " +
@@ -62,7 +65,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
 
     @Override
-    public List<SendMessage> handle(Update update) {
+    public List<BotApiMethod<?>> handle(Update update) {
 
         // Creating new DTO for this user
         SubscriptionCreationDTO dto = SubscriptionCreationDTO.builder()
@@ -183,7 +186,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
 
-            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommand().getCommand(), state.getStateIndex(), student.getTelegramId())));
+            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommandObject().getCommand(), state.getStateIndex(), student.getTelegramId())));
 
             button.setText(String.format(USER_DATA_PATTERN,
                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
@@ -212,7 +215,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public BotCommand getCommand() {
+    public BotCommand getCommandObject() {
         return ButtonCommand.CREATE_SUBSCRIPTION;
     }
 

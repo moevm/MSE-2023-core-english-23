@@ -30,7 +30,7 @@ VALUES ('a63960e2-bdda-11ed-afa1-0242ac120002', 'f0e1a34a-bdd3-11ed-afa1-0242ac1
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)
 VALUES ('a639681c-bdda-11ed-afa1-0242ac120002', 'f0e1a62e-bdd3-11ed-afa1-0242ac120002', 'f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'TIME_BASED', 'CANCELLED', 2, NOW() - 1, NOW() + 364, NOW() - 1, NOW());
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)
-VALUES ('a6396a88-bdda-11ed-afa1-0242ac120002', 'f0e1a796-bdd3-11ed-afa1-0242ac120002', 'f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'QUANTITY_BASED', 'ACTIVE', 4, NOW() - 3,NOW() + 62, NOW() - 0.15, NOW() - 0.15);
+VALUES ('a6396a88-bdda-11ed-afa1-0242ac120002', 'f0e1a796-bdd3-11ed-afa1-0242ac120002', 'f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'QUANTITY_BASED', 'ACTIVE', 1, NOW() - 3,NOW() + 62, NOW() - 0.15, NOW() - 0.15);
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)
 VALUES ('a6396c54-bdda-11ed-afa1-0242ac120002', 'f0e1ad2c-bdd3-11ed-afa1-0242ac120002', 'f0e1b1be-bdd3-11ed-afa1-0242ac120002', 'QUANTITY_BASED', 'ACTIVE', 2, NOW() - 20,NOW() + 39, NOW() - 0.2, NOW());
 
@@ -53,9 +53,10 @@ VALUES ('6b4e28be-bddf-11ed-afa1-0242ac120002', NOW(),'Проработка ак
 INSERT INTO Lesson(id, topic, link, status, subscription_id, created_when, modified_when)
 VALUES ('6b4e29b8-bddf-11ed-afa1-0242ac120002','Чтение', 'https://us05web.zoom.us/ls', 'CANCELLED_BY_STUDENT', 'a6396a88-bdda-11ed-afa1-0242ac120002',  NOW() - 0.2, NOW() - 0.08);
 INSERT INTO Lesson(id, date, topic, link, status, subscription_id, created_when, modified_when)
-VALUES ('6b4ef9b8-bddf-11ed-afa1-0242ac120002', NOW() - 14,'Подготовка к экзамену', 'https://us05web.zoom.us/ls', 'ENDED', 'a6396a88-bdda-11ed-afa1-0242ac120002',  NOW() - 0.2, NOW() - 0.08);
+VALUES ('6b4ef9b8-bddf-11ed-afa1-0242ac120002', NOW() - 14,'Подготовка к экзамену', 'https://us05web.zoom.us/ls', 'ENDED', 'a6396c54-bdda-11ed-afa1-0242ac120002',  NOW() - 0.2, NOW() - 0.08);
 INSERT INTO Lesson(id, date, topic, link, status, subscription_id, created_when, modified_when)
-VALUES ('6b4e29b8-bddf-14ed-afa1-0242ac120002', NOW() + 14,'Экзамен', 'https://us05web.zoom.us/ls', 'NOT_STARTED_YET', 'a6396a88-bdda-11ed-afa1-0242ac120002',  NOW() - 0.2, NOW() - 0.08);
+VALUES ('6b4e29b8-bddf-14ed-afa1-0242ac120002', NOW() + 14,'Экзамен', 'https://us05web.zoom.us/ls', 'NOT_STARTED_YET', 'a6396c54-bdda-11ed-afa1-0242ac120002',  NOW() - 0.2, NOW() - 0.08);
+
 
 INSERT INTO lesson_info(id, lesson_id, attendance, score, created_when, modified_when)
 VALUES ('a1a30544-bde2-11ed-afa1-0242ac120002', '6b4e23aa-bddf-11ed-afa1-0242ac120002', 'NOT_YET_ATTENDED', 0,  NOW(), NOW());

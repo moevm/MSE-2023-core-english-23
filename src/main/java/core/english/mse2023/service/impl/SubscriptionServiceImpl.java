@@ -24,7 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-    private static final String LESSON_TOPIC_TEMPLATE = "Lesson №%s";
+    private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
 
     private final SubscriptionRepository subscriptionRepository;
     private final LessonRepository lessonRepository;

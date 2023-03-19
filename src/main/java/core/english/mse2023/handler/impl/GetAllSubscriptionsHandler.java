@@ -1,6 +1,6 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.aop.annotation.handler.TextCommandHandler;
+import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-@TextCommandHandler
+@TextCommandType
 @RequiredArgsConstructor
 public class GetAllSubscriptionsHandler implements Handler {
 
@@ -106,7 +106,7 @@ public class GetAllSubscriptionsHandler implements Handler {
         InlineKeyboardButton button = InlineKeyboardButton.builder()
                 // TODO: set appropriate data for callback
                 .callbackData(InlineButtonDTOEncoder.encode(InlineButtonDTO.builder()
-                        .command(InlineButtonCommand.SUBSCRIPTION_GET_MORE_DATA)
+                        .command(InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO)
                         .data(subscriptionId.toString())
                         .stateIndex(0)
                         .build()))

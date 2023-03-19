@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.RemovalCause;
-import core.english.mse2023.aop.annotation.handler.InlineButtonHandler;
+import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.cache.CacheData;
 import core.english.mse2023.config.BotConfig;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -38,7 +38,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final Resolver resolver;
 
-    public TelegramBot(BotConfig config, Resolver resolver, @InlineButtonHandler List<Handler> inlineButtonHandlers) {
+    public TelegramBot(BotConfig config, Resolver resolver, @InlineButtonType List<Handler> inlineButtonHandlers) {
         this.config = config;
         this.resolver = resolver;
         this.inlineButtonHandlers = inlineButtonHandlers

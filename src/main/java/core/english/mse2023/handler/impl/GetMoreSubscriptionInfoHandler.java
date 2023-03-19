@@ -1,7 +1,6 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.aop.annotation.handler.InlineButtonHandler;
-import core.english.mse2023.aop.annotation.handler.TeacherHandler;
+import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -18,12 +17,11 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Component
-@InlineButtonHandler
+@InlineButtonType
 @RequiredArgsConstructor
 public class GetMoreSubscriptionInfoHandler implements Handler {
 
@@ -59,7 +57,7 @@ public class GetMoreSubscriptionInfoHandler implements Handler {
 
             button.setCallbackData(InlineButtonDTOEncoder.encode(
                     InlineButtonDTO.builder()
-                            .command(InlineButtonCommand.LESSON_GET_MORE_DATA)
+                            .command(InlineButtonCommand.GET_MORE_LESSON_INFO)
                             .stateIndex(0)
                             .data(lesson.getId().toString())
                             .build()
@@ -78,6 +76,6 @@ public class GetMoreSubscriptionInfoHandler implements Handler {
 
     @Override
     public BotCommand getCommandObject() {
-        return new BotCommand(InlineButtonCommand.SUBSCRIPTION_GET_MORE_DATA, "");
+        return new BotCommand(InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO, "");
     }
 }

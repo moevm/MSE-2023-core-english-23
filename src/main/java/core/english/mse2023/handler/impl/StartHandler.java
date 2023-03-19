@@ -1,6 +1,6 @@
 package core.english.mse2023.handler.impl;
 
-import core.english.mse2023.aop.annotation.handler.TextCommandHandler;
+import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
@@ -15,7 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import java.util.List;
 
 @Component
-@TextCommandHandler
+@TextCommandType
 @RequiredArgsConstructor
 public class StartHandler implements Handler {
 

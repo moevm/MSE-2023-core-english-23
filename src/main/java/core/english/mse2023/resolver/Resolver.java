@@ -1,6 +1,6 @@
 package core.english.mse2023.resolver;
 
-import core.english.mse2023.aop.annotation.handler.TextCommandHandler;
+import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.handler.Handler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class Resolver {
     private final Map<BotCommand, Handler> handlers;
 
-    public Resolver(@TextCommandHandler List<Handler> handlers) {
+    public Resolver(@TextCommandType List<Handler> handlers) {
         this.handlers = handlers
                 .stream()
                 .collect(Collectors.toMap(Handler::getCommandObject, Function.identity()));

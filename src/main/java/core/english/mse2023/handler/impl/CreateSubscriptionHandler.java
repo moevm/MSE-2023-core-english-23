@@ -2,7 +2,7 @@ package core.english.mse2023.handler.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import core.english.mse2023.aop.annotation.handler.TextCommandHandler;
+import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@TextCommandHandler
+@TextCommandType
 @RequiredArgsConstructor
 public class CreateSubscriptionHandler implements InteractiveHandler {
     private static final String START_TEXT = "Для создания новой подписки заполните и отправьте форму с данными " +

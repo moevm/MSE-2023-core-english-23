@@ -5,8 +5,8 @@ package core.english.mse2023.constant;
  * @see core.english.mse2023.dto.InlineButtonDTO
  */
 public interface InlineButtonCommand {
-    String SUBSCRIPTION_GET_MORE_DATA = "/subscriptionGetMore";
-    String LESSON_GET_MORE_DATA = "/lessonGetMore";
+    String GET_MORE_SUBSCRIPTION_INFO = "/subscriptionGetMore";
+    String GET_MORE_LESSON_INFO = "/lessonGetMore";
 
 
 }

@@ -8,5 +8,5 @@ import java.lang.annotation.RetentionPolicy;
 @StudentRole
 @TeacherRole
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AllRoleRole {
+public @interface AllRoles {
 }

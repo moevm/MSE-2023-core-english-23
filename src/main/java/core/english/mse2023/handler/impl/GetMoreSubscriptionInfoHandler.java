@@ -8,6 +8,7 @@ import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.service.SubscriptionService;
+import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -51,10 +52,9 @@ public class GetMoreSubscriptionInfoHandler implements Handler {
     private InlineKeyboardMarkup getLessonsInlineButtons(List<Lesson> lessons) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
 
         for (Lesson lesson : lessons) {
-            List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
 
             button.setCallbackData(InlineButtonDTOEncoder.encode(
@@ -67,13 +67,12 @@ public class GetMoreSubscriptionInfoHandler implements Handler {
 
             button.setText(String.format(LESSON_DATA_PATTERN, lesson.getTopic()));
 
-            keyboardRow.add(button);
-
-            keyboard.add(keyboardRow);
+            builder.button(button);
+            builder.row();
         }
 
 
-        inlineKeyboardMarkup.setKeyboard(keyboard);
+        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;
     }
 

@@ -5,11 +5,13 @@ import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
+import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
-import core.english.mse2023.util.factory.TelegramMessageUtils;
+import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
@@ -22,20 +24,34 @@ import java.util.UUID;
 public class CancelSubscriptionHandler implements Handler {
 
     private final static String DONE_TEXT = "Подписка отменена";
+    private final static String ALREADY_CANCELED_TEXT = "Невозможно отменить подписку. Она ранее уже была отменена!";
 
     private final SubscriptionService subscriptionService;
+    private final LessonService lessonService;
 
     @Override
     public List<BotApiMethod<?>> handle(Update update) {
 
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
-        subscriptionService.cancelSubscription(UUID.fromString(buttonData.getData()));
+        UUID subscriptionId = UUID.fromString(buttonData.getData());
 
-        return List.of(TelegramMessageUtils.createMessage(
-                update.getCallbackQuery().getMessage().getChatId().toString(),
-                DONE_TEXT
-        ));
+        boolean success = subscriptionService.cancelSubscription(subscriptionId);
+
+        SendMessage message;
+
+        if (!success) {
+            message = TelegramMessageUtils.createMessage(
+                    update.getCallbackQuery().getMessage().getChatId().toString(),
+                    ALREADY_CANCELED_TEXT);
+        } else {
+            lessonService.cancelLessonsFromSubscription(subscriptionId);
+            message = TelegramMessageUtils.createMessage(
+                    update.getCallbackQuery().getMessage().getChatId().toString(),
+                    DONE_TEXT);
+        }
+
+        return List.of(message);
     }
 
     @Override

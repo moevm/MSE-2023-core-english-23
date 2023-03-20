@@ -6,7 +6,7 @@ import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
-import core.english.mse2023.util.factory.TelegramMessageUtils;
+import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -32,13 +32,16 @@ public class ChangeRoleToAdminHandler implements Handler {
 
         boolean result = service.changeUserRole(update, UserRole.ADMIN);
 
-        SendMessage message;
+        SendMessage message = result ?
+                TelegramMessageUtils.createMessage(
+                        update.getMessage().getChatId().toString(),
+                        FAIL_TEXT
+                ) :
+                TelegramMessageUtils.createMessage(
+                        update.getMessage().getChatId().toString(),
+                        String.format(SUCCESS_TEXT, UserRole.ADMIN)
+                );
 
-        if (!result) {
-            message = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), FAIL_TEXT);
-        } else {
-            message = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), String.format(SUCCESS_TEXT, UserRole.ADMIN));
-        }
 
         return List.of(message);
     }

@@ -23,16 +23,13 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
-
-    private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
-
     private final SubscriptionRepository subscriptionRepository;
     private final LessonRepository lessonRepository;
     private final UserRepository userRepository;
 
     @Transactional
     @Override
-    public void createSubscription(SubscriptionCreationDTO creationDTO) {
+    public Subscription createSubscription(SubscriptionCreationDTO creationDTO) {
 
         Subscription subscription = new Subscription();
 
@@ -51,18 +48,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscription.setTeacher(userRepository.findByTelegramId(creationDTO.getTeacherTelegramId()));
         subscription.setLessonsRest(creationDTO.getLessonsRest());
 
-        List<Lesson> lessons = new ArrayList<>();
-
-        for (int i = 0; i < creationDTO.getLessonsRest(); i++) {
-            lessons.add(createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1))));
-        }
-
-        lessons.get(0).setDate(subscription.getStartDate());
-
         subscriptionRepository.save(subscription);
 
-        lessonRepository.saveAll(lessons);
-
+        return subscription;
     }
 
     @Override
@@ -70,37 +58,20 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return subscriptionRepository.findAll();
     }
 
-    @Override
-    public List<Lesson> getAllLessonsForSubscription(UUID subscriptionId) {
-        return lessonRepository.getAllBySubscriptionId(subscriptionId);
-    }
-
-    @Override
-    public Lesson createLesson(Subscription subscription, String topic) {
-        Lesson lesson = new Lesson();
-
-        lesson.setStatus(LessonStatus.NOT_STARTED_YET);
-        lesson.setSubscription(subscription);
-        lesson.setTopic(topic);
-
-        return lesson;
-    }
 
     @Override
     @Transactional
-    public void cancelSubscription(UUID subscriptionId) {
+    public boolean cancelSubscription(UUID subscriptionId) {
         Subscription subscription = subscriptionRepository.getSubscriptionsById(subscriptionId);
 
+        if (subscription.getStatus() == SubscriptionStatus.CANCELLED) {
+            return false;
+        }
         subscription.setStatus(SubscriptionStatus.CANCELLED);
 
-        List<Lesson> lessons = lessonRepository.getAllBySubscriptionId(subscriptionId);
-
-        for (Lesson lesson : lessons) {
-            lesson.setStatus(LessonStatus.CANCELLED);
-        }
-
         subscriptionRepository.save(subscription);
-        lessonRepository.saveAll(lessons);
+
+        return true;
     }
 
 }

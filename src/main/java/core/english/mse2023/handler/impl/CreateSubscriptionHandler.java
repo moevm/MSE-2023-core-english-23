@@ -4,22 +4,23 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
-import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.InteractiveHandler;
+import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.SubscriptionType;
+import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.service.UserService;
 import core.english.mse2023.state.State;
 import core.english.mse2023.state.subcription.InitializedState;
 import core.english.mse2023.state.subcription.PartiallyCreatedState;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
-import core.english.mse2023.util.factory.TelegramInlineButtonsUtils;
-import core.english.mse2023.util.factory.TelegramMessageUtils;
+import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
+import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -64,6 +64,8 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     private final UserService userService;
 
     private final SubscriptionService subscriptionService;
+
+    private final LessonService lessonService;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -129,7 +131,8 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             dto.setStudentTelegramId(buttonData.getData());
 
             // Since DTO is completely full - it's time to pass creation of the Subscription object to its service
-            subscriptionService.createSubscription(dto);
+            Subscription newSubscription = subscriptionService.createSubscription(dto);
+            lessonService.createLessonsForSubscriptions(newSubscription, newSubscription.getLessonsRest());
 
             removeFromCacheBy(update.getCallbackQuery().getFrom().getId().toString());
 

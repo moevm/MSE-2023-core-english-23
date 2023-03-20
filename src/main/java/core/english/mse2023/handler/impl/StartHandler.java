@@ -6,6 +6,7 @@ import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
+import core.english.mse2023.util.factory.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -31,7 +32,7 @@ public class StartHandler implements Handler {
     public List<BotApiMethod<?>> handle(Update update) {
         User user = service.create(update);
 
-        return List.of(createMessage(update.getMessage().getChatId().toString(),
+        return List.of(TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(),
                 String.format(GREETING, user.getName(), user.getRole()), replyKeyboardMaker.getMainMenuKeyboard()));
     }
 

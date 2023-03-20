@@ -6,6 +6,8 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
+import core.english.mse2023.util.factory.TelegramInlineButtonsUtils;
+import core.english.mse2023.util.factory.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -29,7 +31,7 @@ public class MainMenuSubscriptionHandler implements Handler {
     public List<BotApiMethod<?>> handle(Update update) {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
-        return List.of(editMessageReplyMarkup(
+        return List.of(TelegramMessageUtils.editMessageReplyMarkup(
                 update.getCallbackQuery().getMessage().getChatId().toString(),
                 update.getCallbackQuery().getMessage().getMessageId(),
                 getMarkupWithInlineButton(buttonData.getData())
@@ -46,21 +48,21 @@ public class MainMenuSubscriptionHandler implements Handler {
 
         InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
 
-        createInlineButtonInBuilderRow(
-                InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO,
-                subscriptionId,
-                0,
-                BUTTON_TEXT,
-                builder
-        );
-
-        createInlineButtonInBuilderRow(
-                InlineButtonCommand.CANCEL_SUBSCRIPTION,
-                subscriptionId,
-                0,
-                CANCEL_SUBSCRIPTION_TEXT,
-                builder
-        );
+        builder
+                .button(TelegramInlineButtonsUtils.createInlineButton(
+                        InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO,
+                        subscriptionId,
+                        0,
+                        BUTTON_TEXT
+                ))
+                .row()
+                .button(TelegramInlineButtonsUtils.createInlineButton(
+                        InlineButtonCommand.CANCEL_SUBSCRIPTION,
+                        subscriptionId,
+                        0,
+                        CANCEL_SUBSCRIPTION_TEXT
+                ))
+                .row();
 
         inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;

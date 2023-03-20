@@ -6,6 +6,7 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.service.SubscriptionService;
+import core.english.mse2023.util.factory.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -31,7 +32,7 @@ public class CancelSubscriptionHandler implements Handler {
 
         subscriptionService.cancelSubscription(UUID.fromString(buttonData.getData()));
 
-        return List.of(createMessage(
+        return List.of(TelegramMessageUtils.createMessage(
                 update.getCallbackQuery().getMessage().getChatId().toString(),
                 DONE_TEXT
         ));

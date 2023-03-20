@@ -3,12 +3,12 @@ package core.english.mse2023.handler.impl;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.InlineButtonCommand;
-import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
+import core.english.mse2023.util.factory.TelegramInlineButtonsUtils;
+import core.english.mse2023.util.factory.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -16,7 +16,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,10 +68,10 @@ public class GetAllSubscriptionsHandler implements Handler {
     private List<BotApiMethod<?>> createMessagesWithButton(List<Subscription> subscriptions, String chatId) {
         List<BotApiMethod<?>> messages = new ArrayList<>();
 
-        messages.add(createMessage(chatId, WELCOME_TEXT));
+        messages.add(TelegramMessageUtils.createMessage(chatId, WELCOME_TEXT));
 
         for (Subscription subscription : subscriptions) {
-            SendMessage message = createMessage(
+            SendMessage message = TelegramMessageUtils.createMessage(
                     chatId,
                     String.format(DATA_PATTERN,
                             subscription.getType(),
@@ -105,21 +104,23 @@ public class GetAllSubscriptionsHandler implements Handler {
 
         InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
 
-        createInlineButtonInBuilderRow(
-                InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO,
-                subscriptionId.toString(),
-                0,
-                BUTTON_TEXT,
-                builder
-        );
+        builder
+                .button(TelegramInlineButtonsUtils.createInlineButton(
+                        InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO,
+                        subscriptionId.toString(),
+                        0,
+                        BUTTON_TEXT
+                ))
+                .row();
 
-        createInlineButtonInBuilderRow(
-                InlineButtonCommand.CANCEL_SUBSCRIPTION,
-                subscriptionId.toString(),
-                0,
-                CANCEL_SUBSCRIPTION_TEXT,
-                builder
-        );
+        builder
+                .button(TelegramInlineButtonsUtils.createInlineButton(
+                        InlineButtonCommand.CANCEL_SUBSCRIPTION,
+                        subscriptionId.toString(),
+                        0,
+                        CANCEL_SUBSCRIPTION_TEXT
+                ))
+                .row();
 
         inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;

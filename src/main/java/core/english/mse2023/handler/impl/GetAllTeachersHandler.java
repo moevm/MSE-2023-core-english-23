@@ -5,6 +5,7 @@ import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
+import core.english.mse2023.util.factory.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -33,9 +34,9 @@ public class GetAllTeachersHandler implements Handler {
         SendMessage sendMessage;
 
         if (teachers.isEmpty()) {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_TEACHERS_TEXT);
+            sendMessage = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), NO_TEACHERS_TEXT);
         } else {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, getTeachersDataText(teachers)));
+            sendMessage = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, getTeachersDataText(teachers)));
         }
 
         return List.of(sendMessage);

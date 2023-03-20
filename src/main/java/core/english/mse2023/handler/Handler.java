@@ -29,55 +29,5 @@ public interface Handler {
      */
     BotCommand getCommandObject();
 
-    /**
-     * Creates SendMessage object
-     * @param chatId Telegram chat id to put message to
-     * @param messageText Text to send by this message
-     * @param replyKeyboardMarkup Keyboard to send with this message
-     * @return Created SendMessage object
-     */
-    default SendMessage createMessage(String chatId, String messageText, ReplyKeyboardMarkup replyKeyboardMarkup) {
-        return SendMessage.builder()
-                .chatId(chatId)
-                .text(messageText)
-                .replyMarkup(replyKeyboardMarkup)
-                .build();
-    }
-    /**
-     * Creates SendMessage object
-     * @param chatId Telegram chat id to put message to
-     * @param messageText Text to send by this message
-     * @return Created SendMessage object
-     */
-    default SendMessage createMessage(String chatId, String messageText) {
-        return SendMessage.builder()
-                .chatId(chatId)
-                .text(messageText)
-                .build();
-    }
 
-    default EditMessageReplyMarkup editMessageReplyMarkup(String chatId, int messageId, InlineKeyboardMarkup newInlineKeyboardMarkup) {
-        return EditMessageReplyMarkup.builder()
-                .chatId(chatId)
-                .messageId(messageId)
-                .replyMarkup(newInlineKeyboardMarkup)
-                .build();
-    }
-
-    default void createInlineButtonInBuilderRow(String commandName, String data, int stateIndex, String text, InlineKeyboardBuilder builder) {
-        InlineKeyboardButton button = new InlineKeyboardButton();
-
-        button.setCallbackData(InlineButtonDTOEncoder.encode(
-                InlineButtonDTO.builder()
-                        .command(commandName)
-                        .stateIndex(stateIndex)
-                        .data(data)
-                        .build()
-        ));
-
-        button.setText(text);
-
-        builder.button(button);
-        builder.row();
-    }
 }

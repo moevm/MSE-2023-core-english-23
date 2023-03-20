@@ -86,4 +86,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return lesson;
     }
 
+    @Override
+    @Transactional
+    public void cancelSubscription(UUID subscriptionId) {
+        Subscription subscription = subscriptionRepository.getSubscriptionsById(subscriptionId);
+
+        subscription.setStatus(SubscriptionStatus.CANCELLED);
+
+        List<Lesson> lessons = lessonRepository.getAllBySubscriptionId(subscriptionId);
+
+        for (Lesson lesson : lessons) {
+            lesson.setStatus(LessonStatus.CANCELLED);
+        }
+
+        subscriptionRepository.save(subscription);
+        lessonRepository.saveAll(lessons);
+    }
+
 }

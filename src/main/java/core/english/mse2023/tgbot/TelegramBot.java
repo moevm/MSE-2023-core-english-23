@@ -137,6 +137,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      * @param methods - list of bot api methods to execute
      */
     public void executeBotApiMethods(List<? extends BotApiMethod<?>> methods) {
+        if (methods == null) return;
         for (BotApiMethod<?> method : methods) {
             try {
                 execute(method);

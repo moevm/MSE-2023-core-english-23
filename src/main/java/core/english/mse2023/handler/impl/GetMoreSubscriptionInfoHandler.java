@@ -25,9 +25,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GetMoreSubscriptionInfoHandler implements Handler {
 
-    private static final String LESSON_DATA_PATTERN = """
-            %s
-            """;
+    private static final String LESSON_DATA_PATTERN = "%s";
+    private static final String BACK_TO_MAIN_MENU_TEXT = "◄ Назад в главное меню ◄";
 
     private final SubscriptionService subscriptionService;
 
@@ -41,34 +40,34 @@ public class GetMoreSubscriptionInfoHandler implements Handler {
         EditMessageReplyMarkup editMessageReplyMarkup = editMessageReplyMarkup(
                 update.getCallbackQuery().getMessage().getChatId().toString(),
                 update.getCallbackQuery().getMessage().getMessageId(),
-                getLessonsInlineButtons(lessons)
+                getLessonsInlineButtons(lessons, buttonData.getData())
         );
 
         return List.of(editMessageReplyMarkup);
     }
 
-    private InlineKeyboardMarkup getLessonsInlineButtons(List<Lesson> lessons) {
+    private InlineKeyboardMarkup getLessonsInlineButtons(List<Lesson> lessons, String subscriptionId) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
 
+        createInlineButtonInBuilderRow(
+                InlineButtonCommand.MAIN_MENU_SUBSCRIPTION,
+                subscriptionId,
+                0,
+                BACK_TO_MAIN_MENU_TEXT,
+                builder
+        );
+
         for (Lesson lesson : lessons) {
-            InlineKeyboardButton button = new InlineKeyboardButton();
-
-            button.setCallbackData(InlineButtonDTOEncoder.encode(
-                    InlineButtonDTO.builder()
-                            .command(InlineButtonCommand.GET_MORE_LESSON_INFO)
-                            .stateIndex(0)
-                            .data(lesson.getId().toString())
-                            .build()
-            ));
-
-            button.setText(String.format(LESSON_DATA_PATTERN, lesson.getTopic()));
-
-            builder.button(button);
-            builder.row();
+            createInlineButtonInBuilderRow(
+                    InlineButtonCommand.GET_MORE_LESSON_INFO,
+                    lesson.getId().toString(),
+                    0,
+                    String.format(LESSON_DATA_PATTERN, lesson.getTopic()),
+                    builder
+            );
         }
-
 
         inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;

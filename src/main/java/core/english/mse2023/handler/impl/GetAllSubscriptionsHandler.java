@@ -8,6 +8,7 @@ import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.service.SubscriptionService;
+import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -44,6 +45,8 @@ public class GetAllSubscriptionsHandler implements Handler {
     private static final String USER_DATA_PATTERN = "%s%s";
 
     private static final String BUTTON_TEXT = "Подробнее";
+
+    private static final String CANCEL_SUBSCRIPTION_TEXT = "Отменить подписку";
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -100,23 +103,25 @@ public class GetAllSubscriptionsHandler implements Handler {
     private InlineKeyboardMarkup getMarkupWithInlineButton(UUID subscriptionId) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
+        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
 
-        InlineKeyboardButton button = InlineKeyboardButton.builder()
-                // TODO: set appropriate data for callback
-                .callbackData(InlineButtonDTOEncoder.encode(InlineButtonDTO.builder()
-                        .command(InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO)
-                        .data(subscriptionId.toString())
-                        .stateIndex(0)
-                        .build()))
-                .text(BUTTON_TEXT)
-                .build();
+        createInlineButtonInBuilderRow(
+                InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO,
+                subscriptionId.toString(),
+                0,
+                BUTTON_TEXT,
+                builder
+        );
 
-        keyboardRow.add(button);
-        keyboard.add(keyboardRow);
+        createInlineButtonInBuilderRow(
+                InlineButtonCommand.CANCEL_SUBSCRIPTION,
+                subscriptionId.toString(),
+                0,
+                CANCEL_SUBSCRIPTION_TEXT,
+                builder
+        );
 
-        inlineKeyboardMarkup.setKeyboard(keyboard);
+        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;
     }
 }

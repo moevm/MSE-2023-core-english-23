@@ -1,5 +1,8 @@
 package core.english.mse2023.handler;
 
+import core.english.mse2023.dto.InlineButtonDTO;
+import core.english.mse2023.encoder.InlineButtonDTOEncoder;
+import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -7,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 
@@ -58,5 +62,22 @@ public interface Handler {
                 .messageId(messageId)
                 .replyMarkup(newInlineKeyboardMarkup)
                 .build();
+    }
+
+    default void createInlineButtonInBuilderRow(String commandName, String data, int stateIndex, String text, InlineKeyboardBuilder builder) {
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setCallbackData(InlineButtonDTOEncoder.encode(
+                InlineButtonDTO.builder()
+                        .command(commandName)
+                        .stateIndex(stateIndex)
+                        .data(data)
+                        .build()
+        ));
+
+        button.setText(text);
+
+        builder.button(button);
+        builder.row();
     }
 }

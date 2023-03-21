@@ -8,6 +8,7 @@ import core.english.mse2023.model.dictionary.SubscriptionStatus;
 import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.repository.SubscriptionRepository;
 import core.english.mse2023.repository.UserRepository;
+import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
-    private final LessonRepository lessonRepository;
+    private final LessonService lessonService;
     private final UserRepository userRepository;
 
     @Transactional
@@ -50,10 +51,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         subscriptionRepository.save(subscription);
 
+        lessonService.createBaseLessonsForSubscription(subscription);
+
         return subscription;
     }
 
     @Override
+    @Transactional
     public List<Subscription> getAllSubscriptions() {
         return subscriptionRepository.findAll();
     }
@@ -69,8 +73,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
         subscription.setStatus(SubscriptionStatus.CANCELLED);
 
-        subscriptionRepository.save(subscription);
+        lessonService.cancelLessonsFromSubscription(subscriptionId);
 
+        subscriptionRepository.save(subscription);
         return true;
     }
 

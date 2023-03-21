@@ -5,6 +5,7 @@ import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.service.LessonService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,13 @@ public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepository;
 
     @Override
+    @Transactional
     public Lesson getLessonById(UUID id) {
         return lessonRepository.getLessonById(id);
     }
 
     @Override
+    @Transactional
     public void cancelLessonsFromSubscription(UUID subscriptionId) {
         List<Lesson> lessons = lessonRepository.getAllBySubscriptionId(subscriptionId);
 
@@ -39,16 +42,19 @@ public class LessonServiceImpl implements LessonService {
 
     }
 
+    @Transactional
     @Override
     public List<Lesson> getAllLessonsForSubscription(UUID subscriptionId) {
         return lessonRepository.getAllBySubscriptionId(subscriptionId);
     }
 
     @Override
-    public void createLessonsForSubscriptions(Subscription subscription, int amount) {
+    @Transactional
+    public void createBaseLessonsForSubscription(Subscription subscription) {
+
         List<Lesson> lessons = new ArrayList<>();
 
-        for (int i = 0; i < amount; i++) {
+        for (int i = 0; i < subscription.getLessonsRest(); i++) {
             lessons.add(createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1))));
         }
 
@@ -59,6 +65,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    @Transactional
     public Lesson createLesson(Subscription subscription, String topic) {
         Lesson lesson = new Lesson();
 

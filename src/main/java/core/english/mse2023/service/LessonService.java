@@ -14,7 +14,7 @@ public interface LessonService {
 
     List<Lesson> getAllLessonsForSubscription(UUID subscriptionId);
 
-    void createLessonsForSubscriptions(Subscription subscription, int amount);
+    void createBaseLessonsForSubscription(Subscription subscription);
 
     Lesson createLesson(Subscription subscription, String topic);
 

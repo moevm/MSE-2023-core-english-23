@@ -131,8 +131,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             dto.setStudentTelegramId(buttonData.getData());
 
             // Since DTO is completely full - it's time to pass creation of the Subscription object to its service
-            Subscription newSubscription = subscriptionService.createSubscription(dto);
-            lessonService.createLessonsForSubscriptions(newSubscription, newSubscription.getLessonsRest());
+            subscriptionService.createSubscription(dto);
 
             removeFromCacheBy(update.getCallbackQuery().getFrom().getId().toString());
 
@@ -181,6 +180,10 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
         if (dto.getStartDate().after(dto.getEndDate())) {
             throw new IllegalUserInputException("Start date cannot go after the end date.");
+        }
+
+        if (dto.getLessonsRest() < 1) {
+            throw new IllegalUserInputException("Subscription has to have a least 1 lesson in it.");
         }
     }
 

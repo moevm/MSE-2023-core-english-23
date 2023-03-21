@@ -27,7 +27,6 @@ public class CancelSubscriptionHandler implements Handler {
     private final static String ALREADY_CANCELED_TEXT = "Невозможно отменить подписку. Она ранее уже была отменена!";
 
     private final SubscriptionService subscriptionService;
-    private final LessonService lessonService;
 
     @Override
     public List<BotApiMethod<?>> handle(Update update) {
@@ -45,7 +44,6 @@ public class CancelSubscriptionHandler implements Handler {
                     update.getCallbackQuery().getMessage().getChatId().toString(),
                     ALREADY_CANCELED_TEXT);
         } else {
-            lessonService.cancelLessonsFromSubscription(subscriptionId);
             message = TelegramMessageUtils.createMessage(
                     update.getCallbackQuery().getMessage().getChatId().toString(),
                     DONE_TEXT);

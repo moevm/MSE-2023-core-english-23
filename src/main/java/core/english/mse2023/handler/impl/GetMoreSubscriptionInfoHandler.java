@@ -1,6 +1,7 @@
 package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
+import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -27,11 +28,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GetMoreSubscriptionInfoHandler implements Handler {
 
-    private static final String LESSON_DATA_PATTERN = "%s";
-    private static final String BACK_TO_MAIN_MENU_TEXT = "◄ Назад в главное меню ◄";
-
-    private final SubscriptionService subscriptionService;
     private final LessonService lessonService;
+
+    private final InlineKeyboardMaker inlineKeyboardMaker;
 
     @Override
     public List<BotApiMethod<?>> handle(Update update) {
@@ -43,40 +42,14 @@ public class GetMoreSubscriptionInfoHandler implements Handler {
         EditMessageReplyMarkup editMessageReplyMarkup = TelegramMessageUtils.editMessageReplyMarkup(
                 update.getCallbackQuery().getMessage().getChatId().toString(),
                 update.getCallbackQuery().getMessage().getMessageId(),
-                getLessonsInlineButtons(lessons, buttonData.getData())
+                inlineKeyboardMaker.getSubscriptionLessonsMenu(lessons, buttonData.getData())
         );
 
         return List.of(editMessageReplyMarkup);
     }
 
-    private InlineKeyboardMarkup getLessonsInlineButtons(List<Lesson> lessons, String subscriptionId) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-
-        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance()
-                .button(TelegramInlineButtonsUtils.createInlineButton(
-                        InlineButtonCommand.MAIN_MENU_SUBSCRIPTION,
-                        subscriptionId,
-                        0,
-                        BACK_TO_MAIN_MENU_TEXT
-                ))
-                .row();
-
-        for (Lesson lesson : lessons) {
-            builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                            InlineButtonCommand.GET_MORE_LESSON_INFO,
-                            lesson.getId().toString(),
-                            0,
-                            String.format(LESSON_DATA_PATTERN, lesson.getTopic())
-                    ))
-                    .row();
-        }
-
-        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
-        return inlineKeyboardMarkup;
-    }
-
     @Override
     public BotCommand getCommandObject() {
-        return new BotCommand(InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO, "");
+        return InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO;
     }
 }

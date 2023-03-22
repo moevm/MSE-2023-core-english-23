@@ -3,13 +3,13 @@ package core.english.mse2023.handler.impl;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.InteractiveHandler;
-import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.SubscriptionType;
 import core.english.mse2023.service.LessonService;
@@ -42,6 +42,9 @@ import java.util.stream.Collectors;
 @TextCommandType
 @RequiredArgsConstructor
 public class CreateSubscriptionHandler implements InteractiveHandler {
+
+    private final MessageTextMaker messageTextMaker;
+
     private static final String START_TEXT = "Для создания новой подписки заполните и отправьте форму с данными " +
             "\\(каждое поле на новой строке в одном сообщении в том же порядке\\)\\. Пример:\n%s";
 
@@ -52,8 +55,6 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             """;
 
     private static final String USER_CHOOSE_TEXT = "Далее выберите студента, с которым будете заниматься:";
-
-    private static final String USER_DATA_PATTERN = "%s%s";
 
     private static final String SUCCESS_TEXT = "Новая подписка и требуемые уроки созданы.";
 
@@ -198,7 +199,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
                             getCommandObject().getCommand(),
                             student.getTelegramId(),
                             state.getStateIndex(),
-                            String.format(USER_DATA_PATTERN,
+                            messageTextMaker.userDataPatternMessageText(
                                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
                                     student.getName() // Student's name (always present)
                             )

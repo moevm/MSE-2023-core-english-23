@@ -21,13 +21,19 @@ import java.util.List;
 public class AssignRoleHandler implements Handler {
 
     private static final String MESSAGE = "Вы перешли в раздел НАЗНАЧИТЬ РОЛЬ";
+
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override
     public List<BotApiMethod<?>> handle(Update update) {
 
-        return List.of(TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(),
-                MESSAGE, replyKeyboardMaker.getAssignRoleKeyboard()));
+        return List.of(
+                TelegramMessageUtils.createMessage(
+                        update.getMessage().getChatId().toString(),
+                        MESSAGE,
+                        replyKeyboardMaker.getAssignRoleKeyboard()
+                )
+        );
     }
 
     @Override

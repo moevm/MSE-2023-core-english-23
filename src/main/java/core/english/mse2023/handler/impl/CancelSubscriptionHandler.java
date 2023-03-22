@@ -5,7 +5,6 @@ import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
-import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +53,6 @@ public class CancelSubscriptionHandler implements Handler {
 
     @Override
     public BotCommand getCommandObject() {
-        return new BotCommand(InlineButtonCommand.CANCEL_SUBSCRIPTION, "");
+        return InlineButtonCommand.CANCEL_SUBSCRIPTION;
     }
 }

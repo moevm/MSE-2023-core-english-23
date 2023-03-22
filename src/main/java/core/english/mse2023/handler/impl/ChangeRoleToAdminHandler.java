@@ -2,6 +2,7 @@ package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -22,8 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChangeRoleToAdminHandler implements Handler {
 
-    private static final String SUCCESS_TEXT = "Ваша роль изменена на: %s";
-    private static final String FAIL_TEXT = "Невозможно сменить роль на такую же, как у вас.";
+    private final MessageTextMaker messageTextMaker;
 
     private final UserService service;
 
@@ -35,11 +35,11 @@ public class ChangeRoleToAdminHandler implements Handler {
         SendMessage message = result ?
                 TelegramMessageUtils.createMessage(
                         update.getMessage().getChatId().toString(),
-                        FAIL_TEXT
+                        messageTextMaker.failedToChangeUserRoleMessageText()
                 ) :
                 TelegramMessageUtils.createMessage(
                         update.getMessage().getChatId().toString(),
-                        String.format(SUCCESS_TEXT, UserRole.ADMIN)
+                        messageTextMaker.userRoleSuccessfullyChangedMessageText(UserRole.ADMIN.toString())
                 );
 
 

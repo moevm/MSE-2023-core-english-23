@@ -3,6 +3,7 @@ package core.english.mse2023.util.utilities;
 import lombok.experimental.UtilityClass;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
@@ -40,6 +41,23 @@ public class TelegramMessageUtils {
         return EditMessageReplyMarkup.builder()
                 .chatId(chatId)
                 .messageId(messageId)
+                .replyMarkup(newInlineKeyboardMarkup)
+                .build();
+    }
+
+    public EditMessageText editMessageText(String chatId, int messageId, String newMessageText) {
+        return EditMessageText.builder()
+                .chatId(chatId)
+                .messageId(messageId)
+                .text(newMessageText)
+                .build();
+    }
+
+    public EditMessageText editMessageTextWithReplyMarkup(String chatId, int messageId, String newMessageText, InlineKeyboardMarkup newInlineKeyboardMarkup) {
+        return EditMessageText.builder()
+                .chatId(chatId)
+                .messageId(messageId)
+                .text(newMessageText)
                 .replyMarkup(newInlineKeyboardMarkup)
                 .build();
     }

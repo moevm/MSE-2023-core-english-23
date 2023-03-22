@@ -2,6 +2,7 @@ package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -22,8 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChangeRoleToTeacherHandler implements Handler {
 
-    private static final String SUCCESS_TEXT = "Ваша роль изменена на: %s";
-    private static final String FAIL_TEXT = "Невозможно сменить роль на такую же, как у вас.";
+    private final MessageTextMaker messageTextMaker;
 
     private final UserService service;
 
@@ -35,9 +35,15 @@ public class ChangeRoleToTeacherHandler implements Handler {
         SendMessage message;
 
         if (!result) {
-            message = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), FAIL_TEXT);
+            message = TelegramMessageUtils.createMessage(
+                    update.getMessage().getChatId().toString(),
+                    messageTextMaker.failedToChangeUserRoleMessageText()
+            );
         } else {
-            message = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), String.format(SUCCESS_TEXT, UserRole.TEACHER));
+            message = TelegramMessageUtils.createMessage(
+                    update.getMessage().getChatId().toString(),
+                    messageTextMaker.userRoleSuccessfullyChangedMessageText(UserRole.TEACHER.toString())
+            );
         }
 
         return List.of(message);

@@ -8,6 +8,7 @@ import core.english.mse2023.model.dictionary.SubscriptionStatus;
 import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.repository.SubscriptionRepository;
 import core.english.mse2023.repository.UserRepository;
+import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +24,13 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
-
-    private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
-
     private final SubscriptionRepository subscriptionRepository;
-    private final LessonRepository lessonRepository;
+    private final LessonService lessonService;
     private final UserRepository userRepository;
 
     @Transactional
     @Override
-    public void createSubscription(SubscriptionCreationDTO creationDTO) {
+    public Subscription createSubscription(SubscriptionCreationDTO creationDTO) {
 
         Subscription subscription = new Subscription();
 
@@ -51,39 +49,34 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscription.setTeacher(userRepository.findByTelegramId(creationDTO.getTeacherTelegramId()));
         subscription.setLessonsRest(creationDTO.getLessonsRest());
 
-        List<Lesson> lessons = new ArrayList<>();
-
-        for (int i = 0; i < creationDTO.getLessonsRest(); i++) {
-            lessons.add(createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1))));
-        }
-
-        lessons.get(0).setDate(subscription.getStartDate());
-
         subscriptionRepository.save(subscription);
 
-        lessonRepository.saveAll(lessons);
+        lessonService.createBaseLessonsForSubscription(subscription);
 
+        return subscription;
     }
 
     @Override
+    @Transactional
     public List<Subscription> getAllSubscriptions() {
         return subscriptionRepository.findAll();
     }
 
-    @Override
-    public List<Lesson> getAllLessonsForSubscription(UUID subscriptionId) {
-        return lessonRepository.getAllBySubscriptionId(subscriptionId);
-    }
 
     @Override
-    public Lesson createLesson(Subscription subscription, String topic) {
-        Lesson lesson = new Lesson();
+    @Transactional
+    public boolean cancelSubscription(UUID subscriptionId) {
+        Subscription subscription = subscriptionRepository.getSubscriptionsById(subscriptionId);
 
-        lesson.setStatus(LessonStatus.NOT_STARTED_YET);
-        lesson.setSubscription(subscription);
-        lesson.setTopic(topic);
+        if (subscription.getStatus() == SubscriptionStatus.CANCELLED) {
+            return false;
+        }
+        subscription.setStatus(SubscriptionStatus.CANCELLED);
 
-        return lesson;
+        lessonService.cancelLessonsFromSubscription(subscriptionId);
+
+        subscriptionRepository.save(subscription);
+        return true;
     }
 
 }

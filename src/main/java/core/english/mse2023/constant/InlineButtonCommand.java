@@ -7,6 +7,8 @@ package core.english.mse2023.constant;
 public interface InlineButtonCommand {
     String GET_MORE_SUBSCRIPTION_INFO = "/subscriptionGetMore";
     String GET_MORE_LESSON_INFO = "/lessonGetMore";
+    String CANCEL_SUBSCRIPTION = "/cancelSubscription";
+    String MAIN_MENU_SUBSCRIPTION = "/mainMenuSubscription";
 
 
 }

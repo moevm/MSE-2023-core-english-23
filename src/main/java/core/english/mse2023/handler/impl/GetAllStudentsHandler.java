@@ -5,6 +5,7 @@ import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
+import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -36,9 +37,9 @@ public class GetAllStudentsHandler implements Handler {
         SendMessage sendMessage;
 
         if (students.isEmpty()) {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), NO_STUDENTS_TEXT);
+            sendMessage = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), NO_STUDENTS_TEXT);
         } else {
-            sendMessage = createMessage(update.getMessage().getChatId().toString(), START_TEXT);
+            sendMessage = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), START_TEXT);
             sendMessage.setReplyMarkup(getStudentsButtons(students));
         }
 

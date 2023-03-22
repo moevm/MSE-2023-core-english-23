@@ -9,13 +9,18 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.InteractiveHandler;
+import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.SubscriptionType;
+import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.service.UserService;
 import core.english.mse2023.state.State;
 import core.english.mse2023.state.subcription.InitializedState;
 import core.english.mse2023.state.subcription.PartiallyCreatedState;
+import core.english.mse2023.util.builder.InlineKeyboardBuilder;
+import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
+import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,7 +30,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -61,6 +65,8 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
     private final SubscriptionService subscriptionService;
 
+    private final LessonService lessonService;
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 
@@ -77,7 +83,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
         // Sending start message
         SendMessage message;
 
-        message = createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, DATA_FORM_TEXT));
+        message = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, DATA_FORM_TEXT));
 
         message.setParseMode(ParseMode.MARKDOWNV2);
 
@@ -106,7 +112,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             dto.setType(SubscriptionType.QUANTITY_BASED);
 
             // Sending buttons with students. Data from them will be used in the next state
-            SendMessage sendMessage = createMessage(update.getMessage().getChatId().toString(), USER_CHOOSE_TEXT);
+            SendMessage sendMessage = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), USER_CHOOSE_TEXT);
             sendMessage.setReplyMarkup(getStudentsButtons(userService.getAllStudents(), state));
 
             messages.add(sendMessage);
@@ -129,7 +135,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
             removeFromCacheBy(update.getCallbackQuery().getFrom().getId().toString());
 
-            SendMessage sendMessage = createMessage(update.getCallbackQuery().getMessage().getChatId().toString(), SUCCESS_TEXT);
+            SendMessage sendMessage = TelegramMessageUtils.createMessage(update.getCallbackQuery().getMessage().getChatId().toString(), SUCCESS_TEXT);
             messages.add(sendMessage);
         }
 
@@ -175,31 +181,33 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
         if (dto.getStartDate().after(dto.getEndDate())) {
             throw new IllegalUserInputException("Start date cannot go after the end date.");
         }
+
+        if (dto.getLessonsRest() < 1) {
+            throw new IllegalUserInputException("Subscription has to have a least 1 lesson in it.");
+        }
     }
 
     private InlineKeyboardMarkup getStudentsButtons(List<User> students, State state) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
 
         for (User student : students) {
-            List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
-            InlineKeyboardButton button = new InlineKeyboardButton();
-
-            button.setCallbackData(InlineButtonDTOEncoder.encode(new InlineButtonDTO(getCommandObject().getCommand(), state.getStateIndex(), student.getTelegramId())));
-
-            button.setText(String.format(USER_DATA_PATTERN,
-                    (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
-                    student.getName() // Student's name (always present)
-            ));
-
-            keyboardRow.add(button);
-
-            keyboard.add(keyboardRow);
+            builder
+                    .button(TelegramInlineButtonsUtils.createInlineButton(
+                            getCommandObject().getCommand(),
+                            student.getTelegramId(),
+                            state.getStateIndex(),
+                            String.format(USER_DATA_PATTERN,
+                                    (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
+                                    student.getName() // Student's name (always present)
+                            )
+                    ))
+                    .row();
         }
 
 
-        inlineKeyboardMarkup.setKeyboard(keyboard);
+        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;
     }
 

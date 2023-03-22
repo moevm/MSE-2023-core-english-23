@@ -3,11 +3,12 @@ package core.english.mse2023.handler.impl;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.InlineButtonCommand;
-import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.service.SubscriptionService;
+import core.english.mse2023.util.builder.InlineKeyboardBuilder;
+import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
+import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -15,7 +16,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +45,8 @@ public class GetAllSubscriptionsHandler implements Handler {
 
     private static final String BUTTON_TEXT = "Подробнее";
 
+    private static final String CANCEL_SUBSCRIPTION_TEXT = "Отменить подписку";
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 
@@ -66,10 +68,10 @@ public class GetAllSubscriptionsHandler implements Handler {
     private List<BotApiMethod<?>> createMessagesWithButton(List<Subscription> subscriptions, String chatId) {
         List<BotApiMethod<?>> messages = new ArrayList<>();
 
-        messages.add(createMessage(chatId, WELCOME_TEXT));
+        messages.add(TelegramMessageUtils.createMessage(chatId, WELCOME_TEXT));
 
         for (Subscription subscription : subscriptions) {
-            SendMessage message = createMessage(
+            SendMessage message = TelegramMessageUtils.createMessage(
                     chatId,
                     String.format(DATA_PATTERN,
                             subscription.getType(),
@@ -100,23 +102,23 @@ public class GetAllSubscriptionsHandler implements Handler {
     private InlineKeyboardMarkup getMarkupWithInlineButton(UUID subscriptionId) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
+        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance()
+                .button(TelegramInlineButtonsUtils.createInlineButton(
+                        InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO,
+                        subscriptionId.toString(),
+                        0,
+                        BUTTON_TEXT
+                ))
+                .row()
+                .button(TelegramInlineButtonsUtils.createInlineButton(
+                        InlineButtonCommand.CANCEL_SUBSCRIPTION,
+                        subscriptionId.toString(),
+                        0,
+                        CANCEL_SUBSCRIPTION_TEXT
+                ))
+                .row();
 
-        InlineKeyboardButton button = InlineKeyboardButton.builder()
-                // TODO: set appropriate data for callback
-                .callbackData(InlineButtonDTOEncoder.encode(InlineButtonDTO.builder()
-                        .command(InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO)
-                        .data(subscriptionId.toString())
-                        .stateIndex(0)
-                        .build()))
-                .text(BUTTON_TEXT)
-                .build();
-
-        keyboardRow.add(button);
-        keyboard.add(keyboardRow);
-
-        inlineKeyboardMarkup.setKeyboard(keyboard);
+        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;
     }
 }

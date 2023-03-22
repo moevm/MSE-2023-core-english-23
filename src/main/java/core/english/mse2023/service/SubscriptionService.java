@@ -9,11 +9,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface SubscriptionService {
-    void createSubscription(SubscriptionCreationDTO creationDTO);
+    Subscription createSubscription(SubscriptionCreationDTO creationDTO);
 
     List<Subscription> getAllSubscriptions();
 
-    List<Lesson> getAllLessonsForSubscription(UUID subscriptionId);
-
-    Lesson createLesson(Subscription subscription, String topic);
+    boolean cancelSubscription(UUID subscriptionId);
 }

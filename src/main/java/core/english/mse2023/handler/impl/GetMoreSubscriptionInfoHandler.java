@@ -1,5 +1,6 @@
 package core.english.mse2023.handler.impl;
 
+import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 @Component
 @InlineButtonType
+@AllRoles
 @RequiredArgsConstructor
 public class GetMoreSubscriptionInfoHandler implements Handler {
 

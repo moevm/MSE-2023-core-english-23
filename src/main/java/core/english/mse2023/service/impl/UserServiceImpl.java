@@ -1,6 +1,7 @@
 package core.english.mse2023.service.impl;
 
 
+import core.english.mse2023.exception.NoSuchUserException;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.repository.UserRepository;
@@ -23,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(Update update) {
+    public User getUserOrCreateNewOne(Update update) {
         String telegramId = update.getMessage().getFrom().getId().toString();
 
         User user = repository.findByTelegramId(telegramId);
@@ -52,8 +53,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUser(UUID id) {
-        return repository.findById(id);
+    public UserRole getUserRole(String telegramId) throws NoSuchUserException {
+        User user = repository.findByTelegramId(telegramId);
+
+        if (user == null)
+            throw new NoSuchUserException(String.format("User with telegram id %s hasn't been found", telegramId));
+
+        return user.getRole();
     }
 
     @Override

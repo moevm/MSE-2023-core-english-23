@@ -2,6 +2,7 @@ package core.english.mse2023.handler.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @TextCommandType
+@AllRoles
 @RequiredArgsConstructor
 public class CreateSubscriptionHandler implements InteractiveHandler {
 

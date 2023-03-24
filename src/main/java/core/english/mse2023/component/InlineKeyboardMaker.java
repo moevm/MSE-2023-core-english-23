@@ -19,7 +19,7 @@ public class InlineKeyboardMaker {
         inlineKeyboardMarkup.setKeyboard(
                 InlineKeyboardBuilder.instance()
                         .button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_ATTEND_MENU,
+                                InlineButtonCommand.GET_ATTENDANCE_MENU,
                                 lessonId,
                                 0
                         ))

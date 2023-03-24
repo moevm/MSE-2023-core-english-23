@@ -15,7 +15,7 @@ public interface InlineButtonCommand {
     BotCommand SET_LESSON_ATTENDED = new BotCommand("/setLessonAttended", "Посетил");
     BotCommand SET_LESSON_SKIPPED = new BotCommand("/setLessonSkipped", "Пропустил");
     BotCommand MAIN_MENU_LESSON = new BotCommand("/mainMenuLesson", "◄ Назад в главное меню ◄");
-    BotCommand GET_ATTEND_MENU = new BotCommand("/getAttendMenu", "Отметить посещение");
+    BotCommand GET_ATTENDANCE_MENU = new BotCommand("/getAttendanceMenu", "Отметить посещение");
 
 
 }

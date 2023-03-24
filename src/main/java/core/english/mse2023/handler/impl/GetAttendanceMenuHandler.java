@@ -18,11 +18,7 @@ import java.util.List;
 @Component
 @InlineButtonType
 @RequiredArgsConstructor
-public class GetAttendMenuHandler implements Handler {
-
-    private static final String ATTENDED_TEXT = "Посетил";
-
-    private static final String DID_NOT_ATTEND_TEXT = "Пропустил";
+public class GetAttendanceMenuHandler implements Handler {
 
     private final InlineKeyboardMaker inlineKeyboardMaker;
 
@@ -40,6 +36,6 @@ public class GetAttendMenuHandler implements Handler {
 
     @Override
     public BotCommand getCommandObject() {
-        return InlineButtonCommand.GET_ATTEND_MENU;
+        return InlineButtonCommand.GET_ATTENDANCE_MENU;
     }
 }

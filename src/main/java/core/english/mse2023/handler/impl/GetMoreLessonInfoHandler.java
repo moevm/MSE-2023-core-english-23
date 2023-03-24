@@ -9,9 +9,6 @@ import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.service.LessonService;
-import core.english.mse2023.util.builder.InlineKeyboardBuilder;
-import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
-import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -19,9 +16,7 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,10 +39,10 @@ public class GetMoreLessonInfoHandler implements Handler {
         Lesson lesson = lessonService.getLessonById(UUID.fromString(buttonData.getData()));
 
 
-        SendMessage message = TelegramMessageUtils.createMessage(
-                update.getCallbackQuery().getMessage().getChatId().toString(),
-                messageTextMaker.lessonInfoPatternMessageText(lesson)
-        );
+        SendMessage message = SendMessage.builder()
+                .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
+                .build();
 
         message.setParseMode(ParseMode.MARKDOWNV2);
 

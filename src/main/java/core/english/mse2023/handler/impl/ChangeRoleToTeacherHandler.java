@@ -7,7 +7,6 @@ import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
-import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -35,15 +34,15 @@ public class ChangeRoleToTeacherHandler implements Handler {
         SendMessage message;
 
         if (!result) {
-            message = TelegramMessageUtils.createMessage(
-                    update.getMessage().getChatId().toString(),
-                    messageTextMaker.failedToChangeUserRoleMessageText()
-            );
+            message = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(messageTextMaker.failedToChangeUserRoleMessageText())
+                    .build();
         } else {
-            message = TelegramMessageUtils.createMessage(
-                    update.getMessage().getChatId().toString(),
-                    messageTextMaker.userRoleSuccessfullyChangedMessageText(UserRole.TEACHER.toString())
-            );
+            message = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(messageTextMaker.userRoleSuccessfullyChangedMessageText(UserRole.TEACHER))
+                    .build();
         }
 
         return List.of(message);

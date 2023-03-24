@@ -6,7 +6,6 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.service.SubscriptionService;
-import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -39,13 +38,15 @@ public class CancelSubscriptionHandler implements Handler {
         SendMessage message;
 
         if (!success) {
-            message = TelegramMessageUtils.createMessage(
-                    update.getCallbackQuery().getMessage().getChatId().toString(),
-                    ALREADY_CANCELED_TEXT);
+            message = SendMessage.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .text(ALREADY_CANCELED_TEXT)
+                    .build();
         } else {
-            message = TelegramMessageUtils.createMessage(
-                    update.getCallbackQuery().getMessage().getChatId().toString(),
-                    DONE_TEXT);
+            message = SendMessage.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .text(DONE_TEXT)
+                    .build();
         }
 
         return List.of(message);

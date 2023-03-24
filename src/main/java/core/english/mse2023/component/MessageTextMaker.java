@@ -1,6 +1,7 @@
 package core.english.mse2023.component;
 
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.dictionary.UserRole;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -12,11 +13,11 @@ public class MessageTextMaker {
         return "Невозможно сменить роль на такую же, как у вас.";
     }
 
-    public String userRoleSuccessfullyChangedMessageText(String newRoleName) {
+    public String userRoleSuccessfullyChangedMessageText(UserRole newRole) {
 
         String messageTemplate = "Ваша роль изменена на: %s";
 
-        return String.format(messageTemplate, newRoleName);
+        return String.format(messageTemplate, newRole.toString());
     }
 
     public String userDataPatternMessageText(String lastName, String name) {

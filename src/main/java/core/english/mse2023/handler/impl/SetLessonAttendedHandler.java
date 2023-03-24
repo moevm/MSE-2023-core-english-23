@@ -9,12 +9,11 @@ import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.dictionary.AttendanceType;
-import core.english.mse2023.service.LessonInfoService;
 import core.english.mse2023.service.LessonService;
-import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
@@ -41,13 +40,12 @@ public class SetLessonAttendedHandler implements Handler {
 
         Lesson lesson = lessonService.getLessonById(lessonId);
 
-        return List.of(
-                TelegramMessageUtils.editMessageTextWithReplyMarkup(
-                        update.getCallbackQuery().getMessage().getChatId().toString(),
-                        update.getCallbackQuery().getMessage().getMessageId(),
-                        messageTextMaker.lessonInfoPatternMessageText(lesson),
-                        inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(buttonData.getData())
-                )
+        return List.of(EditMessageText.builder()
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                        .messageId(update.getCallbackQuery().getMessage().getMessageId())
+                        .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
+                        .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(buttonData.getData()))
+                        .build()
         );
     }
 

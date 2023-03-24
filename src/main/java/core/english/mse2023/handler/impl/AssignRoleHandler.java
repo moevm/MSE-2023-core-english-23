@@ -5,10 +5,10 @@ import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
-import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
@@ -27,13 +27,11 @@ public class AssignRoleHandler implements Handler {
     @Override
     public List<BotApiMethod<?>> handle(Update update) {
 
-        return List.of(
-                TelegramMessageUtils.createMessage(
-                        update.getMessage().getChatId().toString(),
-                        MESSAGE,
-                        replyKeyboardMaker.getAssignRoleKeyboard()
-                )
-        );
+        return List.of(SendMessage.builder()
+                .chatId(update.getMessage().getChatId().toString())
+                .text(MESSAGE)
+                .replyMarkup(replyKeyboardMaker.getAssignRoleKeyboard())
+                .build());
     }
 
     @Override

@@ -2,10 +2,11 @@ package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.dto.InlineButtonDTO;
+import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.service.UserService;
-import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -37,10 +38,16 @@ public class GetAllStudentsHandler implements Handler {
         SendMessage sendMessage;
 
         if (students.isEmpty()) {
-            sendMessage = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), NO_STUDENTS_TEXT);
+            sendMessage = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(NO_STUDENTS_TEXT)
+                    .build();
         } else {
-            sendMessage = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), START_TEXT);
-            sendMessage.setReplyMarkup(getStudentsButtons(students));
+            sendMessage = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(START_TEXT)
+                    .replyMarkup(getStudentsButtons(students))
+                    .build();
         }
 
 
@@ -57,7 +64,11 @@ public class GetAllStudentsHandler implements Handler {
             InlineKeyboardButton button = new InlineKeyboardButton();
 
             // TODO: set appropriate data for callback
-            button.setCallbackData(student.getTelegramId());
+            button.setCallbackData(InlineButtonDTOEncoder.encode(InlineButtonDTO.builder()
+                    .command(null)
+                    .stateIndex(0)
+                    .data(null)
+                    .build()));
             button.setText(String.format(USER_DATA_PATTERN,
                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
                     student.getName() // Student's name (always present)

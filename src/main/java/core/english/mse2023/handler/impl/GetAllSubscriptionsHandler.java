@@ -3,25 +3,19 @@ package core.english.mse2023.handler.impl;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
-import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.service.SubscriptionService;
-import core.english.mse2023.util.builder.InlineKeyboardBuilder;
-import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
-import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @TextCommandType
@@ -67,12 +61,15 @@ public class GetAllSubscriptionsHandler implements Handler {
     private List<BotApiMethod<?>> createMessagesWithButton(List<Subscription> subscriptions, String chatId) {
         List<BotApiMethod<?>> messages = new ArrayList<>();
 
-        messages.add(TelegramMessageUtils.createMessage(chatId, WELCOME_TEXT));
+        messages.add(SendMessage.builder()
+                .chatId(chatId)
+                .text(WELCOME_TEXT)
+                .build());
 
         for (Subscription subscription : subscriptions) {
-            SendMessage message = TelegramMessageUtils.createMessage(
-                    chatId,
-                    String.format(DATA_PATTERN,
+            SendMessage message = SendMessage.builder()
+                    .chatId(chatId)
+                    .text(String.format(DATA_PATTERN,
                             subscription.getType(),
                             subscription.getStatus(),
                             subscription.getLessonsRest(),
@@ -86,9 +83,8 @@ public class GetAllSubscriptionsHandler implements Handler {
                             ),
                             dateFormat.format(subscription.getStartDate()),
                             dateFormat.format(subscription.getEndDate())
-                    ),
-                    null
-            );
+                    ))
+                    .build();
 
             message.setReplyMarkup(inlineKeyboardMaker.getSubscriptionMainMenu(subscription.getId().toString()));
 

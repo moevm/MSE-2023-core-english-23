@@ -20,7 +20,6 @@ import core.english.mse2023.state.subcription.InitializedState;
 import core.english.mse2023.state.subcription.PartiallyCreatedState;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
-import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -84,7 +83,10 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
         // Sending start message
         SendMessage message;
 
-        message = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, DATA_FORM_TEXT));
+        message = SendMessage.builder()
+                .chatId(update.getMessage().getChatId().toString())
+                .text(String.format(START_TEXT, DATA_FORM_TEXT))
+                .build();
 
         message.setParseMode(ParseMode.MARKDOWNV2);
 
@@ -113,8 +115,11 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             dto.setType(SubscriptionType.QUANTITY_BASED);
 
             // Sending buttons with students. Data from them will be used in the next state
-            SendMessage sendMessage = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), USER_CHOOSE_TEXT);
-            sendMessage.setReplyMarkup(getStudentsButtons(userService.getAllStudents(), state));
+            SendMessage sendMessage = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(USER_CHOOSE_TEXT)
+                    .replyMarkup(getStudentsButtons(userService.getAllStudents(), state))
+                    .build();
 
             messages.add(sendMessage);
 
@@ -136,7 +141,11 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
             removeFromCacheBy(update.getCallbackQuery().getFrom().getId().toString());
 
-            SendMessage sendMessage = TelegramMessageUtils.createMessage(update.getCallbackQuery().getMessage().getChatId().toString(), SUCCESS_TEXT);
+            SendMessage sendMessage = SendMessage.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .text(SUCCESS_TEXT)
+                    .build();
+
             messages.add(sendMessage);
         }
 

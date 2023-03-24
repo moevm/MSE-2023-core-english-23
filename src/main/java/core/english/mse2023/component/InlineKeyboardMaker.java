@@ -16,15 +16,17 @@ public class InlineKeyboardMaker {
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance()
-                .button(TelegramInlineButtonsUtils.createInlineButton(
-                        InlineButtonCommand.GET_ATTEND_MENU,
-                        lessonId,
-                        0
-                ))
-                .row();
+        inlineKeyboardMarkup.setKeyboard(
+                InlineKeyboardBuilder.instance()
+                        .button(TelegramInlineButtonsUtils.createInlineButton(
+                                InlineButtonCommand.GET_ATTEND_MENU,
+                                lessonId,
+                                0
+                        ))
+                        .row()
+                        .build().getKeyboard()
+        );
 
-        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;
     }
 
@@ -32,27 +34,29 @@ public class InlineKeyboardMaker {
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance()
-                .button(TelegramInlineButtonsUtils.createInlineButton(
-                        InlineButtonCommand.MAIN_MENU_LESSON,
-                        lessonId,
-                        0
-                ))
-                .row()
-                .button(TelegramInlineButtonsUtils.createInlineButton(
-                        InlineButtonCommand.SET_LESSON_ATTENDED,
-                        lessonId,
-                        0
-                ))
-                .row()
-                .button(TelegramInlineButtonsUtils.createInlineButton(
-                        InlineButtonCommand.SET_LESSON_SKIPPED,
-                        lessonId,
-                        0
-                ))
-                .row();
+        inlineKeyboardMarkup.setKeyboard(
+                InlineKeyboardBuilder.instance()
+                        .button(TelegramInlineButtonsUtils.createInlineButton(
+                                InlineButtonCommand.MAIN_MENU_LESSON,
+                                lessonId,
+                                0
+                        ))
+                        .row()
+                        .button(TelegramInlineButtonsUtils.createInlineButton(
+                                InlineButtonCommand.SET_LESSON_ATTENDED,
+                                lessonId,
+                                0
+                        ))
+                        .row()
+                        .button(TelegramInlineButtonsUtils.createInlineButton(
+                                InlineButtonCommand.SET_LESSON_SKIPPED,
+                                lessonId,
+                                0
+                        ))
+                        .row()
+                        .build().getKeyboard()
+        );
 
-        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;
     }
 
@@ -84,21 +88,23 @@ public class InlineKeyboardMaker {
     public InlineKeyboardMarkup getSubscriptionMainMenu(String subscriptionId) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance()
-                .button(TelegramInlineButtonsUtils.createInlineButton(
-                        InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO,
-                        subscriptionId,
-                        0
-                ))
-                .row()
-                .button(TelegramInlineButtonsUtils.createInlineButton(
-                        InlineButtonCommand.CANCEL_SUBSCRIPTION,
-                        subscriptionId,
-                        0
-                ))
-                .row();
+        inlineKeyboardMarkup.setKeyboard(
+                InlineKeyboardBuilder.instance()
+                        .button(TelegramInlineButtonsUtils.createInlineButton(
+                                InlineButtonCommand.GET_MORE_SUBSCRIPTION_INFO,
+                                subscriptionId,
+                                0
+                        ))
+                        .row()
+                        .button(TelegramInlineButtonsUtils.createInlineButton(
+                                InlineButtonCommand.CANCEL_SUBSCRIPTION,
+                                subscriptionId,
+                                0
+                        ))
+                        .row()
+                        .build().getKeyboard()
+        );
 
-        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;
     }
 }

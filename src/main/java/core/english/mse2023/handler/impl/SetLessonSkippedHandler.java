@@ -8,12 +8,12 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.dictionary.AttendanceType;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.ParseMode;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
@@ -23,7 +23,7 @@ import java.util.UUID;
 @Component
 @InlineButtonType
 @RequiredArgsConstructor
-public class GetMoreLessonInfoHandler implements Handler {
+public class SetLessonSkippedHandler implements Handler {
 
     private final MessageTextMaker messageTextMaker;
 
@@ -33,26 +33,24 @@ public class GetMoreLessonInfoHandler implements Handler {
 
     @Override
     public List<BotApiMethod<?>> handle(Update update) {
-
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
-        Lesson lesson = lessonService.getLessonById(UUID.fromString(buttonData.getData()));
+        UUID lessonId = UUID.fromString(buttonData.getData());
+        lessonService.setAttendance(lessonId, AttendanceType.SKIPPED);
 
+        Lesson lesson = lessonService.getLessonById(lessonId);
 
-        SendMessage message = SendMessage.builder()
-                .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
-                .build();
-
-        message.setParseMode(ParseMode.MARKDOWNV2);
-
-        message.setReplyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(lesson.getId().toString()));
-
-        return List.of(message);
+        return List.of(EditMessageText.builder()
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                        .messageId(update.getCallbackQuery().getMessage().getMessageId())
+                        .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
+                        .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(buttonData.getData()))
+                        .build()
+        );
     }
 
     @Override
     public BotCommand getCommandObject() {
-        return InlineButtonCommand.GET_MORE_LESSON_INFO;
+        return InlineButtonCommand.SET_LESSON_SKIPPED;
     }
 }

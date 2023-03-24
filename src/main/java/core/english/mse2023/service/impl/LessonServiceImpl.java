@@ -1,9 +1,13 @@
 package core.english.mse2023.service.impl;
 
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.Subscription;
+import core.english.mse2023.model.dictionary.AttendanceType;
 import core.english.mse2023.model.dictionary.LessonStatus;
+import core.english.mse2023.repository.LessonInfoRepository;
 import core.english.mse2023.repository.LessonRepository;
+import core.english.mse2023.service.LessonInfoService;
 import core.english.mse2023.service.LessonService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,7 @@ public class LessonServiceImpl implements LessonService {
 
 
     private final LessonRepository lessonRepository;
+    private final LessonInfoService lessonInfoService;
 
     @Override
     @Transactional
@@ -51,17 +56,18 @@ public class LessonServiceImpl implements LessonService {
     @Override
     @Transactional
     public void createBaseLessonsForSubscription(Subscription subscription) {
+        Lesson lesson = createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, 1));
+        lesson.setDate(subscription.getStartDate());
 
-        List<Lesson> lessons = new ArrayList<>();
+        lessonRepository.save(lesson);
+        lessonInfoService.createLessonInfo(lesson);
 
-        for (int i = 0; i < subscription.getLessonsRest(); i++) {
-            lessons.add(createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1))));
+
+        for (int i = 1; i < subscription.getLessonsRest(); i++) {
+            lesson = createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1)));
+            lessonRepository.save(lesson);
+            lessonInfoService.createLessonInfo(lesson);
         }
-
-        lessons.get(0).setDate(subscription.getStartDate());
-
-        lessonRepository.saveAll(lessons);
-
     }
 
     @Override
@@ -74,5 +80,19 @@ public class LessonServiceImpl implements LessonService {
         lesson.setTopic(topic);
 
         return lesson;
+    }
+
+    @Override
+    @Transactional
+    public void setAttendance(UUID lessonId, AttendanceType attendanceType) {
+
+        Lesson lesson = lessonRepository.getLessonById(lessonId);
+
+        if (attendanceType == AttendanceType.ATTENDED || attendanceType == AttendanceType.SKIPPED) {
+            lesson.setStatus(LessonStatus.ENDED);
+            lessonRepository.save(lesson);
+        }
+
+        lessonInfoService.setAttendance(lesson, attendanceType);
     }
 }

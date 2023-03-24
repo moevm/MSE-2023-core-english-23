@@ -44,7 +44,7 @@ create table lesson_info
     modified_when   timestamp(6) not null,
     attendance      varchar(255) not null,
     family_comment  varchar(255),
-    score           integer      not null,
+    score           integer,
     teacher_comment varchar(255),
     lesson_id       uuid         not null,
     primary key (id)

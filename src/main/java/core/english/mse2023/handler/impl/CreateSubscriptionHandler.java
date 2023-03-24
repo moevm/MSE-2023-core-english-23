@@ -3,13 +3,13 @@ package core.english.mse2023.handler.impl;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.InteractiveHandler;
-import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.SubscriptionType;
 import core.english.mse2023.service.LessonService;
@@ -20,7 +20,6 @@ import core.english.mse2023.state.subcription.InitializedState;
 import core.english.mse2023.state.subcription.PartiallyCreatedState;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
-import core.english.mse2023.util.utilities.TelegramMessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -42,6 +41,9 @@ import java.util.stream.Collectors;
 @TextCommandType
 @RequiredArgsConstructor
 public class CreateSubscriptionHandler implements InteractiveHandler {
+
+    private final MessageTextMaker messageTextMaker;
+
     private static final String START_TEXT = "Для создания новой подписки заполните и отправьте форму с данными " +
             "\\(каждое поле на новой строке в одном сообщении в том же порядке\\)\\. Пример:\n%s";
 
@@ -52,8 +54,6 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             """;
 
     private static final String USER_CHOOSE_TEXT = "Далее выберите студента, с которым будете заниматься:";
-
-    private static final String USER_DATA_PATTERN = "%s%s";
 
     private static final String SUCCESS_TEXT = "Новая подписка и требуемые уроки созданы.";
 
@@ -83,7 +83,10 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
         // Sending start message
         SendMessage message;
 
-        message = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), String.format(START_TEXT, DATA_FORM_TEXT));
+        message = SendMessage.builder()
+                .chatId(update.getMessage().getChatId().toString())
+                .text(String.format(START_TEXT, DATA_FORM_TEXT))
+                .build();
 
         message.setParseMode(ParseMode.MARKDOWNV2);
 
@@ -112,8 +115,11 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             dto.setType(SubscriptionType.QUANTITY_BASED);
 
             // Sending buttons with students. Data from them will be used in the next state
-            SendMessage sendMessage = TelegramMessageUtils.createMessage(update.getMessage().getChatId().toString(), USER_CHOOSE_TEXT);
-            sendMessage.setReplyMarkup(getStudentsButtons(userService.getAllStudents(), state));
+            SendMessage sendMessage = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(USER_CHOOSE_TEXT)
+                    .replyMarkup(getStudentsButtons(userService.getAllStudents(), state))
+                    .build();
 
             messages.add(sendMessage);
 
@@ -135,7 +141,11 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
             removeFromCacheBy(update.getCallbackQuery().getFrom().getId().toString());
 
-            SendMessage sendMessage = TelegramMessageUtils.createMessage(update.getCallbackQuery().getMessage().getChatId().toString(), SUCCESS_TEXT);
+            SendMessage sendMessage = SendMessage.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .text(SUCCESS_TEXT)
+                    .build();
+
             messages.add(sendMessage);
         }
 
@@ -198,7 +208,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
                             getCommandObject().getCommand(),
                             student.getTelegramId(),
                             state.getStateIndex(),
-                            String.format(USER_DATA_PATTERN,
+                            messageTextMaker.userDataPatternMessageText(
                                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
                                     student.getName() // Student's name (always present)
                             )

@@ -5,6 +5,7 @@ import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.state.State;
 import lombok.Getter;
 import lombok.Setter;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -29,8 +30,8 @@ public class CacheData {
         state = handler.getInitialState();
     }
 
-    public List<SendMessage> updateData(Update update) {
-        List<SendMessage> sendMessageList;
+    public List<BotApiMethod<?>> updateData(Update update) {
+        List<BotApiMethod<?>> sendMessageList;
         try {
             sendMessageList = handler.update(update, state);
 

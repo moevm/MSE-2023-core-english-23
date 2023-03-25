@@ -96,8 +96,8 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public List<SendMessage> update(Update update, State state) throws IllegalUserInputException, IllegalStateException {
-        ArrayList<SendMessage> messages = new ArrayList<>();
+    public List<BotApiMethod<?>> update(Update update, State state) throws IllegalUserInputException, IllegalStateException {
+        ArrayList<BotApiMethod<?>> messages = new ArrayList<>();
 
         if (state instanceof InitializedState) {
             // Data comes from Message field

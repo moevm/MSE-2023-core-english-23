@@ -36,8 +36,8 @@ public class Gateway {
         ));
     }
 
-    public List<? extends BotApiMethod<?>> processUpdate(Update update) {
-        List<? extends BotApiMethod<?>> reply = new ArrayList<>();
+    public List<BotApiMethod<?>> processUpdate(Update update) {
+        List<BotApiMethod<?>> reply = new ArrayList<>();
 
         if (update.hasMessage()) {
             try {

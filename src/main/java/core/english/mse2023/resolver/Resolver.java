@@ -45,7 +45,7 @@ public abstract class Resolver {
 
     private Handler getHandler(String command) {
         BotCommand searchingCommand = new BotCommand();
-        for (BotCommand botCommand: textCommandHandlers.keySet()) {
+        for (BotCommand botCommand : textCommandHandlers.keySet()) {
             if (botCommand.getCommand().equals(command) || botCommand.getDescription().equals(command)) {
                 searchingCommand = botCommand;
                 break;
@@ -54,8 +54,8 @@ public abstract class Resolver {
         return textCommandHandlers.get(searchingCommand);
     }
 
-    public List<? extends BotApiMethod<?>> resolve(Update update) {
-        List<? extends BotApiMethod<?>> reply = new ArrayList<>();
+    public List<BotApiMethod<?>> resolve(Update update) {
+        List<BotApiMethod<?>> reply = new ArrayList<>();
 
         if (update.hasMessage() && update.getMessage().hasText()) {
 
@@ -70,6 +70,7 @@ public abstract class Resolver {
                     cacheManager.cache(update.getMessage().getFrom().getId().toString(), new CacheData(interactiveHandler));
 
                     reply = interactiveHandler.handle(update);
+
 
                 } else {
                     reply = handler.handle(update);

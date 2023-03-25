@@ -1,10 +1,14 @@
 package core.english.mse2023.service.impl;
 
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonHistory;
 import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.dictionary.AttendanceType;
+import core.english.mse2023.model.dictionary.LessonHistoryEventType;
+
 import core.english.mse2023.model.dictionary.LessonStatus;
+import core.english.mse2023.repository.LessonHistoryRepository;
 import core.english.mse2023.repository.LessonInfoRepository;
 import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.service.LessonInfoService;
@@ -14,9 +18,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static core.english.mse2023.model.dictionary.LessonStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +34,9 @@ public class LessonServiceImpl implements LessonService {
 
     private final LessonRepository lessonRepository;
     private final LessonInfoService lessonInfoService;
+    private final LessonHistoryRepository lessonHistoryRepository;
+
+    private final LessonInfoRepository lessonInfoRepository;
 
     @Override
     @Transactional
@@ -75,7 +85,7 @@ public class LessonServiceImpl implements LessonService {
     public Lesson createLesson(Subscription subscription, String topic) {
         Lesson lesson = new Lesson();
 
-        lesson.setStatus(LessonStatus.NOT_STARTED_YET);
+        lesson.setStatus(NOT_STARTED_YET);
         lesson.setSubscription(subscription);
         lesson.setTopic(topic);
 
@@ -94,5 +104,30 @@ public class LessonServiceImpl implements LessonService {
         }
 
         lessonInfoService.setAttendance(lesson, attendanceType);
+    }
+
+    @Override
+    @Transactional
+    public LessonStatus cancelLesson(UUID lessonId){
+        Lesson lesson = this.getLessonById(lessonId);
+        LessonStatus status = lesson.getStatus();
+        if (status == NOT_STARTED_YET) {
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
+            lesson.setStatus(CANCELLED_BY_TEACHER);
+            lesson.setModifiedWhen(currentTime);
+
+            LessonHistory lessonHistory = new LessonHistory();
+            lessonHistory.setLesson(lesson);
+            lessonHistory.setType(LessonHistoryEventType.CANCELLED);
+            lessonHistory.setCreatedWhen(currentTime);
+            lessonHistory.setModifiedWhen(currentTime);
+            lessonHistoryRepository.save(lessonHistory);
+
+            LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+            lessonInfo.setAttendance(AttendanceType.CANCELLED);
+            lessonInfo.setModifiedWhen(currentTime);
+        }
+        return status;
     }
 }

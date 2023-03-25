@@ -24,6 +24,12 @@ public class InlineKeyboardMaker {
                                 0
                         ))
                         .row()
+                        .button(TelegramInlineButtonsUtils.createInlineButton(
+                                InlineButtonCommand.CANCEL_LESSON,
+                                lessonId,
+                                0
+                        ))
+                        .row()
                         .build().getKeyboard()
         );
 
@@ -107,4 +113,5 @@ public class InlineKeyboardMaker {
 
         return inlineKeyboardMarkup;
     }
+
 }

@@ -123,11 +123,10 @@ public class LessonServiceImpl implements LessonService {
             lessonHistory.setCreatedWhen(currentTime);
             lessonHistory.setModifiedWhen(currentTime);
             lessonHistoryRepository.save(lessonHistory);
-
             LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
             lessonInfo.setAttendance(AttendanceType.CANCELLED);
             lessonInfo.setModifiedWhen(currentTime);
         }
-        return status;
+        return lesson.getStatus();
     }
 }

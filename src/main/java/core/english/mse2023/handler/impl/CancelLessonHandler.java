@@ -27,8 +27,7 @@ import java.util.UUID;
 @InlineButtonType
 @TeacherRole
 public class CancelLessonHandler implements Handler {
-    private static final String CANCELLED_TEXT = "Невозможно отменить урок. Он ранее уже был отменён.";
-    private static final String DONE_TEXT = "Вы отменили выбранное занятие.";
+    private static final String DONE_TEXT = "Выбранный урок отменён.";
     private static final String ENDED_TEXT = "Невозможно отменить урок. Он уже завершён.";
     private static final String IN_PROGRESS_TEXT = "Невозможно отменить урок. Он уже начат.";
 
@@ -40,33 +39,20 @@ public class CancelLessonHandler implements Handler {
 
         UUID lessonId = UUID.fromString(buttonData.getData());
         LessonStatus status = lessonService.cancelLesson(lessonId);
-        SendMessage message;
-        switch (status){
-            case NOT_STARTED_YET:
-                message = SendMessage.builder()
-                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(DONE_TEXT)
-                    .build();
-                break;
-            case ENDED:
-                message = SendMessage.builder()
+        SendMessage message = switch (status) {
+            case ENDED -> SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                     .text(ENDED_TEXT)
                     .build();
-                break;
-            case IN_PROGRESS:
-                message = SendMessage.builder()
+            case IN_PROGRESS -> SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                     .text(IN_PROGRESS_TEXT)
                     .build();
-                break;
-            default:
-                message = SendMessage.builder()
+            default -> SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(CANCELLED_TEXT)
+                    .text(DONE_TEXT)
                     .build();
-
-        }
+        };
 
         return List.of(message);
     }

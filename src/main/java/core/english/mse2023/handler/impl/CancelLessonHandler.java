@@ -1,4 +1,5 @@
 package core.english.mse2023.handler.impl;
+import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.component.ReplyKeyboardMaker;
@@ -26,6 +27,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @InlineButtonType
 @TeacherRole
+@AdminRole
 public class CancelLessonHandler implements Handler {
     private static final String DONE_TEXT = "Выбранный урок отменён.";
     private static final String ENDED_TEXT = "Невозможно отменить урок. Он уже завершён.";

@@ -1,5 +1,6 @@
 package core.english.mse2023.handler.impl;
 
+import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
+@AllRoles
 @InlineButtonType
 @RequiredArgsConstructor
 public class CancelSubscriptionHandler implements Handler {

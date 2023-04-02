@@ -1,5 +1,6 @@
 package core.english.mse2023.handler.impl;
 
+import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Component
 @TextCommandType
+@AllRoles
 @AllArgsConstructor
 public class ToMainMenuHandler implements Handler {
 

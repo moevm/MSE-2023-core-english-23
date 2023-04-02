@@ -1,6 +1,7 @@
 package core.english.mse2023.handler.impl;
 
 import core.english.mse2023.aop.annotation.handler.AdminRole;
+import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
@@ -15,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import java.util.List;
 
 @Component
-@AdminRole
+@AllRoles
 @TextCommandType
 @AllArgsConstructor
 public class AssignRoleHandler implements Handler {

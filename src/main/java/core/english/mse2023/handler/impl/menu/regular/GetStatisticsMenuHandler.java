@@ -1,10 +1,13 @@
-package core.english.mse2023.handler.impl;
+package core.english.mse2023.handler.impl.menu;
 
+import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.AllRoles;
+import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
+import core.english.mse2023.model.dictionary.UserRole;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -16,25 +19,27 @@ import java.util.List;
 
 @Component
 @TextCommandType
-@AllRoles
+@AdminRole
+@TeacherRole
 @AllArgsConstructor
-public class SubscriptionMenuHandler implements Handler {
+public class GetStatisticsMenuHandler implements Handler {
 
-    private static final String MESSAGE = "Вы перешли в раздел АБОНЕМЕНТ (ПОДПИСКА)";
+    private static final String MESSAGE = "Вы перешли в раздел СТАТИСТИКА";
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update) {
+    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         return List.of(SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
                 .text(MESSAGE)
-                .replyMarkup(replyKeyboardMaker.getSubscriptionKeyboard())
+                .replyMarkup(replyKeyboardMaker.getStatisticsMenu(userRole))
                 .build());
     }
 
     @Override
     public BotCommand getCommandObject() {
-        return ButtonCommand.SUBSCRIPTION;
+        return ButtonCommand.STATISTICS;
     }
 }
+

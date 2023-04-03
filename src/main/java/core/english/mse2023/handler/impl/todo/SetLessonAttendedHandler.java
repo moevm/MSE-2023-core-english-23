@@ -10,6 +10,7 @@ import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.dictionary.AttendanceType;
+import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class SetLessonAttendedHandler implements Handler {
     private final InlineKeyboardMaker inlineKeyboardMaker;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update) {
+    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
         UUID lessonId = UUID.fromString(buttonData.getData());

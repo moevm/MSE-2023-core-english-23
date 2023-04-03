@@ -1,4 +1,4 @@
-package core.english.mse2023.handler.impl;
+package core.english.mse2023.handler.impl.todo;
 
 import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
@@ -6,6 +6,7 @@ import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
+import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,7 @@ public class CancelSubscriptionHandler implements Handler {
     private final SubscriptionService subscriptionService;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update) {
+    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 

@@ -1,4 +1,4 @@
-package core.english.mse2023.handler.impl;
+package core.english.mse2023.handler.impl.getall;
 
 import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
@@ -6,6 +6,7 @@ import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Subscription;
+import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -48,11 +49,17 @@ public class GetAllSubscriptionsHandler implements Handler {
     private final InlineKeyboardMaker inlineKeyboardMaker;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update) {
+    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
 
-        List<Subscription> subscriptions = subscriptionService.getAllSubscriptions();
+        List<Subscription> subscriptions;
 
-        return createMessagesWithButton(subscriptions, update.getMessage().getChatId().toString());
+        if (userRole == UserRole.PARENT) {
+            subscriptions = subscriptionService.getAllSubscriptionsInFamily(update.getMessage().getFrom().getId().toString());
+        } else {
+            subscriptions = subscriptionService.getAllSubscriptions();
+        }
+
+        return createMessagesWithButton(subscriptions, update.getMessage().getChatId().toString(), userRole);
     }
 
     @Override
@@ -60,7 +67,7 @@ public class GetAllSubscriptionsHandler implements Handler {
         return ButtonCommand.GET_ALL_SUBSCRIPTIONS;
     }
 
-    private List<BotApiMethod<?>> createMessagesWithButton(List<Subscription> subscriptions, String chatId) {
+    private List<BotApiMethod<?>> createMessagesWithButton(List<Subscription> subscriptions, String chatId, UserRole userRole) {
         List<BotApiMethod<?>> messages = new ArrayList<>();
 
         messages.add(SendMessage.builder()
@@ -88,7 +95,7 @@ public class GetAllSubscriptionsHandler implements Handler {
                     ))
                     .build();
 
-            message.setReplyMarkup(inlineKeyboardMaker.getSubscriptionMainMenu(subscription.getId().toString()));
+            message.setReplyMarkup(inlineKeyboardMaker.getSubscriptionMainMenu(subscription.getId().toString(), userRole));
 
             messages.add(message);
         }

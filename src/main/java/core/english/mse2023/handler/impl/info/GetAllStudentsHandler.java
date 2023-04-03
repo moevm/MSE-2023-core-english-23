@@ -1,13 +1,18 @@
-package core.english.mse2023.handler.impl;
+package core.english.mse2023.handler.impl.getall;
 
+import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
+import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
+import core.english.mse2023.util.builder.InlineKeyboardBuilder;
+import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -22,7 +27,7 @@ import java.util.List;
 
 @Component
 @TextCommandType
-@AllRoles
+@AdminRole
 @RequiredArgsConstructor
 public class GetAllStudentsHandler implements Handler {
 
@@ -33,7 +38,7 @@ public class GetAllStudentsHandler implements Handler {
     private final UserService service;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update) {
+    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         List<User> students = service.getAllStudents();
 
@@ -59,30 +64,22 @@ public class GetAllStudentsHandler implements Handler {
     private InlineKeyboardMarkup getStudentsButtons(List<User> students) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
 
         for (User student : students) {
-            List<InlineKeyboardButton> keyboardRow = new ArrayList<>();
-            InlineKeyboardButton button = new InlineKeyboardButton();
-
-            // TODO: set appropriate data for callback
-            button.setCallbackData(InlineButtonDTOEncoder.encode(InlineButtonDTO.builder()
-                    .command(null)
-                    .stateIndex(0)
-                    .data(null)
-                    .build()));
-            button.setText(String.format(USER_DATA_PATTERN,
-                    (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
-                    student.getName() // Student's name (always present)
-            ));
-
-            keyboardRow.add(button);
-
-            keyboard.add(keyboardRow);
+            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                            InlineButtonCommand.GET_MORE_USER_INFO.getCommand(),
+                            student.getTelegramId(),
+                            0,
+                            String.format(USER_DATA_PATTERN,
+                                    (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
+                                    student.getName() // Student's name (always present)
+                            )
+                    ))
+                    .row();
         }
 
-
-        inlineKeyboardMarkup.setKeyboard(keyboard);
+        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;
     }
 

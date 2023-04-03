@@ -2,7 +2,9 @@ package core.english.mse2023.handler.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.AllRoles;
+import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
@@ -13,6 +15,7 @@ import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.SubscriptionType;
+import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.service.UserService;
@@ -40,7 +43,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @TextCommandType
-@AllRoles
+@AdminRole
+@TeacherRole
 @RequiredArgsConstructor
 public class CreateSubscriptionHandler implements InteractiveHandler {
 
@@ -67,13 +71,12 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
     private final SubscriptionService subscriptionService;
 
-    private final LessonService lessonService;
-
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
+    // TODO - this handler should have much complicated state logic than it has now
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update) {
+    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         // Creating new DTO for this user
         SubscriptionCreationDTO dto = SubscriptionCreationDTO.builder()
@@ -96,7 +99,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> update(Update update, State state) throws IllegalUserInputException, IllegalStateException {
+    public List<BotApiMethod<?>> update(Update update, State state, UserRole role) throws IllegalUserInputException, IllegalStateException {
         ArrayList<BotApiMethod<?>> messages = new ArrayList<>();
 
         if (state instanceof InitializedState) {

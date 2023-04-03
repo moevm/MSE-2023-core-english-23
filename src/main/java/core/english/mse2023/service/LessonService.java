@@ -21,4 +21,5 @@ public interface LessonService {
     Lesson createLesson(Subscription subscription, String topic);
 
     void setAttendance(UUID lessonId, AttendanceType attendanceType);
+    LessonStatus cancelLesson(UUID lessonId);
 }

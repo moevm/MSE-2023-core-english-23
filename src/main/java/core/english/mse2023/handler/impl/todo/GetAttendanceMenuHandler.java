@@ -1,4 +1,4 @@
-package core.english.mse2023.handler.impl;
+package core.english.mse2023.handler.impl.todo;
 
 import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
@@ -22,6 +22,9 @@ import java.util.List;
 @AllRoles
 @RequiredArgsConstructor
 public class GetAttendanceMenuHandler implements Handler {
+
+    // TODO: должно быть заменено командой "Установить результаты занятия",
+    //  в которой логика из этого хэндлера является одной из частей выполнения команды
 
     private final InlineKeyboardMaker inlineKeyboardMaker;
 

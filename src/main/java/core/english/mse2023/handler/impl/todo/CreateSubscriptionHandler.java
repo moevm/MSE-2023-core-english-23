@@ -1,4 +1,4 @@
-package core.english.mse2023.handler.impl;
+package core.english.mse2023.handler.impl.todo;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -74,7 +74,6 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     // TODO - this handler should have much complicated state logic than it has now
-
     @Override
     public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
 

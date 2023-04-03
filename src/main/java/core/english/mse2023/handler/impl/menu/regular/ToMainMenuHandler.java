@@ -1,4 +1,4 @@
-package core.english.mse2023.handler.impl.menu;
+package core.english.mse2023.handler.impl.menu.regular;
 
 import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;

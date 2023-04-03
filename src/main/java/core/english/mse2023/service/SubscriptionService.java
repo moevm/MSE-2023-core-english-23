@@ -13,5 +13,7 @@ public interface SubscriptionService {
 
     List<Subscription> getAllSubscriptions();
 
+    List<Subscription> getAllSubscriptionsInFamily(String parentTelegramId);
+
     boolean cancelSubscription(UUID subscriptionId);
 }

@@ -1,10 +1,12 @@
 package core.english.mse2023.service.impl;
 
 import core.english.mse2023.dto.SubscriptionCreationDTO;
+import core.english.mse2023.model.Family;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.model.dictionary.SubscriptionStatus;
+import core.english.mse2023.repository.FamilyRepository;
 import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.repository.SubscriptionRepository;
 import core.english.mse2023.repository.UserRepository;
@@ -27,6 +29,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final LessonService lessonService;
     private final UserRepository userRepository;
+    private final FamilyRepository familyRepository;
 
     @Transactional
     @Override
@@ -60,6 +63,19 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Transactional
     public List<Subscription> getAllSubscriptions() {
         return subscriptionRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public List<Subscription> getAllSubscriptionsInFamily(String parentTelegramId) {
+
+        List<Subscription> subscriptions = new ArrayList<>();
+
+        for (Family family : familyRepository.getAllByParent(userRepository.findByTelegramId(parentTelegramId))) {
+            subscriptions.addAll(subscriptionRepository.getAllByStudent(family.getStudent()));
+        }
+
+        return subscriptions;
     }
 
 

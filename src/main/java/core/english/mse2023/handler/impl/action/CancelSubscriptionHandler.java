@@ -1,7 +1,9 @@
-package core.english.mse2023.handler.impl.todo;
+package core.english.mse2023.handler.impl.action;
 
+import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
+import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -19,7 +21,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-@AllRoles
+@AdminRole
+@TeacherRole
 @InlineButtonType
 @RequiredArgsConstructor
 public class CancelSubscriptionHandler implements Handler {

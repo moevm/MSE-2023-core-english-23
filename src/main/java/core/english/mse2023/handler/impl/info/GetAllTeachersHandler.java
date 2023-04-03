@@ -1,4 +1,4 @@
-package core.english.mse2023.handler.impl.getall;
+package core.english.mse2023.handler.impl.info;
 
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.AllRoles;

@@ -1,7 +1,6 @@
 package core.english.mse2023.handler.impl.menu.regular;
 
 import core.english.mse2023.aop.annotation.handler.AdminRole;
-import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.ReplyKeyboardMaker;
@@ -20,11 +19,10 @@ import java.util.List;
 @Component
 @TextCommandType
 @AdminRole
-@TeacherRole
 @AllArgsConstructor
-public class GetStatisticsMenuHandler implements Handler {
+public class DataMenuHandler implements Handler {
 
-    private static final String MESSAGE = "Вы перешли в раздел СТАТИСТИКА";
+    private static final String MESSAGE = "Вы перешли в раздел РАБОТА С ДАННЫМИ";
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override
@@ -33,7 +31,7 @@ public class GetStatisticsMenuHandler implements Handler {
         return List.of(SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
                 .text(MESSAGE)
-                .replyMarkup(replyKeyboardMaker.getStatisticsMenu(userRole))
+                .replyMarkup(replyKeyboardMaker.getDataMenu())
                 .build());
     }
 
@@ -42,4 +40,3 @@ public class GetStatisticsMenuHandler implements Handler {
         return ButtonCommand.STATISTICS;
     }
 }
-

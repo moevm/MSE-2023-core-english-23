@@ -2,6 +2,7 @@ package core.english.mse2023.cache;
 
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
+import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.state.State;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,10 +31,10 @@ public class CacheData {
         state = handler.getInitialState();
     }
 
-    public List<BotApiMethod<?>> updateData(Update update) {
+    public List<BotApiMethod<?>> updateData(Update update, UserRole role) {
         List<BotApiMethod<?>> sendMessageList;
         try {
-            sendMessageList = handler.update(update, state);
+            sendMessageList = handler.update(update, state, role);
 
             state.next(this);
 

@@ -1,6 +1,7 @@
 package core.english.mse2023.handler;
 
 import core.english.mse2023.exception.IllegalUserInputException;
+import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.state.State;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,11 +15,12 @@ public interface InteractiveHandler extends Handler {
      *
      * @param update Data from user
      * @param state  Current handler's working state
+     * @param role Role of user that triggered this handler
      * @return List of messages to be sent to the user
      * @throws IllegalUserInputException If user entered something wrong
      * @throws IllegalStateException     If method has been used in the wrong {@link State}
      */
-    List<BotApiMethod<?>> update(Update update, State state) throws IllegalUserInputException, IllegalStateException;
+    List<BotApiMethod<?>> update(Update update, State state, UserRole role) throws IllegalUserInputException, IllegalStateException;
 
     /**
      * Returns initial state for this handler

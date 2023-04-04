@@ -18,11 +18,11 @@ import java.util.List;
 
 @Component
 @TextCommandType
-@AdminRole
+@TeacherRole
 @AllArgsConstructor
-public class DataMenuHandler implements Handler {
+public class WorkWithSubscriptionsHandler implements Handler {
 
-    private static final String MESSAGE = "Вы перешли в раздел РАБОТА С ДАННЫМИ";
+    private static final String MESSAGE = "Вы перешли в раздел РАБОТА С ПОДПИСКАМИ";
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override
@@ -31,12 +31,12 @@ public class DataMenuHandler implements Handler {
         return List.of(SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
                 .text(MESSAGE)
-                .replyMarkup(replyKeyboardMaker.getDataMenu())
+                .replyMarkup(replyKeyboardMaker.getWorkWithSubscriptionsMenu())
                 .build());
     }
 
     @Override
     public BotCommand getCommandObject() {
-        return ButtonCommand.DATA;
+        return ButtonCommand.WORK_WITH_SUBSCRIPTIONS;
     }
 }

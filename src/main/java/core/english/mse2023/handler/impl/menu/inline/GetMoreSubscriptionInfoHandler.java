@@ -12,6 +12,7 @@ import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -43,7 +44,7 @@ public class GetMoreSubscriptionInfoHandler implements Handler {
                 .replyMarkup(inlineKeyboardMaker.getSubscriptionLessonsMenu(lessons, buttonData.getData()))
                 .build();
 
-        return List.of(editMessageReplyMarkup);
+        return List.of(editMessageReplyMarkup, new AnswerCallbackQuery(update.getCallbackQuery().getId()));
     }
 
     @Override

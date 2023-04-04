@@ -25,8 +25,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetAllSubscriptionsHandler implements Handler {
 
+    private static final String NO_FAMILY_SUBSCRIPTIONS_TEXT = "В вашей семье нет подписок.";
+    private static final String NO_TEACHER_SUBSCRIPTIONS_TEXT = "Нет подписок, в которых вы являетесь преподавателем.";
+    private static final String NO_SUBSCRIPTIONS_TEXT = "В системе нет подписок";
 
-    private static final String WELCOME_TEXT = "Список подписок в системе:";
     private static final String DATA_PATTERN = """
             Тип: %s
             Статус: %s
@@ -55,6 +57,8 @@ public class GetAllSubscriptionsHandler implements Handler {
 
         if (userRole == UserRole.PARENT) {
             subscriptions = subscriptionService.getAllSubscriptionsInFamily(update.getMessage().getFrom().getId().toString());
+        } else if (userRole == UserRole.TEACHER) {
+            subscriptions = subscriptionService.getAllSubscriptionsWithTeacher(update.getMessage().getFrom().getId().toString());
         } else {
             subscriptions = subscriptionService.getAllSubscriptions();
         }
@@ -68,12 +72,28 @@ public class GetAllSubscriptionsHandler implements Handler {
     }
 
     private List<BotApiMethod<?>> createMessagesWithButton(List<Subscription> subscriptions, String chatId, UserRole userRole) {
-        List<BotApiMethod<?>> messages = new ArrayList<>();
 
-        messages.add(SendMessage.builder()
-                .chatId(chatId)
-                .text(WELCOME_TEXT)
-                .build());
+        if (subscriptions.size() == 0) {
+            if (userRole == UserRole.PARENT) {
+                return List.of(SendMessage.builder()
+                        .chatId(chatId)
+                        .text(NO_FAMILY_SUBSCRIPTIONS_TEXT)
+                        .build());
+            } else if (userRole == UserRole.TEACHER) {
+                return List.of(SendMessage.builder()
+                        .chatId(chatId)
+                        .text(NO_TEACHER_SUBSCRIPTIONS_TEXT)
+                        .build());
+            } else {
+                return List.of(SendMessage.builder()
+                        .chatId(chatId)
+                        .text(NO_SUBSCRIPTIONS_TEXT)
+                        .build());
+            }
+
+        }
+
+        List<BotApiMethod<?>> messages = new ArrayList<>();
 
         for (Subscription subscription : subscriptions) {
             SendMessage message = SendMessage.builder()

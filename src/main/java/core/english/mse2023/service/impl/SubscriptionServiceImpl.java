@@ -78,6 +78,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return subscriptions;
     }
 
+    @Override
+    @Transactional
+    public List<Subscription> getAllSubscriptionsWithTeacher(String teacherTelegramId) {
+
+        return new ArrayList<>(subscriptionRepository.getAllByTeacher(userRepository.findByTelegramId(teacherTelegramId)));
+
+    }
+
 
     @Override
     @Transactional

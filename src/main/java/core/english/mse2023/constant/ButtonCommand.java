@@ -27,4 +27,6 @@ public interface ButtonCommand {
 
     BotCommand CREATE_SUBSCRIPTION = new BotCommand("/createSubscription", "Создать подписку");
 
+    BotCommand WORK_WITH_SUBSCRIPTIONS = new BotCommand("/workWithSubscriptions", "Работа с подписками");
+
 }

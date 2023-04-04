@@ -63,10 +63,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean changeUserRole(Update update, UserRole role) {
+    public boolean changeUserRole(String telegramId, UserRole role) {
         boolean roleHasBeenChanged = false;
-
-        String telegramId = update.getMessage().getFrom().getId().toString();
 
         User user = repository.findByTelegramId(telegramId);
 

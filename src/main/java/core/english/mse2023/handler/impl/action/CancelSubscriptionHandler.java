@@ -12,6 +12,7 @@ import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -55,7 +56,7 @@ public class CancelSubscriptionHandler implements Handler {
                     .build();
         }
 
-        return List.of(message);
+        return List.of(message, new AnswerCallbackQuery(update.getCallbackQuery().getId()));
     }
 
     @Override

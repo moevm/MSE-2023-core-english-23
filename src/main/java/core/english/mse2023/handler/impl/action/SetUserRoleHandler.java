@@ -11,10 +11,12 @@ import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 
 import java.util.List;
 
@@ -37,21 +39,23 @@ public class SetUserRoleHandler implements Handler {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
         UserRole newRole = UserRole.valueOf(buttonData.getData());
 
-        boolean result = service.changeUserRole(update, newRole);
+        boolean result = service.changeUserRole(update.getCallbackQuery().getFrom().getId().toString(), newRole);
 
         SendMessage message = result ?
                 SendMessage.builder()
-                        .chatId(update.getMessage().getChatId().toString())
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                         .text(String.format(USER_ROLE_SUCCESSFULLY_CHANGED_MESSAGE_TEXT, newRole))
                         .replyMarkup(replyKeyboardMaker.getMainMenuKeyboard(newRole))
                         .build()
                 :
                 SendMessage.builder()
-                        .chatId(update.getMessage().getChatId().toString())
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                         .text(FAILED_TO_CHANGE_USER_ROLE_MESSAGE_TEXT)
                         .build();
 
-        return List.of(message);
+
+
+        return List.of(message, new AnswerCallbackQuery(update.getCallbackQuery().getId()));
     }
 
     @Override

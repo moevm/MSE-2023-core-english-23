@@ -51,7 +51,7 @@ public class AssignRoleHandler implements Handler {
                             InlineButtonCommand.SET_USER_ROLE.getCommand(),
                             role.toString(),
                             0,
-                            role.toString()
+                            role.getString()
                     ))
                     .row();
         }

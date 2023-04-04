@@ -97,15 +97,11 @@ public abstract class Resolver {
             // If we received an inline button press
 
             CacheData cacheData = cacheManager.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
+            InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
             // Checking if user who pressed the button has any ongoing processes
-            if (cacheData != null) {
-                InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
-
-                // Checking if data from the button corresponds with the expected data
-                if (cacheData.getHandler().getCommandObject().getCommand().equals(inlineButtonDTO.getCommand()) &&
-                        (cacheData.getState().getStateIndex() - 1) == inlineButtonDTO.getStateIndex()) {
-
+            if (cacheData != null && cacheData.getHandler().getCommandObject().getCommand().equals(inlineButtonDTO.getCommand())) {
+                if (cacheData.getCurrentStateIndex() == inlineButtonDTO.getStateIndex()) {
                     // If everything is ok - proceed the command
                     reply = cacheData.updateData(update, role);
 

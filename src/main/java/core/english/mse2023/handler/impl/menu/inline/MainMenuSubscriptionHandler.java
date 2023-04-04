@@ -10,6 +10,7 @@ import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -30,11 +31,14 @@ public class MainMenuSubscriptionHandler implements Handler {
     public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
-        return List.of(EditMessageReplyMarkup.builder()
-                .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .messageId(update.getCallbackQuery().getMessage().getMessageId())
-                .replyMarkup(inlineKeyboardMaker.getSubscriptionMainMenu(buttonData.getData(), userRole))
-                .build());
+        return List.of(
+                EditMessageReplyMarkup.builder()
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                        .messageId(update.getCallbackQuery().getMessage().getMessageId())
+                        .replyMarkup(inlineKeyboardMaker.getSubscriptionMainMenu(buttonData.getData(), userRole))
+                        .build(),
+                new AnswerCallbackQuery(update.getCallbackQuery().getId())
+        );
     }
 
     @Override

@@ -8,11 +8,11 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
-import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -37,11 +37,13 @@ public class MainMenuLessonHandler implements Handler {
 
         Lesson lesson = lessonService.getLessonById(UUID.fromString(buttonData.getData()));
 
-        return List.of(EditMessageReplyMarkup.builder()
+        return List.of(
+                EditMessageReplyMarkup.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                         .messageId(update.getCallbackQuery().getMessage().getMessageId())
-                        .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(buttonData.getData(), lesson.getStatus(), userRole))
-                        .build()
+                        .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(buttonData.getData(), lesson.getStatus(), lesson.getDate() != null, userRole))
+                        .build(),
+                new AnswerCallbackQuery(update.getCallbackQuery().getId())
         );
     }
 

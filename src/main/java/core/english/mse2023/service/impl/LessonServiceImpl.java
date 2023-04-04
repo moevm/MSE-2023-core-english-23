@@ -108,7 +108,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public LessonStatus cancelLesson(UUID lessonId){
+    public Lesson cancelLesson(UUID lessonId){
         Lesson lesson = this.getLessonById(lessonId);
         LessonStatus status = lesson.getStatus();
         if (status == NOT_STARTED_YET) {
@@ -127,6 +127,6 @@ public class LessonServiceImpl implements LessonService {
             lessonInfo.setAttendance(AttendanceType.CANCELLED);
             lessonInfo.setModifiedWhen(currentTime);
         }
-        return lesson.getStatus();
+        return lesson;
     }
 }

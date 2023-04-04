@@ -29,6 +29,7 @@ public interface InlineButtonCommand {
     BotCommand RESCHEDULE_LESSON = new BotCommand("/rescheduleLesson", "Перенести");
     BotCommand CANCEL_LESSON = new BotCommand("/cancelLesson", "Отменить урок");
     BotCommand SET_FAMILY_COMMENT = new BotCommand("/setFamilyComment", "Дать отзыв");
+    BotCommand SET_LESSON_DATE = new BotCommand("/setLessonDate", "Назначить дату");
 
 
 }

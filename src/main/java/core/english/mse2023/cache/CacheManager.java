@@ -66,7 +66,7 @@ public class CacheManager {
             @Override
             public long expireAfterRead(@Nonnull String s, @Nonnull CacheData cacheData, long l, long l1) {
 
-                if (!cacheData.getState().hasNext()) {
+                if (cacheData.isHasFinished()) {
                     return 10;
                 }
                 return expireTime;

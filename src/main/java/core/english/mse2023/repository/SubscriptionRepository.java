@@ -13,4 +13,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
     Subscription getSubscriptionsById(UUID subscriptionId);
 
     List<Subscription> getAllByStudent(User student);
+
+    List<Subscription> getAllByTeacher(User teacher);
 }

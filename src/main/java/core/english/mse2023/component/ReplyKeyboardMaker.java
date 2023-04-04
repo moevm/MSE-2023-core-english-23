@@ -38,7 +38,7 @@ public class ReplyKeyboardMaker {
             case TEACHER -> {
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton(ButtonCommand.STATISTICS.getDescription()));
-                row.add(new KeyboardButton(ButtonCommand.GET_ALL_SUBSCRIPTIONS.getDescription()));
+                row.add(new KeyboardButton(ButtonCommand.WORK_WITH_SUBSCRIPTIONS.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
                 keyboard.add(row);
             }
@@ -114,12 +114,28 @@ public class ReplyKeyboardMaker {
         return getReplyKeyboardMarkup(keyboard);
     }
 
+    public ReplyKeyboardMarkup getWorkWithSubscriptionsMenu() {
+        List<KeyboardRow> keyboard = new ArrayList<>();
+
+        keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
+                ButtonCommand.GET_ALL_SUBSCRIPTIONS.getDescription()
+        ))));
+        keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
+                ButtonCommand.CREATE_SUBSCRIPTION.getDescription()
+        ))));
+        keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
+                ButtonCommand.TO_MAIN_MENU.getDescription()
+        ))));
+
+        return getReplyKeyboardMarkup(keyboard);
+    }
+
     private ReplyKeyboardMarkup getReplyKeyboardMarkup(List<KeyboardRow> keyboardRows) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        replyKeyboardMarkup.setKeyboard(keyboardRows);
-        replyKeyboardMarkup.setSelective(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(false);
-        return replyKeyboardMarkup;
+        return ReplyKeyboardMarkup.builder()
+                .keyboard(keyboardRows)
+                .selective(true)
+                .resizeKeyboard(true)
+                .oneTimeKeyboard(false)
+                .build();
     }
 }

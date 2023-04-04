@@ -1,9 +1,8 @@
-package core.english.mse2023.handler.impl.todo;
+package core.english.mse2023.handler.impl.action;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
-import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.MessageTextMaker;
@@ -12,21 +11,24 @@ import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
+import core.english.mse2023.exception.UnexpectedUpdateType;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.SubscriptionType;
 import core.english.mse2023.model.dictionary.UserRole;
-import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.service.UserService;
-import core.english.mse2023.state.State;
-import core.english.mse2023.state.subcription.InitializedState;
-import core.english.mse2023.state.subcription.PartiallyCreatedState;
+import core.english.mse2023.state.subcription.SubscriptionCreationEvent;
+import core.english.mse2023.state.subcription.SubscriptionCreationState;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -59,7 +61,8 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             `lessonAmount: 7`
             """;
 
-    private static final String USER_CHOOSE_TEXT = "Далее выберите студента, с которым будете заниматься:";
+    private static final String STUDENT_CHOOSE_TEXT = "Далее выберите студента, с которым будете заниматься:";
+    private static final String TEACHER_CHOOSE_TEXT = "Также выберите учителя, который будет проводить занятия:";
 
     private static final String SUCCESS_TEXT = "Новая подписка и требуемые уроки созданы.";
 
@@ -73,13 +76,21 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
+    @Qualifier("subscriptionCreationStateMachineFactory")
+    private final StateMachineFactory<SubscriptionCreationState, SubscriptionCreationEvent> stateMachineFactory;
+
     // TODO - this handler should have much complicated state logic than it has now
     @Override
     public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
 
+        StateMachine<SubscriptionCreationState, SubscriptionCreationEvent> stateMachine =
+                stateMachineFactory.getStateMachine();
+        stateMachine.start();
+        stateMachine.getExtendedState().getVariables().put("UserRole", userRole);
+
         // Creating new DTO for this user
         SubscriptionCreationDTO dto = SubscriptionCreationDTO.builder()
-                .teacherTelegramId(update.getMessage().getFrom().getId().toString())
+                .stateMachine(stateMachine)
                 .build();
 
         subscriptionCreationCache.put(update.getMessage().getFrom().getId().toString(), dto);
@@ -98,19 +109,27 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> update(Update update, State state, UserRole role) throws IllegalUserInputException, IllegalStateException {
+    public List<BotApiMethod<?>> update(Update update, UserRole userRole) throws IllegalUserInputException, IllegalStateException {
         ArrayList<BotApiMethod<?>> messages = new ArrayList<>();
 
-        if (state instanceof InitializedState) {
-            // Data comes from Message field
+        SubscriptionCreationDTO dto;
 
-            // Getting current DTO
-            SubscriptionCreationDTO dto = subscriptionCreationCache.getIfPresent(update.getMessage().getFrom().getId().toString());
+        if (update.hasMessage()) {
+            dto = subscriptionCreationCache.getIfPresent(update.getMessage().getFrom().getId().toString());
+        } else if (update.hasCallbackQuery()) {
+            dto = subscriptionCreationCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
+        } else {
+            throw new UnexpectedUpdateType("Update type for CreateSubscriptionHandler wasn't message or callback query.");
+        }
 
-            if (dto == null) {
-                log.error("DTO instance wasn't created yet! Cannot continue. User id: {}; Current state: {}", update.getMessage().getFrom().getId(), state.getClass().getName());
-                throw new IllegalStateException("There's no DTO created to continue building Subscription.");
-            }
+        if (dto == null) {
+            log.error("DTO instance wasn't created yet! Cannot continue. User id: {}", update.getMessage().getFrom().getId());
+            throw new IllegalStateException("There's no DTO created to continue building Subscription.");
+        }
+
+        var stateMachine = dto.getStateMachine();
+
+        if (stateMachine.getState().getId() == SubscriptionCreationState.START_DATE_CHOOSING) {
 
             // Parsing data from user
             parseInput(update.getMessage().getText(), dto);
@@ -118,32 +137,56 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             // TODO - ask user in future?
             dto.setType(SubscriptionType.QUANTITY_BASED);
 
+            stateMachine.sendEvent(SubscriptionCreationEvent.CHOOSE_START_DATE);
+            stateMachine.sendEvent(SubscriptionCreationEvent.CHOOSE_END_DATE);
+            stateMachine.sendEvent(SubscriptionCreationEvent.ENTER_LESSON_AMOUNT);
+
             // Sending buttons with students. Data from them will be used in the next state
             SendMessage sendMessage = SendMessage.builder()
                     .chatId(update.getMessage().getChatId().toString())
-                    .text(USER_CHOOSE_TEXT)
-                    .replyMarkup(getStudentsButtons(userService.getAllStudents(), state))
+                    .text(STUDENT_CHOOSE_TEXT)
+                    .replyMarkup(getStudentsButtons(userService.getAllStudents(), stateMachine.getState().getId()))
                     .build();
 
             messages.add(sendMessage);
 
-        } else if (state instanceof PartiallyCreatedState) {
-            // Data comes from Data field of CallbackQuery
-
-            // Getting current DTO
-            SubscriptionCreationDTO dto = subscriptionCreationCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
-            if (dto == null) {
-                log.error("DTO instance wasn't created yet! Cannot continue. User id: {}; Current state: {}", update.getCallbackQuery().getFrom().getId(), state.getClass().getName());
-                throw new IllegalStateException("There's no DTO created to continue building Subscription.");
-            }
+        } else if (stateMachine.getState().getId() == SubscriptionCreationState.STUDENT_CHOOSING) {
 
             InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
             dto.setStudentTelegramId(buttonData.getData());
 
-            // Since DTO is completely full - it's time to pass creation of the Subscription object to its service
-            subscriptionService.createSubscription(dto);
+            stateMachine.sendEvent(SubscriptionCreationEvent.CHOOSE_STUDENT);
 
-            removeFromCacheBy(update.getCallbackQuery().getFrom().getId().toString());
+            if (userRole == UserRole.TEACHER) {
+                dto.setTeacherTelegramId(update.getCallbackQuery().getFrom().getId().toString());
+
+                subscriptionService.createSubscription(dto);
+
+                SendMessage sendMessage = SendMessage.builder()
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                        .text(SUCCESS_TEXT)
+                        .build();
+
+                messages.add(sendMessage);
+                messages.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
+            } else {
+                SendMessage sendMessage = SendMessage.builder()
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                        .replyMarkup(getTeachersButtons(userService.getAllTeachers(), stateMachine.getState().getId()))
+                        .text(TEACHER_CHOOSE_TEXT)
+                        .build();
+
+                messages.add(sendMessage);
+                messages.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
+            }
+
+        } else if (stateMachine.getState().getId() == SubscriptionCreationState.TEACHER_CHOOSING) {
+            InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
+            dto.setTeacherTelegramId(buttonData.getData());
+
+            stateMachine.sendEvent(SubscriptionCreationEvent.CHOOSE_TEACHER);
+
+            subscriptionService.createSubscription(dto);
 
             SendMessage sendMessage = SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
@@ -151,6 +194,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
                     .build();
 
             messages.add(sendMessage);
+            messages.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
         }
 
         return messages;
@@ -201,7 +245,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
         }
     }
 
-    private InlineKeyboardMarkup getStudentsButtons(List<User> students, State state) {
+    private InlineKeyboardMarkup getStudentsButtons(List<User> students, SubscriptionCreationState state) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
@@ -211,7 +255,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
                     .button(TelegramInlineButtonsUtils.createInlineButton(
                             getCommandObject().getCommand(),
                             student.getTelegramId(),
-                            state.getStateIndex(),
+                            state.getIndex(),
                             messageTextMaker.userDataPatternMessageText(
                                     (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
                                     student.getName() // Student's name (always present)
@@ -225,15 +269,60 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
         return inlineKeyboardMarkup;
     }
 
-    @Override
-    public State getInitialState() {
-        return new InitializedState();
+    private InlineKeyboardMarkup getTeachersButtons(List<User> teachers, SubscriptionCreationState state) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
+
+        for (User teacher : teachers) {
+            builder
+                    .button(TelegramInlineButtonsUtils.createInlineButton(
+                            getCommandObject().getCommand(),
+                            teacher.getTelegramId(),
+                            state.getIndex(),
+                            messageTextMaker.userDataPatternMessageText(
+                                    (teacher.getLastName() != null) ? (teacher.getLastName() + " ") : "", // Student's last name if present
+                                    teacher.getName() // Student's name (always present)
+                            )
+                    ))
+                    .row();
+        }
+
+
+        inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
+        return inlineKeyboardMarkup;
     }
 
     @Override
     public void removeFromCacheBy(String id) {
         if (subscriptionCreationCache.getIfPresent(id) != null)
             subscriptionCreationCache.invalidate(id);
+    }
+
+    @Override
+    public boolean hasFinished(String id) {
+        var dto = subscriptionCreationCache.getIfPresent(id);
+
+        boolean result = true;
+
+        if (dto != null) {
+            result = dto.getStateMachine().isComplete();
+        }
+
+        return result;
+    }
+
+    @Override
+    public int getCurrentStateIndex(String id) {
+        var dto = subscriptionCreationCache.getIfPresent(id);
+
+        int result = -1;
+
+        if (dto != null) {
+            result = dto.getStateMachine().getState().getId().getIndex();
+        }
+
+        return result;
     }
 
     @Override

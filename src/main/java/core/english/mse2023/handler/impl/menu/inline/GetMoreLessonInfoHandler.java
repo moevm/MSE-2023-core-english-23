@@ -13,6 +13,7 @@ import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -49,9 +50,9 @@ public class GetMoreLessonInfoHandler implements Handler {
 
         message.setParseMode(ParseMode.MARKDOWNV2);
 
-        message.setReplyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(lesson.getId().toString(), lesson.getStatus(), userRole));
+        message.setReplyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(lesson.getId().toString(), lesson.getStatus(), lesson.getDate() != null, userRole));
 
-        return List.of(message);
+        return List.of(message, new AnswerCallbackQuery(update.getCallbackQuery().getId()));
     }
 
     @Override

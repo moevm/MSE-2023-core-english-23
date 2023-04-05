@@ -1,8 +1,9 @@
 package core.english.mse2023.cache;
 
 import core.english.mse2023.exception.IllegalUserInputException;
+import core.english.mse2023.exception.UnexpectedUpdateType;
 import core.english.mse2023.handler.InteractiveHandler;
-import core.english.mse2023.state.State;
+import core.english.mse2023.model.dictionary.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -23,19 +24,43 @@ public class CacheData {
 
     @Getter
     @Setter
-    private State state;
+    private boolean hasFinished;
+
+    @Getter
+    @Setter
+    private int currentStateIndex;
 
     public CacheData(InteractiveHandler handler) {
         this.handler = handler;
-        state = handler.getInitialState();
+        this.hasFinished = false;
+        this.currentStateIndex = 0;
     }
 
-    public List<BotApiMethod<?>> updateData(Update update) {
+    public List<BotApiMethod<?>> updateData(Update update, UserRole role) {
         List<BotApiMethod<?>> sendMessageList;
         try {
-            sendMessageList = handler.update(update, state);
+            String userId = null;
 
-            state.next(this);
+            if (update.hasMessage()) {
+                userId = update.getMessage().getFrom().getId().toString();
+            } else if (update.hasCallbackQuery()) {
+                userId = update.getCallbackQuery().getFrom().getId().toString();
+            }
+
+            if (userId == null) {
+                throw new UnexpectedUpdateType("Cannot get user id since update doesn't have message or callback query.");
+            }
+
+            sendMessageList = handler.update(update, role);
+
+            if (!hasFinished) {
+                if (handler.hasFinished(userId)) {
+                    handler.removeFromCacheBy(userId);
+                    hasFinished = true;
+                } else {
+                    currentStateIndex = handler.getCurrentStateIndex(userId);
+                }
+            }
 
         } catch (IllegalUserInputException exception) {
             SendMessage message = new SendMessage();
@@ -64,7 +89,7 @@ public class CacheData {
         if (update.hasMessage()) {
             message.setChatId(String.valueOf(update.getMessage().getChatId()));
         } else if (update.hasCallbackQuery()) {
-            message.setChatId(String.valueOf(update.getMessage().getChatId()));
+            message.setChatId(String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
         }
     }
 

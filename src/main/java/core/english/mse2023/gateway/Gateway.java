@@ -43,7 +43,7 @@ public class Gateway {
             try {
                 UserRole userRole = userService.getUserRole(update.getMessage().getFrom().getId().toString());
 
-                reply = resolvers.get(userRole).resolve(update);
+                reply = resolvers.get(userRole).resolve(update, userRole);
             } catch (NoSuchUserException exception) {
                 reply = List.of(SendMessage.builder()
                         .chatId(update.getMessage().getChatId().toString())
@@ -54,7 +54,7 @@ public class Gateway {
             try {
                 UserRole userRole = userService.getUserRole(update.getCallbackQuery().getFrom().getId().toString());
 
-                reply = resolvers.get(userRole).resolve(update);
+                reply = resolvers.get(userRole).resolve(update, userRole);
             } catch (NoSuchUserException exception) {
                 reply = List.of(SendMessage.builder()
                         .chatId(update.getMessage().getChatId().toString())

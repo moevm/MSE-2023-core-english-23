@@ -1,6 +1,5 @@
 package core.english.mse2023.resolver;
 
-import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.cache.CacheData;
 import core.english.mse2023.cache.CacheManager;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -8,8 +7,6 @@ import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.dictionary.UserRole;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -54,7 +51,7 @@ public abstract class Resolver {
         return textCommandHandlers.get(searchingCommand);
     }
 
-    public List<BotApiMethod<?>> resolve(Update update) {
+    public List<BotApiMethod<?>> resolve(Update update, UserRole role) {
         List<BotApiMethod<?>> reply = new ArrayList<>();
 
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -69,11 +66,11 @@ public abstract class Resolver {
 
                     cacheManager.cache(update.getMessage().getFrom().getId().toString(), new CacheData(interactiveHandler));
 
-                    reply = interactiveHandler.handle(update);
+                    reply = interactiveHandler.handle(update, role);
 
 
                 } else {
-                    reply = handler.handle(update);
+                    reply = handler.handle(update, role);
                 }
 
             } else {
@@ -84,7 +81,7 @@ public abstract class Resolver {
 
                 // If command found - proceed the command
                 if (commandData != null) {
-                    reply = commandData.updateData(update);
+                    reply = commandData.updateData(update, role);
                     cacheManager.triggerTimeBasedEvictionChecker(update.getMessage().getFrom().getId().toString());
                 } else {
                     reply = List.of(SendMessage.builder()
@@ -100,17 +97,13 @@ public abstract class Resolver {
             // If we received an inline button press
 
             CacheData cacheData = cacheManager.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
+            InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
             // Checking if user who pressed the button has any ongoing processes
-            if (cacheData != null) {
-                InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
-
-                // Checking if data from the button corresponds with the expected data
-                if (cacheData.getHandler().getCommandObject().getCommand().equals(inlineButtonDTO.getCommand()) &&
-                        (cacheData.getState().getStateIndex() - 1) == inlineButtonDTO.getStateIndex()) {
-
+            if (cacheData != null && cacheData.getHandler().getCommandObject().getCommand().equals(inlineButtonDTO.getCommand())) {
+                if (cacheData.getCurrentStateIndex() == inlineButtonDTO.getStateIndex()) {
                     // If everything is ok - proceed the command
-                    reply = cacheData.updateData(update);
+                    reply = cacheData.updateData(update, role);
 
                     // By this if the command finished it work it can be deleted from cache
                     cacheManager.triggerTimeBasedEvictionChecker(update.getCallbackQuery().getFrom().getId().toString());
@@ -121,7 +114,15 @@ public abstract class Resolver {
                 Handler handler = inlineButtonsHandlers.get(buttonData.getCommand());
 
                 if (handler != null) {
-                    reply = handler.handle(update);
+                    if (handler instanceof InteractiveHandler interactiveHandler) {
+
+                        cacheManager.cache(update.getCallbackQuery().getFrom().getId().toString(), new CacheData(interactiveHandler));
+
+                        reply = interactiveHandler.handle(update, role);
+
+                    } else {
+                        reply = handler.handle(update, role);
+                    }
                 }
             }
         }

@@ -20,6 +20,7 @@
         <enforce.plugin.version>3.0.0-M2</enforce.plugin.version>
         <h2-driver.version>1.4.200</h2-driver.version>
         <caffeine.version>2.5.5</caffeine.version>
+        <statemachine.version>3.2.0</statemachine.version>
     </properties>
     <dependencies>
         <dependency>
@@ -69,6 +70,11 @@
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>${caffeine.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.statemachine</groupId>
+            <artifactId>spring-statemachine-core</artifactId>
+            <version>${statemachine.version}</version>
         </dependency>
     </dependencies>
 

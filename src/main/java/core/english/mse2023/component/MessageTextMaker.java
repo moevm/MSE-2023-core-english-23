@@ -9,17 +9,6 @@ import java.text.SimpleDateFormat;
 @Component
 public class MessageTextMaker {
 
-    public String failedToChangeUserRoleMessageText() {
-        return "Невозможно сменить роль на такую же, как у вас.";
-    }
-
-    public String userRoleSuccessfullyChangedMessageText(UserRole newRole) {
-
-        String messageTemplate = "Ваша роль изменена на: %s";
-
-        return String.format(messageTemplate, newRole.toString());
-    }
-
     public String userDataPatternMessageText(String lastName, String name) {
         String messageTemplate = "%s%s";
 

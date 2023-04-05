@@ -16,5 +16,5 @@ public interface UserService {
 
     UserRole getUserRole(String telegramId) throws NoSuchUserException;
 
-    boolean changeUserRole(Update update, UserRole role);
+    boolean changeUserRole(String telegramId, UserRole role);
 }

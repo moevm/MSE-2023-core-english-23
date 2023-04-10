@@ -16,7 +16,7 @@ VALUES ('f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'Данил', 'Комиссар�
 INSERT INTO Users(id, name, lastname, telegram_id, email, password, role, created_when, modified_when)
 VALUES ('f0e1b1be-bdd3-11ed-afa1-0242ac120002', 'Ксения', 'Львова', '111030045', 'kslvova@yandex.ru', 'lvovaK',  'TEACHER', NOW() - 1.02, NOW());
 INSERT INTO Users(id, name, lastname, telegram_id, email, password, role, created_when, modified_when)
-VALUES ('f0e1b2d6-bdd3-11ed-afa1-0242ac120002', 'Наталья', 'Юлина', '789057594', 'yulinan@mail.ru', 'Nyulina',  'ADMIN', NOW() - 10.01, NOW() - 10.01);
+VALUES ('f0e1b2d6-bdd3-11ed-afa1-0242ac120002', 'Наталья', 'Юлина', '742410348', 'yulinan@mail.ru', 'Nyulina',  'ADMIN', NOW() - 10.01, NOW() - 10.01);
 
 INSERT INTO Family(id, student_id, parent_id, created_when, modified_when)
 VALUES ('83d7fef0-bdda-11ed-afa1-0242ac120002', 'f0e1a62e-bdd3-11ed-afa1-0242ac120002', 'f0e1af98-bdd3-11ed-afa1-0242ac120002',  NOW() - 1,  NOW() - 1);

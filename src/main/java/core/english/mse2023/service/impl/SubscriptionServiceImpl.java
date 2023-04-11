@@ -86,6 +86,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     }
 
+    @Override
+    public List<Subscription> getAllSubscriptionsWithStudent(String studentTelegramId) {
+
+        return new ArrayList<>(subscriptionRepository.getAllByStudent(userRepository.findByTelegramId(studentTelegramId)));
+    }
+
 
     @Override
     @Transactional

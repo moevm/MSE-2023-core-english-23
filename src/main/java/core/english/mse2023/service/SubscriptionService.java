@@ -17,5 +17,7 @@ public interface SubscriptionService {
 
     List<Subscription> getAllSubscriptionsWithTeacher(String teacherTelegramId);
 
+    List<Subscription> getAllSubscriptionsWithStudent(String studentTelegramId);
+
     boolean cancelSubscription(UUID subscriptionId);
 }

@@ -27,6 +27,7 @@ public class GetAllSubscriptionsHandler implements Handler {
 
     private static final String NO_FAMILY_SUBSCRIPTIONS_TEXT = "В вашей семье нет подписок.";
     private static final String NO_TEACHER_SUBSCRIPTIONS_TEXT = "Нет подписок, в которых вы являетесь преподавателем.";
+    private static final String NO_STUDENT_SUBSCRIPTIONS_TEXT = "Нет подписок, в которых вы являетесь студентом.";
     private static final String NO_SUBSCRIPTIONS_TEXT = "В системе нет подписок";
 
     private static final String DATA_PATTERN = """
@@ -59,6 +60,8 @@ public class GetAllSubscriptionsHandler implements Handler {
             subscriptions = subscriptionService.getAllSubscriptionsInFamily(update.getMessage().getFrom().getId().toString());
         } else if (userRole == UserRole.TEACHER) {
             subscriptions = subscriptionService.getAllSubscriptionsWithTeacher(update.getMessage().getFrom().getId().toString());
+        } else if (userRole == UserRole.STUDENT) {
+            subscriptions = subscriptionService.getAllSubscriptionsWithStudent(update.getMessage().getFrom().getId().toString());
         } else {
             subscriptions = subscriptionService.getAllSubscriptions();
         }
@@ -83,6 +86,11 @@ public class GetAllSubscriptionsHandler implements Handler {
                 return List.of(SendMessage.builder()
                         .chatId(chatId)
                         .text(NO_TEACHER_SUBSCRIPTIONS_TEXT)
+                        .build());
+            } else if (userRole == UserRole.STUDENT) {
+                return List.of(SendMessage.builder()
+                        .chatId(chatId)
+                        .text(NO_STUDENT_SUBSCRIPTIONS_TEXT)
                         .build());
             } else {
                 return List.of(SendMessage.builder()

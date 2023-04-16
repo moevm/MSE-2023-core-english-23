@@ -26,7 +26,6 @@ public interface InlineButtonCommand {
     BotCommand GET_CANCEL_COMMENT = new BotCommand("/getCancelComment", "Показать причину отмены занятия");
     BotCommand SET_LESSON_RESULTS = new BotCommand("/setLessonResults", "Установить результаты занятия");
     BotCommand CHANGE_LESSON_DATA = new BotCommand("/changeLessonData", "Установить результаты занятия");
-    BotCommand RESCHEDULE_LESSON = new BotCommand("/rescheduleLesson", "Перенести");
     BotCommand CANCEL_LESSON = new BotCommand("/cancelLesson", "Отменить урок");
     BotCommand SET_FAMILY_COMMENT = new BotCommand("/setFamilyComment", "Дать отзыв");
     BotCommand SET_LESSON_DATE = new BotCommand("/setLessonDate", "Назначить дату");

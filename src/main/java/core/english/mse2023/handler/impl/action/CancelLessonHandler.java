@@ -28,7 +28,6 @@ import java.util.UUID;
 @Component
 @AllArgsConstructor
 @InlineButtonType
-@TeacherRole
 @AdminRole
 @StudentRole
 public class CancelLessonHandler implements Handler {

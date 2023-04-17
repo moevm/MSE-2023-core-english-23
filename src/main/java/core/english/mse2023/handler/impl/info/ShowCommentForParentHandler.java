@@ -1,20 +1,21 @@
-package core.english.mse2023.handler.impl.menu.inline;
+package core.english.mse2023.handler.impl.info;
 
-import core.english.mse2023.aop.annotation.handler.AllRoles;
+import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
-import core.english.mse2023.component.InlineKeyboardMaker;
+import core.english.mse2023.aop.annotation.handler.ParentRole;
+import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
-import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
@@ -22,30 +23,30 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
+@TeacherRole
+@AdminRole
+@ParentRole
 @InlineButtonType
-@AllRoles
 @RequiredArgsConstructor
-public class MainMenuLessonHandler implements Handler {
+public class ShowCommentForParentHandler implements Handler {
 
-    private final InlineKeyboardMaker inlineKeyboardMaker;
+    private static final String DATA_PATTERN = "Комментарий учителя для родителей: %s";
 
     private final LessonService lessonService;
 
     @Override
     public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
-        Lesson lesson = lessonService.getLessonById(UUID.fromString(buttonData.getData()));
+        UUID lessonId = UUID.fromString(buttonData.getData());
+
+        String comment = lessonService.getLessonInfoByLessonId(lessonId).getTeacherCommentForParent();
 
         return List.of(
-                EditMessageReplyMarkup.builder()
+                SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .messageId(update.getCallbackQuery().getMessage().getMessageId())
-                        .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
-                                lesson,
-                                lessonService.getLessonInfoByLessonId(lesson.getId()),
-                                userRole
-                        ))
+                        .text(String.format(DATA_PATTERN, comment))
                         .build(),
                 new AnswerCallbackQuery(update.getCallbackQuery().getId())
         );
@@ -53,6 +54,6 @@ public class MainMenuLessonHandler implements Handler {
 
     @Override
     public BotCommand getCommandObject() {
-        return InlineButtonCommand.MAIN_MENU_LESSON;
+        return InlineButtonCommand.SHOW_COMMENT_FOR_PARENT;
     }
 }

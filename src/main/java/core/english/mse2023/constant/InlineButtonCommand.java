@@ -27,6 +27,7 @@ public interface InlineButtonCommand {
     BotCommand FINISH_LESSON = new BotCommand("/finishLesson", "Закончить урок");
 
     BotCommand SET_COMMENT_FOR_PARENT = new BotCommand("/setCommentForParent", "Оставить комментарий Родителю");
+    BotCommand SHOW_COMMENT_FOR_PARENT = new BotCommand("/showCommentForParent", "Показать комментарий для Родителя");
     BotCommand CHANGE_LESSON_DATA = new BotCommand("/changeLessonData", "Изменить данные занятия");
 
     BotCommand RESCHEDULE_LESSON = new BotCommand("/rescheduleLesson", "Перенести");

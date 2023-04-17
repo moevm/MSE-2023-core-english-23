@@ -50,7 +50,11 @@ public class GetMoreLessonInfoHandler implements Handler {
 
         message.setParseMode(ParseMode.MARKDOWNV2);
 
-        message.setReplyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(lesson.getId().toString(), lesson.getStatus(), lesson.getDate() != null, userRole));
+        message.setReplyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
+                lesson,
+                lessonService.getLessonInfoByLessonId(lesson.getId()),
+                userRole
+        ));
 
         return List.of(message, new AnswerCallbackQuery(update.getCallbackQuery().getId()));
     }

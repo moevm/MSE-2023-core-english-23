@@ -47,7 +47,11 @@ public class SetLessonAttendedHandler implements Handler {
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                         .messageId(update.getCallbackQuery().getMessage().getMessageId())
                         .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
-                        .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(buttonData.getData(), lesson.getStatus(), lesson.getDate() != null, userRole))
+                        .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
+                                lesson,
+                                lessonService.getLessonInfoByLessonId(lessonId),
+                                userRole
+                        ))
                         .build()
         );
     }

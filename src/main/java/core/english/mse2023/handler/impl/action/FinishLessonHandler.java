@@ -62,9 +62,8 @@ public class FinishLessonHandler implements Handler {
                     .messageId(update.getCallbackQuery().getMessage().getMessageId())
                     .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
                     .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
-                            lesson.getId().toString(),
-                            lesson.getStatus(),
-                            lesson.getDate() != null,
+                            lesson,
+                            lessonService.getLessonInfoByLessonId(lessonId),
                             userRole
                     ))
                     .parseMode(ParseMode.MARKDOWNV2)

@@ -129,4 +129,11 @@ public class LessonServiceImpl implements LessonService {
         }
         return lesson;
     }
+
+    @Override
+    public void setTeacherCommentForParent(String comment, UUID lessonId) {
+
+        // TODO - finish
+
+    }
 }

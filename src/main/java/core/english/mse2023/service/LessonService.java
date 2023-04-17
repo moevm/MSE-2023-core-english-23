@@ -22,4 +22,6 @@ public interface LessonService {
 
     void setAttendance(UUID lessonId, AttendanceType attendanceType);
     Lesson cancelLesson(UUID lessonId);
+
+    void setTeacherCommentForParent(String comment, UUID lessonId);
 }

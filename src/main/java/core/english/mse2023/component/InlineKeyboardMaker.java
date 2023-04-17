@@ -76,11 +76,17 @@ public class InlineKeyboardMaker {
             case TEACHER, ADMIN -> {
                 switch (lessonStatus) {
                     case ENDED -> {
-                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_LESSON_RESULTS,
-                                lessonId,
-                                0
-                        )).row();
+                        builder
+                                .button(TelegramInlineButtonsUtils.createInlineButton(
+                                        InlineButtonCommand.GET_LESSON_RESULTS,
+                                        lessonId,
+                                        0
+                                )).row()
+                                .button(TelegramInlineButtonsUtils.createInlineButton(
+                                        InlineButtonCommand.SET_COMMENT_FOR_PARENT,
+                                        lessonId,
+                                        0
+                                )).row();
                     }
                     case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(

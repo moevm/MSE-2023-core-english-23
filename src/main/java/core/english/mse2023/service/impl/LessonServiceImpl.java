@@ -130,24 +130,19 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException, LessonHasNotStartedYetException {
+    public Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException {
         Lesson lesson = this.getLessonById(lessonId);
         LessonStatus status = lesson.getStatus();
 
         if (status == ENDED)
             throw new LessonAlreadyFinishedException(String.format("Lesson with id '%s' cannot be finished more than once.", lessonId.toString()));
 
-        if (status == IN_PROGRESS) {
+        lesson.setStatus(ENDED);
 
-            lesson.setStatus(ENDED);
+        LessonHistory lessonHistory = new LessonHistory();
+        lessonHistory.setLesson(lesson);
+        lessonHistory.setType(LessonHistoryEventType.UPDATED);
 
-            LessonHistory lessonHistory = new LessonHistory();
-            lessonHistory.setLesson(lesson);
-            lessonHistory.setType(LessonHistoryEventType.UPDATED);
-
-        } else {
-            throw new LessonHasNotStartedYetException(String.format("Lesson with id '%s' cannot be finished since it hasn't been stated.", lessonId.toString()));
-        }
         return lesson;
     }
 }

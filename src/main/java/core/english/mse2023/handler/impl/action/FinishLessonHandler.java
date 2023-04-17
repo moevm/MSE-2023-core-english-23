@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -66,17 +67,13 @@ public class FinishLessonHandler implements Handler {
                             lesson.getDate() != null,
                             userRole
                     ))
+                    .parseMode(ParseMode.MARKDOWNV2)
                     .build());
 
         } catch (LessonAlreadyFinishedException exception) {
             messages.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                     .text(ALREADY_FINISHED_TEXT)
-                    .build());
-        } catch (LessonHasNotStartedYetException exception) {
-            messages.add(SendMessage.builder()
-                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(NOT_STARTED_YET_TEXT)
                     .build());
         }
 

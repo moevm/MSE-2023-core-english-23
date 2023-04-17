@@ -26,5 +26,5 @@ public interface LessonService {
 
     Lesson cancelLesson(UUID lessonId);
 
-    Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException, LessonHasNotStartedYetException;
+    Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException;
 }

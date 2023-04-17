@@ -89,15 +89,6 @@ public class InlineKeyboardMaker {
                                 0
                         )).row();
                     }
-                    case IN_PROGRESS -> {
-                        builder
-                                .button(TelegramInlineButtonsUtils.createInlineButton(
-                                        InlineButtonCommand.FINISH_LESSON,
-                                        lessonId,
-                                        0
-                                ))
-                                .row();
-                    }
                     case NOT_STARTED_YET -> {
                         builder
                                 .button(TelegramInlineButtonsUtils.createInlineButton(
@@ -108,6 +99,12 @@ public class InlineKeyboardMaker {
                                 .row()
                                 .button(TelegramInlineButtonsUtils.createInlineButton(
                                         InlineButtonCommand.CANCEL_LESSON,
+                                        lessonId,
+                                        0
+                                ))
+                                .row()
+                                .button(TelegramInlineButtonsUtils.createInlineButton(
+                                        InlineButtonCommand.FINISH_LESSON,
                                         lessonId,
                                         0
                                 ))

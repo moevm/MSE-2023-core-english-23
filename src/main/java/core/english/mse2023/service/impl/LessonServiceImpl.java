@@ -1,5 +1,7 @@
 package core.english.mse2023.service.impl;
 
+import core.english.mse2023.exception.LessonAlreadyFinishedException;
+import core.english.mse2023.exception.LessonHasNotStartedYetException;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonHistory;
 import core.english.mse2023.model.LessonInfo;
@@ -112,20 +114,39 @@ public class LessonServiceImpl implements LessonService {
         Lesson lesson = this.getLessonById(lessonId);
         LessonStatus status = lesson.getStatus();
         if (status == NOT_STARTED_YET) {
-            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
             lesson.setStatus(CANCELLED_BY_TEACHER);
-            lesson.setModifiedWhen(currentTime);
 
             LessonHistory lessonHistory = new LessonHistory();
             lessonHistory.setLesson(lesson);
             lessonHistory.setType(LessonHistoryEventType.CANCELLED);
-            lessonHistory.setCreatedWhen(currentTime);
-            lessonHistory.setModifiedWhen(currentTime);
             lessonHistoryRepository.save(lessonHistory);
+
             LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
             lessonInfo.setAttendance(AttendanceType.CANCELLED);
-            lessonInfo.setModifiedWhen(currentTime);
+        }
+        return lesson;
+    }
+
+    @Override
+    @Transactional
+    public Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException, LessonHasNotStartedYetException {
+        Lesson lesson = this.getLessonById(lessonId);
+        LessonStatus status = lesson.getStatus();
+
+        if (status == ENDED)
+            throw new LessonAlreadyFinishedException(String.format("Lesson with id '%s' cannot be finished more than once.", lessonId.toString()));
+
+        if (status == IN_PROGRESS) {
+
+            lesson.setStatus(ENDED);
+
+            LessonHistory lessonHistory = new LessonHistory();
+            lessonHistory.setLesson(lesson);
+            lessonHistory.setType(LessonHistoryEventType.UPDATED);
+
+        } else {
+            throw new LessonHasNotStartedYetException(String.format("Lesson with id '%s' cannot be finished since it hasn't been stated.", lessonId.toString()));
         }
         return lesson;
     }

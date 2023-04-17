@@ -92,7 +92,7 @@ public class InlineKeyboardMaker {
                     case IN_PROGRESS -> {
                         builder
                                 .button(TelegramInlineButtonsUtils.createInlineButton(
-                                        InlineButtonCommand.SET_LESSON_RESULTS,
+                                        InlineButtonCommand.FINISH_LESSON,
                                         lessonId,
                                         0
                                 ))

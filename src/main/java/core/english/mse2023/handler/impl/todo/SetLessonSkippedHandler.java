@@ -15,6 +15,7 @@ import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -47,6 +48,7 @@ public class SetLessonSkippedHandler implements Handler {
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                         .messageId(update.getCallbackQuery().getMessage().getMessageId())
                         .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
+                        .parseMode(ParseMode.MARKDOWNV2)
                         .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(buttonData.getData(), lesson.getStatus(), lesson.getDate() != null, userRole))
                         .build()
         );

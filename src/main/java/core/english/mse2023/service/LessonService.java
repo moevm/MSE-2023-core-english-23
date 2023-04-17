@@ -1,5 +1,7 @@
 package core.english.mse2023.service;
 
+import core.english.mse2023.exception.LessonAlreadyFinishedException;
+import core.english.mse2023.exception.LessonHasNotStartedYetException;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.dictionary.AttendanceType;
@@ -21,7 +23,11 @@ public interface LessonService {
     Lesson createLesson(Subscription subscription, String topic);
 
     void setAttendance(UUID lessonId, AttendanceType attendanceType);
+
     Lesson cancelLesson(UUID lessonId);
 
     void setTeacherCommentForParent(String comment, UUID lessonId);
+
+    Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException;
+
 }

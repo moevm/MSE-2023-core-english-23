@@ -6,6 +6,7 @@ import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Subscription;
+import core.english.mse2023.model.dictionary.SubscriptionStatus;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
@@ -104,6 +105,10 @@ public class GetAllSubscriptionsHandler implements Handler {
         List<BotApiMethod<?>> messages = new ArrayList<>();
 
         for (Subscription subscription : subscriptions) {
+
+            if (subscription.getStatus() == SubscriptionStatus.CANCELLED)
+                continue;
+
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
                     .text(String.format(DATA_PATTERN,

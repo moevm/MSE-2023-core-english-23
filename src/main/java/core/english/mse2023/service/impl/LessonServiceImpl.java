@@ -48,6 +48,15 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
+    public LessonInfo getLessonInfoByLessonId(UUID lessonId) {
+
+        Lesson lesson = lessonRepository.getLessonById(lessonId);
+
+        return lessonInfoRepository.getLessonInfoByLesson(lesson);
+    }
+
+    @Override
+    @Transactional
     public void cancelLessonsFromSubscription(UUID subscriptionId) {
         List<Lesson> lessons = lessonRepository.getAllBySubscriptionId(subscriptionId);
 
@@ -144,5 +153,21 @@ public class LessonServiceImpl implements LessonService {
         lessonHistory.setType(LessonHistoryEventType.UPDATED);
 
         return lesson;
+    }
+
+    @Override
+    @Transactional
+    public void setTeacherCommentForParent(String comment, UUID lessonId) {
+
+        Lesson lesson = this.getLessonById(lessonId);
+
+        LessonHistory lessonHistory = new LessonHistory();
+        lessonHistory.setLesson(lesson);
+        lessonHistory.setType(LessonHistoryEventType.UPDATED);
+        lessonHistoryRepository.save(lessonHistory);
+
+        LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+        lessonInfo.setTeacherCommentForParent(comment);
+
     }
 }

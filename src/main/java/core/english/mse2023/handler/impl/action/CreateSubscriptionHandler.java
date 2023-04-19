@@ -79,7 +79,6 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     @Qualifier("subscriptionCreationStateMachineFactory")
     private final StateMachineFactory<SubscriptionCreationState, SubscriptionCreationEvent> stateMachineFactory;
 
-    // TODO - this handler should have much complicated state logic than it has now
     @Override
     public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
 

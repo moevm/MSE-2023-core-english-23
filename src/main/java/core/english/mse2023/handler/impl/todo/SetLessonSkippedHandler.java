@@ -49,7 +49,11 @@ public class SetLessonSkippedHandler implements Handler {
                         .messageId(update.getCallbackQuery().getMessage().getMessageId())
                         .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
                         .parseMode(ParseMode.MARKDOWNV2)
-                        .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(buttonData.getData(), lesson.getStatus(), lesson.getDate() != null, userRole))
+                        .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
+                                lesson,
+                                lessonService.getLessonInfoByLessonId(lessonId),
+                                userRole
+                        ))
                         .build()
         );
     }

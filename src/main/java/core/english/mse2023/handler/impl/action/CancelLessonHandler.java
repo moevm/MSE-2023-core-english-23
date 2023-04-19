@@ -58,9 +58,8 @@ public class CancelLessonHandler implements Handler {
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                         .messageId(update.getCallbackQuery().getMessage().getMessageId())
                         .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
-                                lessonId.toString(),
-                                lesson.getStatus(),
-                                lesson.getDate() != null,
+                                lesson,
+                                lessonService.getLessonInfoByLessonId(lessonId),
                                 userRole)).build());
                 messages.add(SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())

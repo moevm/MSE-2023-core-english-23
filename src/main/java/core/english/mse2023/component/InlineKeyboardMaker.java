@@ -3,6 +3,7 @@ package core.english.mse2023.component;
 
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
@@ -16,32 +17,32 @@ import java.util.List;
 public class InlineKeyboardMaker {
 
 
-    public InlineKeyboardMarkup getLessonMainMenuInlineKeyboard(String lessonId, LessonStatus lessonStatus, boolean hasDate, UserRole role) {
+    public InlineKeyboardMarkup getLessonMainMenuInlineKeyboard(Lesson lesson, LessonInfo lessonInfo, UserRole role) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
 
         switch (role) {
             case STUDENT -> {
-                switch (lessonStatus) {
+                switch (lesson.getStatus()) {
                     case ENDED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                 InlineButtonCommand.GET_LESSON_RESULTS,
-                                lessonId,
+                                lesson.getId().toString(),
                                 0
                         )).row();
                     }
                     case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                 InlineButtonCommand.GET_CANCEL_COMMENT,
-                                lessonId,
+                                lesson.getId().toString(),
                                 0
                         )).row();
                     }
                     case NOT_STARTED_YET -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                         InlineButtonCommand.CANCEL_LESSON,
-                                        lessonId,
+                                        lesson.getId().toString(),
                                         0
                                 ))
                                 .row();
@@ -49,18 +50,25 @@ public class InlineKeyboardMaker {
                 }
             }
             case PARENT -> {
-                switch (lessonStatus) {
+                switch (lesson.getStatus()) {
                     case ENDED -> {
-                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_LESSON_RESULTS,
-                                lessonId,
-                                0
-                        )).row();
+                        builder
+                                .button(TelegramInlineButtonsUtils.createInlineButton(
+                                        InlineButtonCommand.GET_LESSON_RESULTS,
+                                        lesson.getId().toString(),
+                                        0
+                                )).row();
+                        if (lessonInfo.getTeacherCommentForParent() != null)
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SHOW_COMMENT_FOR_PARENT,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
                     }
                     case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                 InlineButtonCommand.GET_CANCEL_COMMENT,
-                                lessonId,
+                                lesson.getId().toString(),
                                 0
                         )).row();
                     }
@@ -68,24 +76,37 @@ public class InlineKeyboardMaker {
 
                 builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                 InlineButtonCommand.SET_FAMILY_COMMENT,
-                                lessonId,
+                                lesson.getId().toString(),
                                 0
                         ))
                         .row();
             }
             case TEACHER, ADMIN -> {
-                switch (lessonStatus) {
+                switch (lesson.getStatus()) {
                     case ENDED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_LESSON_RESULTS,
-                                lessonId,
-                                0
-                        )).row();
+                                        InlineButtonCommand.GET_LESSON_RESULTS,
+                                        lesson.getId().toString(),
+                                        0
+                                )).row();
+                        if (lessonInfo.getTeacherCommentForParent() != null) {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SHOW_COMMENT_FOR_PARENT,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        } else {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SET_COMMENT_FOR_PARENT,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        }
                     }
                     case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                 InlineButtonCommand.GET_CANCEL_COMMENT,
-                                lessonId,
+                                lesson.getId().toString(),
                                 0
                         )).row();
                     }
@@ -93,34 +114,35 @@ public class InlineKeyboardMaker {
                         builder
                                 .button(TelegramInlineButtonsUtils.createInlineButton(
                                         InlineButtonCommand.CHANGE_LESSON_DATA,
-                                        lessonId,
+                                        lesson.getId().toString(),
                                         0
                                 ))
                                 .row()
                                 .button(TelegramInlineButtonsUtils.createInlineButton(
                                         InlineButtonCommand.CANCEL_LESSON,
-                                        lessonId,
+                                        lesson.getId().toString(),
                                         0
                                 ))
                                 .row()
                                 .button(TelegramInlineButtonsUtils.createInlineButton(
                                         InlineButtonCommand.FINISH_LESSON,
-                                        lessonId,
+                                        lesson.getId().toString(),
                                         0
                                 ))
                                 .row();
 
-                        if (hasDate && role == UserRole.ADMIN) {
+
+                        if (lesson.getDate() != null && role == UserRole.ADMIN) {
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                             InlineButtonCommand.RESCHEDULE_LESSON,
-                                            lessonId,
+                                            lesson.getId().toString(),
                                             0
                                     ))
                                     .row();
                         } else {
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                             InlineButtonCommand.SET_LESSON_DATE,
-                                            lessonId,
+                                            lesson.getId().toString(),
                                             0
                                     ))
                                     .row();

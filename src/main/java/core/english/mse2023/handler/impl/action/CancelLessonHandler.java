@@ -28,9 +28,7 @@ import java.util.UUID;
 @Component
 @AllArgsConstructor
 @InlineButtonType
-@TeacherRole
 @AdminRole
-@StudentRole
 public class CancelLessonHandler implements Handler {
     private static final String DONE_TEXT = "Выбранный урок отменён.";
     private static final String ENDED_TEXT = "Невозможно отменить урок. Он уже завершён.";

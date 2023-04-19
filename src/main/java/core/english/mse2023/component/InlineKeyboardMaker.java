@@ -131,7 +131,8 @@ public class InlineKeyboardMaker {
                                 ))
                                 .row();
 
-                        if (lesson.getDate() != null) {
+
+                        if (lesson.getDate() != null && role == UserRole.ADMIN) {
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                             InlineButtonCommand.RESCHEDULE_LESSON,
                                             lesson.getId().toString(),

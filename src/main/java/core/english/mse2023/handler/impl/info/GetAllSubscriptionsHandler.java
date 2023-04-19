@@ -1,6 +1,6 @@
 package core.english.mse2023.handler.impl.info;
 
-import core.english.mse2023.aop.annotation.handler.AllRoles;
+import core.english.mse2023.aop.annotation.handler.AllRegisteredRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
@@ -21,7 +21,7 @@ import java.util.List;
 
 @Component
 @TextCommandType
-@AllRoles
+@AllRegisteredRoles
 @RequiredArgsConstructor
 public class GetAllSubscriptionsHandler implements Handler {
 

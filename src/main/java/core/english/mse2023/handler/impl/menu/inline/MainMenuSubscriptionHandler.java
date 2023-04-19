@@ -1,6 +1,6 @@
 package core.english.mse2023.handler.impl.menu.inline;
 
-import core.english.mse2023.aop.annotation.handler.AllRoles;
+import core.english.mse2023.aop.annotation.handler.AllRegisteredRoles;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Component
 @InlineButtonType
-@AllRoles
+@AllRegisteredRoles
 @RequiredArgsConstructor
 public class MainMenuSubscriptionHandler implements Handler {
 

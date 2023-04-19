@@ -3,8 +3,10 @@ package core.english.mse2023.aop.annotation.handler;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@AllRegisteredRoles
-@GuestRole
+@AdminRole
+@ParentRole
+@StudentRole
+@TeacherRole
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AllRoles {
+public @interface AllRegisteredRoles {
 }

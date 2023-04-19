@@ -4,7 +4,8 @@ public enum UserRole {
     STUDENT("Ученик"),
     PARENT("Родитель"),
     TEACHER("Учитель"),
-    ADMIN("Админ");
+    ADMIN("Админ"),
+    GUEST("Гость");
 
     private final String string;
 

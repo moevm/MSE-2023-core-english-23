@@ -1,10 +1,11 @@
 package core.english.mse2023.aop.annotation.handler;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@AllRegisteredRoles
-@GuestRole
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AllRoles {
+@Qualifier
+public @interface GuestRole {
 }

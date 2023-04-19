@@ -1,10 +1,6 @@
 package core.english.mse2023.gateway;
 
-import core.english.mse2023.aop.annotation.handler.TextCommandType;
-import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.NoSuchUserException;
-import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.resolver.Resolver;
 import core.english.mse2023.service.UserService;
@@ -45,10 +41,7 @@ public class Gateway {
 
                 reply = resolvers.get(userRole).resolve(update, userRole);
             } catch (NoSuchUserException exception) {
-                reply = List.of(SendMessage.builder()
-                        .chatId(update.getMessage().getChatId().toString())
-                        .text(FAILED_TO_IDENTIFY_TEXT)
-                        .build());
+                reply = resolvers.get(UserRole.GUEST).resolve(update, UserRole.GUEST);
             }
         } else if(update.hasCallbackQuery()) {
             try {

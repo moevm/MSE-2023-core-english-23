@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
@@ -34,7 +32,7 @@ public class UserServiceImpl implements UserService {
             user.setName(update.getMessage().getFrom().getFirstName());
             user.setLastName(update.getMessage().getFrom().getLastName());
             user.setTelegramId(telegramId);
-            user.setRole(UserRole.STUDENT);
+            user.setRole(UserRole.GUEST);
 
             repository.save(user);
         }

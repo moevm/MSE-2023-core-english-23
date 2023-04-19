@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -46,6 +45,11 @@ public class ReplyKeyboardMaker {
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton(ButtonCommand.STATISTICS.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.DATA.getDescription()));
+                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
+                keyboard.add(row);
+            }
+            case GUEST -> {
+                KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
                 keyboard.add(row);
             }

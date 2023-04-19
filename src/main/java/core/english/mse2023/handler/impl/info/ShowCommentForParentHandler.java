@@ -30,7 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShowCommentForParentHandler implements Handler {
 
-    private static final String DATA_PATTERN = "Комментарий учителя для родителей: %s";
+    private static final String DATA_PATTERN = "Комментарий для родителя: %s";
 
     private final LessonService lessonService;
 

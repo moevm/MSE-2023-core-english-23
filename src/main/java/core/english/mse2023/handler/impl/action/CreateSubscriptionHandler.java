@@ -61,7 +61,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             `lessonAmount: 7`
             """;
 
-    private static final String STUDENT_CHOOSE_TEXT = "Далее выберите студента, с которым будете заниматься:";
+    private static final String STUDENT_CHOOSE_TEXT = "Далее выберите студента, с которым будут проводиться занятия:";
     private static final String TEACHER_CHOOSE_TEXT = "Также выберите учителя, который будет проводить занятия:";
 
     private static final String SUCCESS_TEXT = "Новая подписка и требуемые уроки созданы.";

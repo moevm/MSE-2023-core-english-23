@@ -29,7 +29,7 @@ public class GetAllTeachersHandler implements Handler {
 
     private static final String START_TEXT = "Список зарегистрированных преподавателей:";
     private static final String NO_TEACHERS_TEXT = "Зарегистрированные преподаватели отсутствуют в системе.";
-    private static final String USER_DATA_PATTERN = " - %s%s";
+    private static final String USER_DATA_PATTERN = "%s%s";
 
     private final UserService service;
 

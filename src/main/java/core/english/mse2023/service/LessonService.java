@@ -30,6 +30,7 @@ public interface LessonService {
     Lesson cancelLesson(UUID lessonId);
 
     void setTeacherCommentForParent(String comment, UUID lessonId);
+    void setTeacherHomeworkComment(String comment, UUID lessonId);
 
     Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException;
 

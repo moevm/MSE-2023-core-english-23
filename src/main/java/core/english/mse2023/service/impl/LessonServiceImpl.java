@@ -170,4 +170,20 @@ public class LessonServiceImpl implements LessonService {
         lessonInfo.setTeacherCommentForParent(comment);
 
     }
+
+    @Override
+    @Transactional
+    public void setTeacherHomeworkComment(String comment, UUID lessonId) {
+
+        Lesson lesson = this.getLessonById(lessonId);
+
+        LessonHistory lessonHistory = new LessonHistory();
+        lessonHistory.setLesson(lesson);
+        lessonHistory.setType(LessonHistoryEventType.UPDATED);
+        lessonHistoryRepository.save(lessonHistory);
+
+        LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+        lessonInfo.setTeacherComment(comment);
+
+    }
 }

@@ -28,6 +28,8 @@ public interface InlineButtonCommand {
 
     BotCommand SET_COMMENT_FOR_PARENT = new BotCommand("/setCommentForParent", "Оставить комментарий Родителю");
     BotCommand SHOW_COMMENT_FOR_PARENT = new BotCommand("/showCommentForParent", "Показать комментарий для Родителя");
+    BotCommand SET_HOMEWORK_COMMENT = new BotCommand("/setHomeworkComment", "Оставить домашнее задание (комментарий)");
+    BotCommand SHOW_HOMEWORK_COMMENT = new BotCommand("/showHomeworkComment", "Показать домашнее задание (комментарий)");
     BotCommand CHANGE_LESSON_DATA = new BotCommand("/changeLessonData", "Изменить данные занятия");
 
     BotCommand RESCHEDULE_LESSON = new BotCommand("/rescheduleLesson", "Перенести");

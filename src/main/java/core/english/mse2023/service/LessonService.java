@@ -1,13 +1,12 @@
 package core.english.mse2023.service;
 
 import core.english.mse2023.exception.LessonAlreadyFinishedException;
-import core.english.mse2023.exception.LessonHasNotStartedYetException;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.dictionary.AttendanceType;
-import core.english.mse2023.model.dictionary.LessonStatus;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +29,8 @@ public interface LessonService {
     Lesson cancelLesson(UUID lessonId);
 
     void setTeacherCommentForParent(String comment, UUID lessonId);
+
+    Lesson setLessonDate(Timestamp date, UUID lessonId);
 
     Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException;
 

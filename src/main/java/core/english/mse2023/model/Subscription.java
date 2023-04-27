@@ -33,12 +33,12 @@ public class Subscription extends BaseEntity {
     @JoinColumn(name = "student_id", nullable = false)
     private User student;
 
-    @Column(name = "lessons_rest")
+    @Column(name = "lessons_rest", nullable = false)
     private int lessonsRest;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     private Timestamp startDate;
 
-    @Column(name = "end_date")
+    @Column(name = "end_date", nullable = false)
     private Timestamp endDate;
 }

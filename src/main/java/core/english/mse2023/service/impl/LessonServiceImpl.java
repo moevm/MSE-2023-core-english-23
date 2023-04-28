@@ -1,7 +1,6 @@
 package core.english.mse2023.service.impl;
 
 import core.english.mse2023.exception.LessonAlreadyFinishedException;
-import core.english.mse2023.exception.LessonHasNotStartedYetException;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonHistory;
 import core.english.mse2023.model.LessonInfo;
@@ -17,11 +16,9 @@ import core.english.mse2023.service.LessonInfoService;
 import core.english.mse2023.service.LessonService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -169,5 +166,20 @@ public class LessonServiceImpl implements LessonService {
         LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
         lessonInfo.setTeacherCommentForParent(comment);
 
+    }
+
+    @Override
+    @Transactional
+    public Lesson setLessonDate(Timestamp date, UUID lessonId) {
+        Lesson lesson = this.getLessonById(lessonId);
+
+        LessonHistory lessonHistory = new LessonHistory();
+        lessonHistory.setLesson(lesson);
+        lessonHistory.setType(LessonHistoryEventType.UPDATED);
+        lessonHistoryRepository.save(lessonHistory);
+
+        lesson.setDate(date);
+
+        return lesson;
     }
 }

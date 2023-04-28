@@ -33,4 +33,17 @@ public class TelegramInlineButtonsUtils {
                 .text(commandObject.getDescription())
                 .build();
     }
+
+    public InlineKeyboardButton createInlineButtonWithDescriptionOverride(BotCommand commandObject, String descriptionOverride, String data, int stateIndex) {
+        return InlineKeyboardButton.builder()
+                .callbackData(InlineButtonDTOEncoder.encode(
+                        InlineButtonDTO.builder()
+                                .command(commandObject.getCommand())
+                                .stateIndex(stateIndex)
+                                .data(data)
+                                .build()
+                ))
+                .text(descriptionOverride)
+                .build();
+    }
 }

@@ -1,8 +1,24 @@
 package core.english.mse2023.model.dictionary;
 
 public enum UserRole {
-    STUDENT,
-    PARENT,
-    TEACHER,
-    ADMIN
+    STUDENT("Ученик"),
+    PARENT("Родитель"),
+    TEACHER("Учитель"),
+    ADMIN("Админ"),
+    GUEST("Гость");
+
+    private final String string;
+
+    UserRole(String string) {
+        this.string = string;
+    }
+
+    public String getString() {
+        return string;
+    }
+
+    /*@Override
+    public String toString() {
+        return string;
+    }*/
 }

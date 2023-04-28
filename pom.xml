@@ -18,6 +18,9 @@
         <lombok.version>1.18.20</lombok.version>
         <telegram-api.version>6.0.0</telegram-api.version>
         <enforce.plugin.version>3.0.0-M2</enforce.plugin.version>
+        <h2-driver.version>1.4.200</h2-driver.version>
+        <caffeine.version>2.5.5</caffeine.version>
+        <statemachine.version>3.2.0</statemachine.version>
     </properties>
     <dependencies>
         <dependency>
@@ -36,6 +39,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <version>${h2-driver.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -61,6 +65,16 @@
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
             <version>${telegram-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.statemachine</groupId>
+            <artifactId>spring-statemachine-core</artifactId>
+            <version>${statemachine.version}</version>
         </dependency>
     </dependencies>
 

@@ -22,13 +22,16 @@ public class LessonInfo extends BaseEntity {
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
 
-    @Column(name="score", nullable = false)
-    private int score;
+    @Column(name="score")
+    private Integer score;
 
     @Column(name = "family_comment")
     private String familyComment;
 
     @Column(name = "teacher_comment")
     private String teacherComment;
+
+    @Column(name = "teacher_comment_for_parent")
+    private String teacherCommentForParent;
 
 }

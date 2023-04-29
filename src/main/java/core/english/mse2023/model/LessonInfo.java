@@ -31,6 +31,9 @@ public class LessonInfo extends BaseEntity {
     @Column(name = "teacher_comment")
     private String teacherComment;
 
+    @Column(name = "homework_completed")
+    private Boolean homeworkCompleted;
+
     @Column(name = "teacher_comment_for_parent")
     private String teacherCommentForParent;
 

@@ -32,6 +32,8 @@ public interface LessonService {
 
     Lesson setLessonDate(Timestamp date, UUID lessonId);
 
+    Lesson setLessonHomeworkCompletion(UUID lessonId, boolean isComplete);
+
     Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException;
 
 }

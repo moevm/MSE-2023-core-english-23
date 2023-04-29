@@ -182,4 +182,21 @@ public class LessonServiceImpl implements LessonService {
 
         return lesson;
     }
+
+    @Override
+    @Transactional
+    public Lesson setLessonHomeworkCompletion(UUID lessonId, boolean isComplete) {
+
+        Lesson lesson = lessonRepository.getLessonById(lessonId);
+
+        LessonHistory lessonHistory = new LessonHistory();
+        lessonHistory.setLesson(lesson);
+        lessonHistory.setType(LessonHistoryEventType.UPDATED);
+        lessonHistoryRepository.save(lessonHistory);
+
+        LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+        lessonInfo.setHomeworkCompleted(isComplete);
+
+        return lesson;
+    }
 }

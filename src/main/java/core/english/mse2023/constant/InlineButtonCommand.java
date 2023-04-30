@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 public interface InlineButtonCommand {
     BotCommand GET_MORE_SUBSCRIPTION_INFO = new BotCommand("/subscriptionGetMore", "Подробнее");
     BotCommand GET_MORE_LESSON_INFO = new BotCommand("/lessonGetMore", "%s");
-    BotCommand CANCEL_SUBSCRIPTION = new BotCommand("/cancelSubscription", "Отменить подписку");
+    BotCommand CANCEL_SUBSCRIPTION = new BotCommand("/cancelSubscription", "Отменить абонемент");
     BotCommand MAIN_MENU_SUBSCRIPTION = new BotCommand("/mainMenuSubscription", "◄ Назад в главное меню ◄");
 
     BotCommand SET_LESSON_ATTENDED = new BotCommand("/setLessonAttended", "Посетил");

@@ -26,10 +26,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetAllSubscriptionsHandler implements Handler {
 
-    private static final String NO_FAMILY_SUBSCRIPTIONS_TEXT = "В вашей семье нет не отмененных подписок.";
-    private static final String NO_TEACHER_SUBSCRIPTIONS_TEXT = "Нет не отмененных подписок, в которых вы являетесь преподавателем.";
-    private static final String NO_STUDENT_SUBSCRIPTIONS_TEXT = "Нет не отмененных подписок, в которых вы являетесь студентом.";
-    private static final String NO_SUBSCRIPTIONS_TEXT = "В системе нет не отмененных подписок.";
+    private static final String NO_FAMILY_SUBSCRIPTIONS_TEXT = "В вашей семье нет активных абонементов.";
+    private static final String NO_TEACHER_SUBSCRIPTIONS_TEXT = "Нет активных абонементов, в которых вы являетесь преподавателем.";
+    private static final String NO_STUDENT_SUBSCRIPTIONS_TEXT = "Нет активных абонементов, в которых вы являетесь студентом.";
+    private static final String NO_SUBSCRIPTIONS_TEXT = "В системе нет активных абонементов.";
 
     private static final String DATA_PATTERN = """
             Тип: %s

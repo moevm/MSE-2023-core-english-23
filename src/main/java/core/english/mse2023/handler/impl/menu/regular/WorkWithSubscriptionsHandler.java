@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class WorkWithSubscriptionsHandler implements Handler {
 
-    private static final String MESSAGE = "Вы перешли в раздел РАБОТА С ПОДПИСКАМИ";
+    private static final String MESSAGE = "Вы перешли в раздел РАБОТА С АБОНЕМЕНТАМИ";
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override

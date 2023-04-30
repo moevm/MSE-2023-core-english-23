@@ -1,10 +1,7 @@
 package core.english.mse2023.dto;
 
-import core.english.mse2023.model.dictionary.SubscriptionType;
-import core.english.mse2023.state.lesson.LessonCreationEvent;
-import core.english.mse2023.state.lesson.LessonCreationState;
-import core.english.mse2023.state.subcription.SubscriptionCreationEvent;
-import core.english.mse2023.state.subcription.SubscriptionCreationState;
+import core.english.mse2023.state.createLesson.LessonCreationEvent;
+import core.english.mse2023.state.createLesson.LessonCreationState;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +9,6 @@ import lombok.ToString;
 import org.springframework.statemachine.StateMachine;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 @ToString
 @Getter

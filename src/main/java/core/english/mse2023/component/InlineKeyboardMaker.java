@@ -263,10 +263,9 @@ public class InlineKeyboardMaker {
                     .row();
         }
         builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                        InlineButtonCommand.CREATE_LESSON.getCommand(),
+                        InlineButtonCommand.CREATE_LESSON,
                         subscriptionId,
-                        0,
-                        String.format(InlineButtonCommand.CREATE_LESSON.getDescription())
+                        0
                 ))
                 .row();
 

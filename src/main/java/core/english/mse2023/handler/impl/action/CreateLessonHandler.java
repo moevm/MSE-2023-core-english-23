@@ -11,29 +11,22 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.LessonCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
-import core.english.mse2023.exception.UnexpectedUpdateType;
 import core.english.mse2023.handler.InteractiveHandler;
-import core.english.mse2023.model.dictionary.SubscriptionType;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
-import core.english.mse2023.service.UserService;
-import core.english.mse2023.state.lesson.LessonCreationEvent;
-import core.english.mse2023.state.lesson.LessonCreationState;
-import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherEvent;
-import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherState;
+import core.english.mse2023.state.createLesson.LessonCreationEvent;
+import core.english.mse2023.state.createLesson.LessonCreationState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -56,15 +49,13 @@ public class CreateLessonHandler implements InteractiveHandler {
     private static final String DATA_FORM_TEXT = """
             `date: 20\\.03\\.2023`
             `topic: Topic of lesson`
-            `link: Link to lesson`
+            `link: https://example.link.com`
             """;
 
     private static final String SUCCESS_TEXT = "Новый урок добавлен.";
 
     private final Cache<String, LessonCreationDTO> lessonCreationCache = Caffeine.newBuilder()
             .build();
-
-    private final UserService userService;
 
     private final LessonService lessonService;
 
@@ -80,8 +71,6 @@ public class CreateLessonHandler implements InteractiveHandler {
                 stateMachineFactory.getStateMachine();
         stateMachine.start();
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
-        System.out.println(update.getCallbackQuery().getFrom().getId());
-        // Creating new DTO for this user
         LessonCreationDTO dto = LessonCreationDTO.builder()
                 .stateMachine(stateMachine)
                 .subscriptionId(buttonData.getData())
@@ -105,17 +94,8 @@ public class CreateLessonHandler implements InteractiveHandler {
     @Override
     public List<BotApiMethod<?>> update(Update update, UserRole userRole) throws IllegalUserInputException, IllegalStateException {
 
-        LessonCreationDTO dto;
+        LessonCreationDTO dto = lessonCreationCache.getIfPresent(update.getMessage().getFrom().getId().toString());
 
-        if (update.hasMessage()) {
-            dto = lessonCreationCache.getIfPresent(update.getMessage().getFrom().getId().toString());
-        } else if (update.hasCallbackQuery()) {
-            dto = lessonCreationCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
-        } else {
-            throw new UnexpectedUpdateType("Update type for CreateLessonHandler wasn't message or callback query.");
-        }
-
-        System.out.println(update.getMessage().getFrom().getId());
         if (dto == null) {
             log.error("DTO instance wasn't created yet! Cannot continue. User id: {}", update.getMessage().getFrom().getId());
             throw new IllegalStateException("There's no DTO created to continue building Lesson.");
@@ -146,7 +126,11 @@ public class CreateLessonHandler implements InteractiveHandler {
     private void parseInput(String input, LessonCreationDTO dto) throws IllegalUserInputException {
         Map<String, String> data = Arrays.stream(input.split("\n"))
                 .map(field -> field.split(" "))
-                .collect(Collectors.toMap(e -> e[0].toLowerCase().substring(0, e[0].length() - 1), e -> e[1]));
+                .collect(Collectors.toMap(e -> e[0].toLowerCase().substring(0, e[0].length() - 1), e -> {
+                    String[] tmp = new String[e.length - 1];
+                    System.arraycopy(e, 1, tmp, 0, e.length - 1);
+                    return  String.join(" ", tmp);
+                }));
 
         if (data.size() < 2) {
             throw new IllegalUserInputException("Wrong amount of parameters present");
@@ -160,6 +144,7 @@ public class CreateLessonHandler implements InteractiveHandler {
                         Date parsedDate = dateFormat.parse(data.get(key));
                         dto.setDate(new Timestamp(parsedDate.getTime()));
                     } catch (ParseException e) {
+                        throw new IllegalUserInputException("Wrong parameters!");
                         }
                 }
                 case "topic" -> dto.setTopic(data.get(key));

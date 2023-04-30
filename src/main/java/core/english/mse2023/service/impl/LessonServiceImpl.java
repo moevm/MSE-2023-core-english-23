@@ -114,7 +114,7 @@ public class LessonServiceImpl implements LessonService {
 
         Lesson lesson = createLesson(subscription,creationDTO.getTopic());
         if (creationDTO.getDate() != null){
-            setLessonDate(creationDTO.getDate(), lesson.getId(), LessonHistoryEventType.CREATED);
+            setLessonDate(creationDTO.getDate(), lesson.getId());
             if (lesson.getDate().after(new Date())) {
                 lesson.setStatus(ENDED);
             }
@@ -194,7 +194,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public Lesson setLessonDate(Timestamp date, UUID lessonId, LessonHistoryEventType lessonHistoryEventType) {
+    public Lesson setLessonDate(Timestamp date, UUID lessonId) {
         Lesson lesson = this.getLessonById(lessonId);
 
         if ( date.after(lesson.getSubscription().getEndDate()) ||
@@ -203,7 +203,7 @@ public class LessonServiceImpl implements LessonService {
         }
         LessonHistory lessonHistory = new LessonHistory();
         lessonHistory.setLesson(lesson);
-        lessonHistory.setType(lessonHistoryEventType);
+        lessonHistory.setType(LessonHistoryEventType.UPDATED);
         lessonHistoryRepository.save(lessonHistory);
 
         lesson.setDate(date);

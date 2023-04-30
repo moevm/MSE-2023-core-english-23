@@ -136,7 +136,7 @@ public class SetLessonDateHandler implements InteractiveHandler {
             throw new IllegalUserInputException("Failed to parse date format on StartDate parameter");
         }
 
-        Lesson lesson = lessonService.setLessonDate(dto.getDate(), dto.getLessonId(), LessonHistoryEventType.UPDATED);
+        Lesson lesson = lessonService.setLessonDate(dto.getDate(), dto.getLessonId());
 
         stateMachine.sendEvent(SetLessonDateEvent.ENTER_DATE);
 

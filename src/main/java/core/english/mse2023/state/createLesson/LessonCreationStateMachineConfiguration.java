@@ -1,15 +1,11 @@
-package core.english.mse2023.state.lesson;
+package core.english.mse2023.state.createLesson;
 
-import core.english.mse2023.model.dictionary.UserRole;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.StateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
-import org.springframework.statemachine.guard.Guard;
 
 import java.util.EnumSet;
 
@@ -43,9 +39,14 @@ public class LessonCreationStateMachineConfiguration
 
                 .withExternal()
                 .source(LessonCreationState.TOPIC_CHOOSING)
-                .target(LessonCreationState.CREATED)
+                .target(LessonCreationState.LINK_CHOOSING)
                 .event(LessonCreationEvent.CHOOSE_TOPIC)
-                .and();
+                .and()
+
+                .withExternal()
+                .source(LessonCreationState.LINK_CHOOSING)
+                .target(LessonCreationState.CREATED)
+                .event(LessonCreationEvent.CHOOSE_LINK);
     }
 
 

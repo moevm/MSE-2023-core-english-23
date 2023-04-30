@@ -33,7 +33,7 @@ public interface LessonService {
 
     void setTeacherCommentForParent(String comment, UUID lessonId);
 
-    Lesson setLessonDate(Timestamp date, UUID lessonId, LessonHistoryEventType lessonHistoryEventTyp);
+    Lesson setLessonDate(Timestamp date, UUID lessonId);
 
     Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException;
 

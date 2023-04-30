@@ -16,6 +16,7 @@ import core.english.mse2023.repository.LessonHistoryRepository;
 import core.english.mse2023.repository.LessonInfoRepository;
 import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.repository.SubscriptionRepository;
+import core.english.mse2023.service.LessonInfoService;
 import core.english.mse2023.service.LessonService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +35,9 @@ import static core.english.mse2023.model.dictionary.LessonStatus.*;
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
 
-
     private final SubscriptionRepository subscriptionRepository;
     private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
-
-
     private final LessonRepository lessonRepository;
-    private final LessonInfoService lessonInfoService;
     private final LessonHistoryRepository lessonHistoryRepository;
 
     private final LessonInfoRepository lessonInfoRepository;

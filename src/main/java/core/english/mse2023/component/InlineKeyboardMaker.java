@@ -24,6 +24,24 @@ public class InlineKeyboardMaker {
 
         switch (role) {
             case STUDENT -> {
+                if (lessonInfo.getHomeworkCompleted() != null) {
+                    if (lessonInfo.getHomeworkCompleted()) {
+                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                        InlineButtonCommand.SET_HOMEWORK_NOT_COMPLETED,
+                                        lesson.getId().toString(),
+                                        0
+                                ))
+                                .row();
+                    } else {
+                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                        InlineButtonCommand.SET_HOMEWORK_COMPLETED,
+                                        lesson.getId().toString(),
+                                        0
+                                ))
+                                .row();
+                    }
+
+                }
                 switch (lesson.getStatus()) {
                     case ENDED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(

@@ -13,6 +13,7 @@ import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.Subscription;
+import core.english.mse2023.model.dictionary.LessonHistoryEventType;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
@@ -129,22 +130,18 @@ public class SetLessonDateHandler implements InteractiveHandler {
 
             Timestamp date = new Timestamp(parsedDate.getTime());
 
-            if (date.after(dto.getSubscriptionEndDate()) || date.before(dto.getSubscriptionStartDate())) {
-                log.error("User entered lesson date outside subscription boundaries");
-                throw new IllegalUserInputException("User entered lesson date outside subscription boundaries");
-            }
-
             dto.setDate(date);
         } catch (ParseException e) {
             log.error("Failed to parse date format on StartDate parameter. Raw data: " + update.getMessage().getText());
             throw new IllegalUserInputException("Failed to parse date format on StartDate parameter");
         }
 
-        Lesson lesson = lessonService.setLessonDate(dto.getDate(), dto.getLessonId());
+        Lesson lesson = lessonService.setLessonDate(dto.getDate(), dto.getLessonId(), LessonHistoryEventType.UPDATED);
 
         stateMachine.sendEvent(SetLessonDateEvent.ENTER_DATE);
 
         // Sending buttons with students. Data from them will be used in the next state
+
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
                 .text(String.format(SUCCESS_TEXT, lesson.getTopic()))

@@ -75,6 +75,7 @@ create table users
     password      varchar(255),
     role          varchar(255) not null,
     telegram_id   varchar(255) not null,
+    chat_id       varchar(255) not null,
     primary key (id)
 );
 alter table if exists users

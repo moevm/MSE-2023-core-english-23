@@ -39,13 +39,18 @@ public class Gateway {
             try {
                 UserRole userRole = userService.getUserRole(update.getMessage().getFrom().getId().toString());
 
+                userService.setChatIdForUser(update.getMessage().getFrom().getId().toString(), update.getMessage().getChatId().toString());
+
                 reply = resolvers.get(userRole).resolve(update, userRole);
             } catch (NoSuchUserException exception) {
                 reply = resolvers.get(UserRole.GUEST).resolve(update, UserRole.GUEST);
             }
         } else if(update.hasCallbackQuery()) {
+
             try {
                 UserRole userRole = userService.getUserRole(update.getCallbackQuery().getFrom().getId().toString());
+
+                userService.setChatIdForUser(update.getCallbackQuery().getFrom().getId().toString(), update.getCallbackQuery().getMessage().getChatId().toString());
 
                 reply = resolvers.get(userRole).resolve(update, userRole);
             } catch (NoSuchUserException exception) {

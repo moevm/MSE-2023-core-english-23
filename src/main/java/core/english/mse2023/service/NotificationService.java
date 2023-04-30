@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface NotificationService {
 
-    void sendNotification(UUID userId, Notification notification);
+    void sendLessonDateChangedNotification(UUID lessonId);
 }

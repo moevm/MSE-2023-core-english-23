@@ -20,6 +20,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
 
+    @Override
+    @Transactional
+    public void setChatIdForUser(String userTelegramId, String chatId) {
+        User user = repository.findByTelegramId(userTelegramId);
+        user.setChatId(chatId);
+    }
+
     @Transactional
     @Override
     public User getUserOrCreateNewOne(Update update) {
@@ -33,6 +40,7 @@ public class UserServiceImpl implements UserService {
             user.setLastName(update.getMessage().getFrom().getLastName());
             user.setTelegramId(telegramId);
             user.setRole(UserRole.GUEST);
+            user.setChatId(update.getMessage().getChatId().toString());
 
             repository.save(user);
         }

@@ -1,7 +1,7 @@
 package core.english.mse2023.service.impl;
 
 import core.english.mse2023.exception.LessonAlreadyFinishedException;
-import core.english.mse2023.exception.LessonHasNotStartedYetException;
+import core.english.mse2023.exception.LessonDoesNotExistsException;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonHistory;
 import core.english.mse2023.model.LessonInfo;
@@ -13,15 +13,14 @@ import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.repository.LessonHistoryRepository;
 import core.english.mse2023.repository.LessonInfoRepository;
 import core.english.mse2023.repository.LessonRepository;
-import core.english.mse2023.service.LessonInfoService;
+import core.english.mse2023.repository.SubscriptionRepository;
 import core.english.mse2023.service.LessonService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,13 +30,8 @@ import static core.english.mse2023.model.dictionary.LessonStatus.*;
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
 
-    private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
-
-
     private final LessonRepository lessonRepository;
-    private final LessonInfoService lessonInfoService;
     private final LessonHistoryRepository lessonHistoryRepository;
-
     private final LessonInfoRepository lessonInfoRepository;
 
     @Override
@@ -49,98 +43,43 @@ public class LessonServiceImpl implements LessonService {
     @Override
     @Transactional
     public LessonInfo getLessonInfoByLessonId(UUID lessonId) {
-
-        Lesson lesson = lessonRepository.getLessonById(lessonId);
-
-        return lessonInfoRepository.getLessonInfoByLesson(lesson);
+        return lessonInfoRepository.getLessonInfoByLessonId(lessonId);
     }
 
     @Override
     @Transactional
-    public void cancelLessonsFromSubscription(UUID subscriptionId) {
-        List<Lesson> lessons = lessonRepository.getAllBySubscriptionId(subscriptionId);
-
-        for (Lesson lesson : lessons) {
-            lesson.setStatus(LessonStatus.CANCELLED);
-        }
-
-        lessonRepository.saveAll(lessons);
-
-    }
-
-    @Transactional
-    @Override
     public List<Lesson> getAllLessonsForSubscription(UUID subscriptionId) {
         return lessonRepository.getAllBySubscriptionId(subscriptionId);
     }
 
-    @Override
-    @Transactional
-    public void createBaseLessonsForSubscription(Subscription subscription) {
-        Lesson lesson = createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, 1));
-        lesson.setDate(subscription.getStartDate());
-
-        lessonRepository.save(lesson);
-        lessonInfoService.createLessonInfo(lesson);
-
-
-        for (int i = 1; i < subscription.getLessonsRest(); i++) {
-            lesson = createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1)));
-            lessonRepository.save(lesson);
-            lessonInfoService.createLessonInfo(lesson);
-        }
-    }
 
     @Override
     @Transactional
     public Lesson createLesson(Subscription subscription, String topic) {
-        Lesson lesson = new Lesson();
 
-        lesson.setStatus(NOT_STARTED_YET);
-        lesson.setSubscription(subscription);
-        lesson.setTopic(topic);
+        Lesson lesson = Lesson.builder()
+                .status(NOT_STARTED_YET)
+                .subscription(subscription)
+                .topic(topic)
+                .build();
+
+        lessonRepository.save(lesson);
+
+        createHistoryEvent(lesson, LessonHistoryEventType.CREATED);
+        createLessonInfo(lesson, AttendanceType.NOT_YET_ATTENDED);
 
         return lesson;
     }
 
     @Override
     @Transactional
-    public void setAttendance(UUID lessonId, AttendanceType attendanceType) {
+    public Lesson finishLesson(UUID lessonId) throws LessonDoesNotExistsException, LessonAlreadyFinishedException {
+        Lesson lesson = getLessonById(lessonId);
 
-        Lesson lesson = lessonRepository.getLessonById(lessonId);
-
-        if (attendanceType == AttendanceType.ATTENDED || attendanceType == AttendanceType.SKIPPED) {
-            lesson.setStatus(LessonStatus.ENDED);
-            lessonRepository.save(lesson);
+        if (lesson == null) {
+            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
         }
 
-        lessonInfoService.setAttendance(lesson, attendanceType);
-    }
-
-    @Override
-    @Transactional
-    public Lesson cancelLesson(UUID lessonId){
-        Lesson lesson = this.getLessonById(lessonId);
-        LessonStatus status = lesson.getStatus();
-        if (status == NOT_STARTED_YET) {
-
-            lesson.setStatus(CANCELLED_BY_TEACHER);
-
-            LessonHistory lessonHistory = new LessonHistory();
-            lessonHistory.setLesson(lesson);
-            lessonHistory.setType(LessonHistoryEventType.CANCELLED);
-            lessonHistoryRepository.save(lessonHistory);
-
-            LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
-            lessonInfo.setAttendance(AttendanceType.CANCELLED);
-        }
-        return lesson;
-    }
-
-    @Override
-    @Transactional
-    public Lesson finishLesson(UUID lessonId) throws LessonAlreadyFinishedException {
-        Lesson lesson = this.getLessonById(lessonId);
         LessonStatus status = lesson.getStatus();
 
         if (status == ENDED)
@@ -148,73 +87,139 @@ public class LessonServiceImpl implements LessonService {
 
         lesson.setStatus(ENDED);
 
-        LessonHistory lessonHistory = new LessonHistory();
-        lessonHistory.setLesson(lesson);
-        lessonHistory.setType(LessonHistoryEventType.UPDATED);
+        createHistoryEvent(lesson, LessonHistoryEventType.UPDATED);
 
         return lesson;
     }
 
     @Override
     @Transactional
-    public void setTeacherCommentForParent(String comment, UUID lessonId) {
+    public Lesson cancelLesson(UUID lessonId, LessonStatus lessonStatus) throws LessonDoesNotExistsException {
+        Lesson lesson = getLessonById(lessonId);
 
-        Lesson lesson = this.getLessonById(lessonId);
+        if (lesson == null) {
+            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+        }
 
-        LessonHistory lessonHistory = new LessonHistory();
-        lessonHistory.setLesson(lesson);
-        lessonHistory.setType(LessonHistoryEventType.UPDATED);
-        lessonHistoryRepository.save(lessonHistory);
+        LessonStatus status = lesson.getStatus();
+
+        if (status == NOT_STARTED_YET) {
+            lesson.setStatus(lessonStatus);
+
+            createHistoryEvent(lesson, LessonHistoryEventType.CANCELLED);
+
+            LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+            lessonInfo.setAttendance(AttendanceType.CANCELLED);
+        }
+
+        return lesson;
+    }
+
+
+
+    @Override
+    @Transactional
+    public void setAttendance(UUID lessonId, AttendanceType attendanceType) throws LessonDoesNotExistsException {
+
+        Lesson lesson = getLessonById(lessonId);
+
+        if (lesson == null) {
+            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+        }
+
+        if (attendanceType == AttendanceType.ATTENDED || attendanceType == AttendanceType.SKIPPED) {
+            lesson.setStatus(LessonStatus.ENDED);
+        }
+
+        LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+        lessonInfo.setAttendance(attendanceType);
+
+        createHistoryEvent(lesson, LessonHistoryEventType.UPDATED);
+    }
+
+    @Override
+    @Transactional
+    public void setTeacherCommentForParent(String comment, UUID lessonId) throws LessonDoesNotExistsException {
+
+        Lesson lesson = getLessonById(lessonId);
+
+        if (lesson == null) {
+            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+        }
 
         LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
         lessonInfo.setTeacherCommentForParent(comment);
 
+        createHistoryEvent(lesson, LessonHistoryEventType.UPDATED);
     }
+
     @Override
     @Transactional
-    public void setTeacherHomeworkComment(String comment, UUID lessonId) {
+    public void setTeacherHomeworkComment(String comment, UUID lessonId) throws LessonDoesNotExistsException {
 
-        Lesson lesson = this.getLessonById(lessonId);
+        Lesson lesson = getLessonById(lessonId);
 
-        LessonHistory lessonHistory = new LessonHistory();
-        lessonHistory.setLesson(lesson);
-        lessonHistory.setType(LessonHistoryEventType.UPDATED);
-        lessonHistoryRepository.save(lessonHistory);
+        if (lesson == null) {
+            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+        }
 
         LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
         lessonInfo.setTeacherComment(comment);
 
+        createHistoryEvent(lesson, LessonHistoryEventType.UPDATED);
     }
 
     @Override
     @Transactional
-    public Lesson setLessonDate(Timestamp date, UUID lessonId) {
-        Lesson lesson = this.getLessonById(lessonId);
+    public Lesson setLessonDate(Timestamp date, UUID lessonId) throws LessonDoesNotExistsException {
+        Lesson lesson = getLessonById(lessonId);
 
-        LessonHistory lessonHistory = new LessonHistory();
-        lessonHistory.setLesson(lesson);
-        lessonHistory.setType(LessonHistoryEventType.UPDATED);
-        lessonHistoryRepository.save(lessonHistory);
+        if (lesson == null) {
+            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+        }
 
         lesson.setDate(date);
+
+        createHistoryEvent(lesson, LessonHistoryEventType.UPDATED);
 
         return lesson;
     }
 
     @Override
     @Transactional
-    public Lesson setLessonHomeworkCompletion(UUID lessonId, boolean isComplete) {
+    public Lesson setLessonHomeworkCompletion(UUID lessonId, boolean isComplete) throws LessonDoesNotExistsException {
 
-        Lesson lesson = lessonRepository.getLessonById(lessonId);
+        Lesson lesson = getLessonById(lessonId);
 
-        LessonHistory lessonHistory = new LessonHistory();
-        lessonHistory.setLesson(lesson);
-        lessonHistory.setType(LessonHistoryEventType.UPDATED);
-        lessonHistoryRepository.save(lessonHistory);
+        if (lesson == null) {
+            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+        }
 
         LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
         lessonInfo.setHomeworkCompleted(isComplete);
 
+        createHistoryEvent(lesson, LessonHistoryEventType.UPDATED);
+
         return lesson;
+    }
+
+
+
+    @Override
+    @Transactional
+    public void createHistoryEvent(Lesson lesson, LessonHistoryEventType historyEventType) {
+        LessonHistory lessonHistory = new LessonHistory();
+        lessonHistory.setLesson(lesson);
+        lessonHistory.setType(historyEventType);
+        lessonHistoryRepository.save(lessonHistory);
+    }
+
+    @Override
+    @Transactional
+    public void createLessonInfo(Lesson lesson, AttendanceType attendance) {
+        LessonInfo lessonInfo = new LessonInfo();
+        lessonInfo.setLesson(lesson);
+        lessonInfo.setAttendance(attendance);
+        lessonInfoRepository.save(lessonInfo);
     }
 }

@@ -1,15 +1,17 @@
 package core.english.mse2023.service.impl;
 
 
-import core.english.mse2023.exception.NoSuchUserException;
+import core.english.mse2023.exception.UserDoesNotExistsException;
+import core.english.mse2023.exception.UserAlreadyExistsException;
+import core.english.mse2023.model.Family;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
+import core.english.mse2023.repository.FamilyRepository;
 import core.english.mse2023.repository.UserRepository;
 import core.english.mse2023.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
@@ -19,61 +21,75 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
+    private final FamilyRepository familyRepository;
 
-    @Transactional
     @Override
-    public User getUserOrCreateNewOne(Update update) {
-        String telegramId = update.getMessage().getFrom().getId().toString();
-
-        User user = repository.findByTelegramId(telegramId);
-
-        if (user == null) {
-            user = new User();
-            user.setName(update.getMessage().getFrom().getFirstName());
-            user.setLastName(update.getMessage().getFrom().getLastName());
-            user.setTelegramId(telegramId);
-            user.setRole(UserRole.GUEST);
-
-            repository.save(user);
-        }
-
-        return user;
+    @Transactional
+    public User getUserByTelegramId(String telegramId) {
+        return repository.findByTelegramId(telegramId);
     }
 
     @Override
+    @Transactional
+    public List<Family> getAllFamiliesWithParent(String parentTelegramId) {
+        return familyRepository.getAllByParent(getUserByTelegramId(parentTelegramId));
+    }
+
+    @Override
+    @Transactional
     public List<User> getAllStudents() {
         return repository.findAllByRole(UserRole.STUDENT);
     }
 
     @Override
+    @Transactional
     public List<User> getAllTeachers() {
         return repository.findAllByRole(UserRole.TEACHER);
     }
 
+
+
     @Override
-    public UserRole getUserRole(String telegramId) throws NoSuchUserException {
+    @Transactional
+    public User createUser(String telegramId, String firstName, String lastName) throws UserAlreadyExistsException {
+        User user = repository.findByTelegramId(telegramId);
+
+        if (user != null) throw new UserAlreadyExistsException(String.format("User with telegram id \"%s\" already exists.", telegramId));
+
+        user = User.builder()
+                .name(firstName)
+                .lastName(lastName)
+                .telegramId(telegramId)
+                .role(UserRole.GUEST)
+                .build();
+
+        repository.save(user);
+
+        return user;
+    }
+
+
+
+    @Override
+    @Transactional
+    public UserRole getUserRole(String telegramId) throws UserDoesNotExistsException {
         User user = repository.findByTelegramId(telegramId);
 
         if (user == null)
-            throw new NoSuchUserException(String.format("User with telegram id %s hasn't been found", telegramId));
+            throw new UserDoesNotExistsException(String.format("User with telegram id %s hasn't been found", telegramId));
 
         return user.getRole();
     }
 
     @Override
-    public boolean changeUserRole(String telegramId, UserRole role) {
-        boolean roleHasBeenChanged = false;
-
+    @Transactional
+    public void changeUserRole(String telegramId, UserRole role) throws UserDoesNotExistsException {
         User user = repository.findByTelegramId(telegramId);
 
-        if (user.getRole() != role) {
-            user.setRole(role);
-            repository.save(user);
+        if (user == null)
+            throw new UserDoesNotExistsException(String.format("User with telegram id %s hasn't been found", telegramId));
 
-            roleHasBeenChanged = true;
-        }
-
-        return roleHasBeenChanged;
+        user.setRole(role);
     }
 
 }

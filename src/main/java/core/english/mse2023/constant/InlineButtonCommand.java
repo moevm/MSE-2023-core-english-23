@@ -14,6 +14,8 @@ public interface InlineButtonCommand {
 
     BotCommand SET_LESSON_ATTENDED = new BotCommand("/setLessonAttended", "Посетил");
     BotCommand SET_LESSON_SKIPPED = new BotCommand("/setLessonSkipped", "Пропустил");
+    BotCommand SET_HOMEWORK_COMPLETED = new BotCommand("/setHomeworkCompleted", "ИДЗ сделано");
+    BotCommand SET_HOMEWORK_NOT_COMPLETED = new BotCommand("/setHomeworkNotCompleted", "ИДЗ не сделано");
     BotCommand MAIN_MENU_LESSON = new BotCommand("/mainMenuLesson", "◄ Назад в главное меню ◄");
     BotCommand GET_ATTENDANCE_MENU = new BotCommand("/getAttendanceMenu", "Отметить посещение");
 
@@ -28,6 +30,8 @@ public interface InlineButtonCommand {
 
     BotCommand SET_COMMENT_FOR_PARENT = new BotCommand("/setCommentForParent", "Оставить комментарий Родителю");
     BotCommand SHOW_COMMENT_FOR_PARENT = new BotCommand("/showCommentForParent", "Показать комментарий для Родителя");
+    BotCommand SET_HOMEWORK_COMMENT = new BotCommand("/setHomeworkComment", "Оставить домашнее задание (комментарий)");
+    BotCommand SHOW_HOMEWORK_COMMENT = new BotCommand("/showHomeworkComment", "Показать домашнее задание (комментарий)");
     BotCommand CHANGE_LESSON_DATA = new BotCommand("/changeLessonData", "Изменить данные занятия");
 
     BotCommand CANCEL_LESSON = new BotCommand("/cancelLesson", "Отменить урок");

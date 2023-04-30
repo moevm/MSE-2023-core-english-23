@@ -4,12 +4,14 @@ import core.english.mse2023.dto.LessonCreationDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.exception.LessonAlreadyFinishedException;
+import core.english.mse2023.exception.LessonHasNotStartedYetException;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonHistory;
 import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.dictionary.*;
 
+import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.repository.LessonHistoryRepository;
 import core.english.mse2023.repository.LessonInfoRepository;
 import core.english.mse2023.repository.LessonRepository;
@@ -17,6 +19,7 @@ import core.english.mse2023.repository.SubscriptionRepository;
 import core.english.mse2023.service.LessonService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -34,7 +37,10 @@ public class LessonServiceImpl implements LessonService {
 
     private final SubscriptionRepository subscriptionRepository;
     private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
+
+
     private final LessonRepository lessonRepository;
+    private final LessonInfoService lessonInfoService;
     private final LessonHistoryRepository lessonHistoryRepository;
 
     private final LessonInfoRepository lessonInfoRepository;
@@ -68,6 +74,8 @@ public class LessonServiceImpl implements LessonService {
             LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
             lessonInfo.setAttendance(AttendanceType.CANCELLED);
         }
+
+        lessonRepository.saveAll(lessons);
 
     }
 
@@ -132,6 +140,7 @@ public class LessonServiceImpl implements LessonService {
 
         if (attendanceType == AttendanceType.ATTENDED || attendanceType == AttendanceType.SKIPPED) {
             lesson.setStatus(LessonStatus.ENDED);
+            lessonRepository.save(lesson);
         }
 
         LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
@@ -191,6 +200,21 @@ public class LessonServiceImpl implements LessonService {
         lessonInfo.setTeacherCommentForParent(comment);
 
     }
+    @Override
+    @Transactional
+    public void setTeacherHomeworkComment(String comment, UUID lessonId) {
+
+        Lesson lesson = this.getLessonById(lessonId);
+
+        LessonHistory lessonHistory = new LessonHistory();
+        lessonHistory.setLesson(lesson);
+        lessonHistory.setType(LessonHistoryEventType.UPDATED);
+        lessonHistoryRepository.save(lessonHistory);
+
+        LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+        lessonInfo.setTeacherComment(comment);
+
+    }
 
     @Override
     @Transactional
@@ -215,5 +239,20 @@ public class LessonServiceImpl implements LessonService {
         return lesson;
     }
 
+    @Override
+    @Transactional
+    public Lesson setLessonHomeworkCompletion(UUID lessonId, boolean isComplete) {
 
+        Lesson lesson = lessonRepository.getLessonById(lessonId);
+
+        LessonHistory lessonHistory = new LessonHistory();
+        lessonHistory.setLesson(lesson);
+        lessonHistory.setType(LessonHistoryEventType.UPDATED);
+        lessonHistoryRepository.save(lessonHistory);
+
+        LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+        lessonInfo.setHomeworkCompleted(isComplete);
+
+        return lesson;
+    }
 }

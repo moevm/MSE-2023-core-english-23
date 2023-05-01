@@ -1,6 +1,7 @@
 package core.english.mse2023.component;
 
 
+import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonInfo;
@@ -24,6 +25,24 @@ public class InlineKeyboardMaker {
 
         switch (role) {
             case STUDENT -> {
+                if (lessonInfo.getHomeworkCompleted() != null) {
+                    if (lessonInfo.getHomeworkCompleted()) {
+                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                        InlineButtonCommand.SET_HOMEWORK_NOT_COMPLETED,
+                                        lesson.getId().toString(),
+                                        0
+                                ))
+                                .row();
+                    } else {
+                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                        InlineButtonCommand.SET_HOMEWORK_COMPLETED,
+                                        lesson.getId().toString(),
+                                        0
+                                ))
+                                .row();
+                    }
+
+                }
                 switch (lesson.getStatus()) {
                     case ENDED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
@@ -31,6 +50,13 @@ public class InlineKeyboardMaker {
                                 lesson.getId().toString(),
                                 0
                         )).row();
+                        if (lessonInfo.getTeacherComment() != null) {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SHOW_HOMEWORK_COMMENT,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        }
                     }
                     case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
@@ -58,12 +84,21 @@ public class InlineKeyboardMaker {
                                         lesson.getId().toString(),
                                         0
                                 )).row();
-                        if (lessonInfo.getTeacherCommentForParent() != null)
+                        if (lessonInfo.getTeacherCommentForParent() != null){
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                     InlineButtonCommand.SHOW_COMMENT_FOR_PARENT,
                                     lesson.getId().toString(),
                                     0
                             )).row();
+                        }
+                        if (lessonInfo.getTeacherComment() != null) {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SHOW_HOMEWORK_COMMENT,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        }
+
                     }
                     case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
@@ -150,6 +185,19 @@ public class InlineKeyboardMaker {
                         } else {
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                     InlineButtonCommand.SET_COMMENT_FOR_PARENT,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        }
+                        if (lessonInfo.getTeacherComment() != null) {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SHOW_HOMEWORK_COMMENT,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        } else {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SET_HOMEWORK_COMMENT,
                                     lesson.getId().toString(),
                                     0
                             )).row();
@@ -261,6 +309,12 @@ public class InlineKeyboardMaker {
                     ))
                     .row();
         }
+        builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                        InlineButtonCommand.CREATE_LESSON,
+                        subscriptionId,
+                        0
+                ))
+                .row();
 
         inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;

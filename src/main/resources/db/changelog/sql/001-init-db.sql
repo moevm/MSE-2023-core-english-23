@@ -46,6 +46,7 @@ create table lesson_info
     family_comment  varchar(255),
     score           integer,
     teacher_comment varchar(255),
+    homework_completed bool,
     teacher_comment_for_parent varchar(255),
     lesson_id       uuid         not null,
     primary key (id)

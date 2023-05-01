@@ -67,8 +67,8 @@ INSERT INTO lesson_info(id, lesson_id, attendance, created_when, modified_when)
 VALUES ('a1a308be-bde2-11ed-afa1-0242ac120002', '6b4e2224-bddf-11ed-afa1-0242ac120002', 'NOT_YET_ATTENDED',  NOW(), NOW());
 INSERT INTO lesson_info(id, lesson_id, attendance, created_when, modified_when)
 VALUES ('a1a308be-1de2-11ed-afa1-0242ac120002', '6b4e2264-bddf-11ed-afa1-0242ac120002', 'NOT_YET_ATTENDED',  NOW(), NOW());
-INSERT INTO lesson_info(id, lesson_id, attendance, score, family_comment, teacher_comment, teacher_comment_for_parent, created_when, modified_when)
-VALUES ('a1a30abc-bde2-11ed-afa1-0242ac120002', '6b4e231a-bddf-11ed-afa1-0242ac120002', 'ATTENDED', 10, 'Отличное занятие. Ребёнок доволен', 'Домашнее задание: стр.24', 'Занятие прошло отлично. Пронаблюдайте, пожалуйста, что ребенок выполнит дз.', NOW() - 1, NOW() - 0.9);
+INSERT INTO lesson_info(id, lesson_id, attendance, score, family_comment, teacher_comment, homework_completed, teacher_comment_for_parent, created_when, modified_when)
+VALUES ('a1a30abc-bde2-11ed-afa1-0242ac120002', '6b4e231a-bddf-11ed-afa1-0242ac120002', 'ATTENDED', 10, 'Отличное занятие. Ребёнок доволен', 'Домашнее задание: стр.24', FALSE, 'Занятие прошло отлично. Пронаблюдайте, пожалуйста, что ребенок выполнит дз.', NOW() - 1, NOW() - 0.9);
 INSERT INTO lesson_info(id, lesson_id, attendance, created_when, modified_when)
 VALUES ('a1a30fd0-bde2-11ed-afa1-0242ac120002', '6b4e24b8-bddf-11ed-afa1-0242ac120002', 'CANCELLED', NOW() - 1, NOW());
 INSERT INTO lesson_info(id, lesson_id, attendance, created_when, modified_when)
@@ -79,8 +79,8 @@ INSERT INTO lesson_info(id, lesson_id, attendance, created_when, modified_when)
 VALUES ('a1a3139a-bde2-11ed-afa1-0242ac120002', '6b4e28be-bddf-11ed-afa1-0242ac120002', 'NOT_YET_ATTENDED', NOW() - 0.2, NOW());
 INSERT INTO lesson_info(id, lesson_id, attendance, family_comment, created_when, modified_when)
 VALUES ('a1a314bc-bde2-11ed-afa1-0242ac120002', '6b4e29b8-bddf-11ed-afa1-0242ac120002', 'CANCELLED', 'Отмена занятия по причине болезни.', NOW() - 0.2, NOW() - 0.08);
-INSERT INTO lesson_info(id, lesson_id, attendance, score, family_comment, teacher_comment, teacher_comment_for_parent, created_when, modified_when)
-VALUES ('a1a30abc-bde2-11ed-afa2-0242ac120002', '6b4ef9b8-bddf-11ed-afa1-0242ac120002', 'ATTENDED', 10, 'Отличное занятие. Ребёнок очень доволен', 'Домашнее задание: отдохнуть)', 'Ребенок готов к экзамену!', NOW() - 14, NOW() - 14);
+INSERT INTO lesson_info(id, lesson_id, attendance, score, family_comment, teacher_comment, homework_completed, teacher_comment_for_parent, created_when, modified_when)
+VALUES ('a1a30abc-bde2-11ed-afa2-0242ac120002', '6b4ef9b8-bddf-11ed-afa1-0242ac120002', 'ATTENDED', 10, 'Отличное занятие. Ребёнок очень доволен', 'Домашнее задание: отдохнуть)', True, 'Ребенок готов к экзамену!', NOW() - 14, NOW() - 14);
 INSERT INTO lesson_info(id, lesson_id, attendance, created_when, modified_when)
 VALUES ('a1a308be-1de2-11ed-ada1-0242ac120002', '6b4e29b8-bddf-14ed-afa1-0242ac120002', 'NOT_YET_ATTENDED',  NOW() - 14, NOW() - 14);
 

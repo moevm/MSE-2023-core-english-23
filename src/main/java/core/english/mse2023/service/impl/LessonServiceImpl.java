@@ -1,18 +1,21 @@
 package core.english.mse2023.service.impl;
 
+import core.english.mse2023.dto.LessonCreationDTO;
+import core.english.mse2023.dto.SubscriptionCreationDTO;
+import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.exception.LessonAlreadyFinishedException;
 import core.english.mse2023.exception.LessonHasNotStartedYetException;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonHistory;
 import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.Subscription;
-import core.english.mse2023.model.dictionary.AttendanceType;
-import core.english.mse2023.model.dictionary.LessonHistoryEventType;
+import core.english.mse2023.model.dictionary.*;
 
 import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.repository.LessonHistoryRepository;
 import core.english.mse2023.repository.LessonInfoRepository;
 import core.english.mse2023.repository.LessonRepository;
+import core.english.mse2023.repository.SubscriptionRepository;
 import core.english.mse2023.service.LessonInfoService;
 import core.english.mse2023.service.LessonService;
 import jakarta.transaction.Transactional;
@@ -21,21 +24,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static core.english.mse2023.model.dictionary.AttendanceType.NOT_YET_ATTENDED;
 import static core.english.mse2023.model.dictionary.LessonStatus.*;
 
 @Service
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
 
+    private final SubscriptionRepository subscriptionRepository;
     private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
-
-
     private final LessonRepository lessonRepository;
-    private final LessonInfoService lessonInfoService;
     private final LessonHistoryRepository lessonHistoryRepository;
 
     private final LessonInfoRepository lessonInfoRepository;
@@ -62,6 +64,12 @@ public class LessonServiceImpl implements LessonService {
 
         for (Lesson lesson : lessons) {
             lesson.setStatus(LessonStatus.CANCELLED);
+            LessonHistory lessonHistory = new LessonHistory();
+            lessonHistory.setLesson(lesson);
+            lessonHistory.setType(LessonHistoryEventType.CANCELLED);
+            lessonHistoryRepository.save(lessonHistory);
+            LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+            lessonInfo.setAttendance(AttendanceType.CANCELLED);
         }
 
         lessonRepository.saveAll(lessons);
@@ -77,17 +85,8 @@ public class LessonServiceImpl implements LessonService {
     @Override
     @Transactional
     public void createBaseLessonsForSubscription(Subscription subscription) {
-        Lesson lesson = createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, 1));
-        lesson.setDate(subscription.getStartDate());
-
-        lessonRepository.save(lesson);
-        lessonInfoService.createLessonInfo(lesson);
-
-
-        for (int i = 1; i < subscription.getLessonsRest(); i++) {
-            lesson = createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1)));
-            lessonRepository.save(lesson);
-            lessonInfoService.createLessonInfo(lesson);
+        for (int i = 0; i < subscription.getLessonsRest(); i++) {
+            createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1)));
         }
     }
 
@@ -99,6 +98,33 @@ public class LessonServiceImpl implements LessonService {
         lesson.setStatus(NOT_STARTED_YET);
         lesson.setSubscription(subscription);
         lesson.setTopic(topic);
+        lessonRepository.save(lesson);
+
+        LessonHistory lessonHistory = new LessonHistory();
+        lessonHistory.setLesson(lesson);
+        lessonHistory.setType(LessonHistoryEventType.CREATED);
+        lessonHistoryRepository.save(lessonHistory);
+
+        LessonInfo lessonInfo = new LessonInfo();
+        lessonInfo.setLesson(lesson);
+        lessonInfo.setAttendance(NOT_YET_ATTENDED);
+        lessonInfoRepository.save(lessonInfo);
+
+        return lesson;
+    }
+    @Transactional
+    @Override
+    public Lesson createLesson(LessonCreationDTO creationDTO, UserRole userRole) throws IllegalUserInputException {
+        Subscription subscription = subscriptionRepository.getSubscriptionsById(UUID.fromString(creationDTO.getSubscriptionId()));
+
+        Lesson lesson = createLesson(subscription,creationDTO.getTopic());
+        if (creationDTO.getDate() != null){
+            setLessonDate(creationDTO.getDate(), lesson.getId());
+            if (lesson.getDate().after(new Date())) {
+                lesson.setStatus(ENDED);
+            }
+        }
+        lesson.setLink(creationDTO.getLink());
 
         return lesson;
     }
@@ -114,7 +140,8 @@ public class LessonServiceImpl implements LessonService {
             lessonRepository.save(lesson);
         }
 
-        lessonInfoService.setAttendance(lesson, attendanceType);
+        LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+        lessonInfo.setAttendance(attendanceType);
     }
 
     @Override
@@ -191,12 +218,20 @@ public class LessonServiceImpl implements LessonService {
     public Lesson setLessonDate(Timestamp date, UUID lessonId) {
         Lesson lesson = this.getLessonById(lessonId);
 
+        if ( date.after(lesson.getSubscription().getEndDate()) ||
+                date.before(lesson.getSubscription().getStartDate())) { //если не попадает в подписку
+            throw new IllegalUserInputException("User entered lesson date outside subscription boundaries");
+        }
         LessonHistory lessonHistory = new LessonHistory();
         lessonHistory.setLesson(lesson);
         lessonHistory.setType(LessonHistoryEventType.UPDATED);
         lessonHistoryRepository.save(lessonHistory);
 
         lesson.setDate(date);
+
+        if (lesson.getDate().before(new Date())) {
+            lesson.setStatus(ENDED);
+        }
 
         return lesson;
     }

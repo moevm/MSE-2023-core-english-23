@@ -22,6 +22,9 @@ public class User extends BaseEntity {
     @Column(name = "telegram_id", nullable = false, unique = true)
     private String telegramId;
 
+    @Column(name = "chat_id", nullable = false, unique = true)
+    private String chatId;
+
     @Column(name = "email", unique = true)
     private String email;
 

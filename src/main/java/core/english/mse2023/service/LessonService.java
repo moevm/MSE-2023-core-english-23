@@ -1,5 +1,6 @@
 package core.english.mse2023.service;
 
+import core.english.mse2023.dto.LessonCreationDTO;
 import core.english.mse2023.exception.LessonAlreadyFinishedException;
 import core.english.mse2023.exception.LessonDoesNotExistsException;
 import core.english.mse2023.model.Lesson;
@@ -8,6 +9,7 @@ import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.dictionary.AttendanceType;
 import core.english.mse2023.model.dictionary.LessonHistoryEventType;
 import core.english.mse2023.model.dictionary.LessonStatus;
+import core.english.mse2023.model.dictionary.UserRole;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -63,6 +65,7 @@ public interface LessonService {
      */
     Lesson cancelLesson(UUID lessonId, LessonStatus lessonStatus) throws LessonDoesNotExistsException;
 
+    Lesson createLesson(LessonCreationDTO lessonCreationDTO, UserRole userRole);
 
 
     void setAttendance(UUID lessonId, AttendanceType attendanceType) throws LessonDoesNotExistsException;
@@ -80,4 +83,5 @@ public interface LessonService {
     void createHistoryEvent(Lesson lesson, LessonHistoryEventType historyEventType);
 
     void createLessonInfo(Lesson lesson, AttendanceType attendance);
+
 }

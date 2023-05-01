@@ -10,9 +10,12 @@ import java.util.List;
 
 public interface UserService {
 
+
     User getUserByTelegramId(String telegramId);
 
     List<Family> getAllFamiliesWithParent(String parentTelegramId);
+
+
 
     List<User> getAllStudents();
 
@@ -27,4 +30,6 @@ public interface UserService {
     UserRole getUserRole(String telegramId) throws UserDoesNotExistsException;
 
     void changeUserRole(String telegramId, UserRole role) throws UserDoesNotExistsException;
+
+    void setChatIdForUser(String userTelegramId, String chatId);
 }

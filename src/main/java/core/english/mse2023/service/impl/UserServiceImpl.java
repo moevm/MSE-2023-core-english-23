@@ -48,13 +48,13 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     @Transactional
     public User createUser(String telegramId, String firstName, String lastName) throws UserAlreadyExistsException {
         User user = repository.findByTelegramId(telegramId);
 
-        if (user != null) throw new UserAlreadyExistsException(String.format("User with telegram id \"%s\" already exists.", telegramId));
+        if (user != null)
+            throw new UserAlreadyExistsException(String.format("User with telegram id \"%s\" already exists.", telegramId));
 
         user = User.builder()
                 .name(firstName)
@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
 
         return user;
     }
-
 
 
     @Override
@@ -90,6 +89,13 @@ public class UserServiceImpl implements UserService {
             throw new UserDoesNotExistsException(String.format("User with telegram id %s hasn't been found", telegramId));
 
         user.setRole(role);
+    }
+
+    @Override
+    @Transactional
+    public void setChatIdForUser(String userTelegramId, String chatId) {
+        User user = repository.findByTelegramId(userTelegramId);
+        user.setChatId(chatId);
     }
 
 }

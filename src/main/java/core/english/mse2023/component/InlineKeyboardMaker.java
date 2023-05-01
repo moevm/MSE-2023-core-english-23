@@ -1,6 +1,7 @@
 package core.english.mse2023.component;
 
 
+import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonInfo;
@@ -322,6 +323,12 @@ public class InlineKeyboardMaker {
                     ))
                     .row();
         }
+        builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                        InlineButtonCommand.CREATE_LESSON,
+                        subscriptionId,
+                        0
+                ))
+                .row();
 
         inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;

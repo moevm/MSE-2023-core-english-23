@@ -28,7 +28,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final TelegramBot telegramBot;
 
-    private final UserService userService;
     private final LessonService lessonService;
 
     @Override

@@ -8,6 +8,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 public interface UserService {
+
+    void setChatIdForUser(String userTelegramId, String chatId);
+
     User getUserOrCreateNewOne(Update update);
 
     List<User> getAllStudents();

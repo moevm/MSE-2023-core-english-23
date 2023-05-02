@@ -20,13 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repository;
+
+    private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
 
     @Override
     @Transactional
     public User getUserByTelegramId(String telegramId) {
-        return repository.findByTelegramId(telegramId);
+        return userRepository.findByTelegramId(telegramId);
     }
 
     @Override
@@ -38,20 +39,20 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public List<User> getAllStudents() {
-        return repository.findAllByRole(UserRole.STUDENT);
+        return userRepository.findAllByRole(UserRole.STUDENT);
     }
 
     @Override
     @Transactional
     public List<User> getAllTeachers() {
-        return repository.findAllByRole(UserRole.TEACHER);
+        return userRepository.findAllByRole(UserRole.TEACHER);
     }
 
 
     @Override
     @Transactional
     public User createUser(String telegramId, String firstName, String lastName) throws UserAlreadyExistsException {
-        User user = repository.findByTelegramId(telegramId);
+        User user = getUserByTelegramId(telegramId);
 
         if (user != null)
             throw new UserAlreadyExistsException(String.format("User with telegram id \"%s\" already exists.", telegramId));
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
                 .role(UserRole.GUEST)
                 .build();
 
-        repository.save(user);
+        userRepository.save(user);
 
         return user;
     }
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserRole getUserRole(String telegramId) throws UserDoesNotExistsException {
-        User user = repository.findByTelegramId(telegramId);
+        User user = getUserByTelegramId(telegramId);
 
         if (user == null)
             throw new UserDoesNotExistsException(String.format("User with telegram id %s hasn't been found", telegramId));
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void changeUserRole(String telegramId, UserRole role) throws UserDoesNotExistsException {
-        User user = repository.findByTelegramId(telegramId);
+        User user = getUserByTelegramId(telegramId);
 
         if (user == null)
             throw new UserDoesNotExistsException(String.format("User with telegram id %s hasn't been found", telegramId));
@@ -94,8 +95,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void setChatIdForUser(String telegramId, String chatId) {
-        User user = repository.findByTelegramId(telegramId);
+        User user = getUserByTelegramId(telegramId);
         user.setChatId(chatId);
+    }
+
+    @Override
+    @Transactional
+    public Family setParentForStudent(String studentTelegramId, String parentTelegramId) {
+        User student = getUserByTelegramId(studentTelegramId);
+        User parent = getUserByTelegramId(parentTelegramId);
+
+        Family family = familyRepository.getByStudent(student);
+
+        family.setParent(parent);
+
+        return family;
     }
 
 }

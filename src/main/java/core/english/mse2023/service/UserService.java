@@ -31,6 +31,7 @@ public interface UserService {
      */
     List<User> getAllStudents();
 
+
     /**
      * Gets all Teachers in database
      * @return All teachers
@@ -71,4 +72,12 @@ public interface UserService {
      * @param chatId ID of chat
      */
     void setChatIdForUser(String telegramId, String chatId);
+
+    /**
+     * Sets parent to family with particular student
+     * @param studentTelegramId Student Telegram ID
+     * @param parentTelegramId Parent Telegram ID
+     * @return Family that has been changed
+     */
+    Family setParentForStudent(String studentTelegramId, String parentTelegramId);
 }

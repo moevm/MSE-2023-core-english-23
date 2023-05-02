@@ -105,6 +105,9 @@ public class ReplyKeyboardMaker {
                 ButtonCommand.GET_ALL_STUDENTS.getDescription()
         ))));
         keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
+                ButtonCommand.SET_PARENT_FOR_STUDENT.getDescription()
+        ))));
+        keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
                 ButtonCommand.GET_ALL_SUBSCRIPTIONS.getDescription()
         ))));
         keyboard.add(new KeyboardRow(List.of(new KeyboardButton(

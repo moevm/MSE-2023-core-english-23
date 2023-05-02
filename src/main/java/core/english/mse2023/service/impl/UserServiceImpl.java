@@ -43,6 +43,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getAllParents() {
+        return userRepository.findAllByRole(UserRole.PARENT);
+    }
+
+    @Override
     @Transactional
     public List<User> getAllTeachers() {
         return userRepository.findAllByRole(UserRole.TEACHER);

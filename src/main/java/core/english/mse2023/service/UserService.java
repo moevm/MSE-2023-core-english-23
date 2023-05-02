@@ -31,6 +31,12 @@ public interface UserService {
      */
     List<User> getAllStudents();
 
+    /**
+     * Gets all Parents in database
+     * @return All parents
+     */
+    List<User> getAllParents();
+
 
     /**
      * Gets all Teachers in database

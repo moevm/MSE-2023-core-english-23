@@ -303,7 +303,7 @@ public class InlineKeyboardMaker {
         return inlineKeyboardMarkup;
     }
 
-    public InlineKeyboardMarkup getSubscriptionLessonsMenu(List<Lesson> lessons, String subscriptionId) {
+    public InlineKeyboardMarkup getSubscriptionLessonsMenu(List<Lesson> lessons, String subscriptionId, UserRole userRole) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance()
@@ -323,12 +323,16 @@ public class InlineKeyboardMaker {
                     ))
                     .row();
         }
-        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                        InlineButtonCommand.CREATE_LESSON,
-                        subscriptionId,
-                        0
-                ))
-                .row();
+
+        if (userRole == UserRole.ADMIN || userRole == UserRole.TEACHER) {
+            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                            InlineButtonCommand.CREATE_LESSON,
+                            subscriptionId,
+                            0
+                    ))
+                    .row();
+        }
+
 
         inlineKeyboardMarkup.setKeyboard(builder.build().getKeyboard());
         return inlineKeyboardMarkup;

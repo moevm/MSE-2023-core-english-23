@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface FamilyRepository extends JpaRepository<Family, UUID> {
 
     List<Family> getAllByParent(User parent);
+    Family getByStudent(User student);
 }

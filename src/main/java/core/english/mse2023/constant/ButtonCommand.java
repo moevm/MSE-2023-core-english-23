@@ -23,6 +23,8 @@ public interface ButtonCommand {
 
     BotCommand GET_ALL_TEACHERS = new BotCommand("/getAllTeachers", "Все учителя");
     BotCommand GET_ALL_STUDENTS = new BotCommand("/getAllStudents", "Все студенты");
+    BotCommand SET_PARENT_FOR_STUDENT = new BotCommand("/setParentForStudent", "Назначить родителя ученику");
+
     BotCommand GET_ALL_SUBSCRIPTIONS = new BotCommand("/getAllSubscriptions", "Вывести подписки");
 
     BotCommand CREATE_SUBSCRIPTION = new BotCommand("/createSubscription", "Создать подписку");

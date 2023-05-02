@@ -14,6 +14,7 @@ import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
+import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.state.createLesson.LessonCreationEvent;
 import core.english.mse2023.state.createLesson.LessonCreationState;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,7 @@ public class CreateLessonHandler implements InteractiveHandler {
             .build();
 
     private final LessonService lessonService;
+    private final SubscriptionService subscriptionService;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -73,7 +75,7 @@ public class CreateLessonHandler implements InteractiveHandler {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
         LessonCreationDTO dto = LessonCreationDTO.builder()
                 .stateMachine(stateMachine)
-                .subscriptionId(buttonData.getData())
+                .subscription(subscriptionService.getSubscriptionById(UUID.fromString(buttonData.getData())))
                 .build();
 
         lessonCreationCache.put(update.getCallbackQuery().getFrom().getId().toString(), dto);
@@ -112,7 +114,7 @@ public class CreateLessonHandler implements InteractiveHandler {
 
         parseInput(update.getMessage().getText(), dto);
 
-        lessonService.createLesson(dto, userRole);
+        lessonService.createLesson(dto.getSubscription(), dto.getDate(), dto.getTopic(), dto.getLink());
 
         // Sending buttons with students. Data from them will be used in the next state
         SendMessage sendMessage = SendMessage.builder()

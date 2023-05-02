@@ -1,10 +1,8 @@
 package core.english.mse2023.service.impl;
 
-import core.english.mse2023.aop.aspect.Notification;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.NotificationService;
-import core.english.mse2023.service.UserService;
 import core.english.mse2023.tgbot.TelegramBot;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

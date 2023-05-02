@@ -6,13 +6,8 @@ import core.english.mse2023.exception.SubscriptionDoesNotExistsException;
 import core.english.mse2023.model.Family;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.Subscription;
-import core.english.mse2023.model.dictionary.AttendanceType;
-import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.model.dictionary.SubscriptionStatus;
-import core.english.mse2023.repository.FamilyRepository;
-import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.repository.SubscriptionRepository;
-import core.english.mse2023.repository.UserRepository;
 import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.service.UserService;
@@ -39,6 +34,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     private final LessonService lessonService;
     private final UserService userService;
+
+    @Override
+    public Subscription getSubscriptionById(UUID subscriptionId) {
+        return subscriptionRepository.getSubscriptionsById(subscriptionId);
+    }
 
     @Override
     @Transactional

@@ -1,24 +1,21 @@
 package core.english.mse2023.service.impl;
 
-import core.english.mse2023.dto.LessonCreationDTO;
-import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.exception.LessonAlreadyFinishedException;
+import core.english.mse2023.exception.LessonDateOutsideSubscriptionException;
 import core.english.mse2023.exception.LessonDoesNotExistsException;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonHistory;
 import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.Subscription;
-import core.english.mse2023.model.dictionary.*;
-
+import core.english.mse2023.model.dictionary.AttendanceType;
+import core.english.mse2023.model.dictionary.LessonHistoryEventType;
 import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.repository.LessonHistoryRepository;
 import core.english.mse2023.repository.LessonInfoRepository;
 import core.english.mse2023.repository.LessonRepository;
-import core.english.mse2023.repository.SubscriptionRepository;
 import core.english.mse2023.service.LessonService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +24,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static core.english.mse2023.model.dictionary.AttendanceType.NOT_YET_ATTENDED;
-import static core.english.mse2023.model.dictionary.LessonStatus.*;
+import static core.english.mse2023.model.dictionary.LessonStatus.ENDED;
+import static core.english.mse2023.model.dictionary.LessonStatus.NOT_STARTED_YET;
 
 @Service
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
 
-    private final SubscriptionRepository subscriptionRepository;
     private final LessonRepository lessonRepository;
     private final LessonHistoryRepository lessonHistoryRepository;
     private final LessonInfoRepository lessonInfoRepository;
@@ -57,39 +53,29 @@ public class LessonServiceImpl implements LessonService {
         return lessonRepository.getAllBySubscriptionId(subscriptionId);
     }
 
-    // TODO: create one createLesson method with dto as input.
-    //  In dto some fields set automatically.
+
+
     @Override
     @Transactional
     public Lesson createLesson(Subscription subscription, String topic) {
+        return createLesson(subscription, null, topic, null);
+    }
 
+    @Transactional
+    @Override
+    public Lesson createLesson(Subscription subscription, Timestamp date, String topic, String link) throws IllegalUserInputException {
         Lesson lesson = Lesson.builder()
-                .status(NOT_STARTED_YET)
+                .status((date != null && date.after(new Date())) ? ENDED : NOT_STARTED_YET)
                 .subscription(subscription)
                 .topic(topic)
+                .link(link)
+                .date(date)
                 .build();
 
         lessonRepository.save(lesson);
 
         createHistoryEvent(lesson, LessonHistoryEventType.CREATED);
         createLessonInfo(lesson, AttendanceType.NOT_YET_ATTENDED);
-
-        return lesson;
-    }
-
-    @Transactional
-    @Override
-    public Lesson createLesson(LessonCreationDTO creationDTO, UserRole userRole) throws IllegalUserInputException {
-        Subscription subscription = subscriptionRepository.getSubscriptionsById(UUID.fromString(creationDTO.getSubscriptionId()));
-
-        Lesson lesson = createLesson(subscription,creationDTO.getTopic());
-        if (creationDTO.getDate() != null){
-            setLessonDate(creationDTO.getDate(), lesson.getId());
-            if (lesson.getDate().after(new Date())) {
-                lesson.setStatus(ENDED);
-            }
-        }
-        lesson.setLink(creationDTO.getLink());
 
         return lesson;
     }
@@ -137,7 +123,6 @@ public class LessonServiceImpl implements LessonService {
 
         return lesson;
     }
-
 
 
     @Override
@@ -194,16 +179,16 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public Lesson setLessonDate(Timestamp date, UUID lessonId) throws LessonDoesNotExistsException {
+    public Lesson setLessonDate(Timestamp date, UUID lessonId) throws LessonDoesNotExistsException, LessonDateOutsideSubscriptionException {
         Lesson lesson = getLessonById(lessonId);
 
         if (lesson == null) {
             throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
         }
 
-        if ( date.after(lesson.getSubscription().getEndDate()) ||
-                date.before(lesson.getSubscription().getStartDate())) { //если не попадает в подписку
-            throw new IllegalUserInputException("User entered lesson date outside subscription boundaries");
+        // Если не попадает в пределы подписки
+        if (date.after(lesson.getSubscription().getEndDate()) || date.before(lesson.getSubscription().getStartDate())) {
+            throw new LessonDateOutsideSubscriptionException("Lesson date cannot be outside subscription boundaries.");
         }
 
         lesson.setDate(date);
@@ -234,7 +219,6 @@ public class LessonServiceImpl implements LessonService {
 
         return lesson;
     }
-
 
 
     @Override

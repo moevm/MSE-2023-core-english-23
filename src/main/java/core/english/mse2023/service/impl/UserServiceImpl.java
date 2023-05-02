@@ -1,8 +1,8 @@
 package core.english.mse2023.service.impl;
 
 
-import core.english.mse2023.exception.UserDoesNotExistsException;
 import core.english.mse2023.exception.UserAlreadyExistsException;
+import core.english.mse2023.exception.UserDoesNotExistsException;
 import core.english.mse2023.model.Family;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -93,8 +93,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void setChatIdForUser(String userTelegramId, String chatId) {
-        User user = repository.findByTelegramId(userTelegramId);
+    public void setChatIdForUser(String telegramId, String chatId) {
+        User user = repository.findByTelegramId(telegramId);
         user.setChatId(chatId);
     }
 

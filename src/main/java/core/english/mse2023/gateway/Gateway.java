@@ -1,6 +1,6 @@
 package core.english.mse2023.gateway;
 
-import core.english.mse2023.exception.UserDoesNotExistsException;
+import core.english.mse2023.exception.NoSuchUserException;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.resolver.Resolver;
 import core.english.mse2023.service.UserService;
@@ -42,7 +42,7 @@ public class Gateway {
                 userService.setChatIdForUser(update.getMessage().getFrom().getId().toString(), update.getMessage().getChatId().toString());
 
                 reply = resolvers.get(userRole).resolve(update, userRole);
-            } catch (UserDoesNotExistsException exception) {
+            } catch (NoSuchUserException exception) {
                 reply = resolvers.get(UserRole.GUEST).resolve(update, UserRole.GUEST);
             }
         } else if(update.hasCallbackQuery()) {
@@ -53,7 +53,7 @@ public class Gateway {
                 userService.setChatIdForUser(update.getCallbackQuery().getFrom().getId().toString(), update.getCallbackQuery().getMessage().getChatId().toString());
 
                 reply = resolvers.get(userRole).resolve(update, userRole);
-            } catch (UserDoesNotExistsException exception) {
+            } catch (NoSuchUserException exception) {
                 reply = List.of(SendMessage.builder()
                         .chatId(update.getMessage().getChatId().toString())
                         .text(FAILED_TO_IDENTIFY_TEXT)

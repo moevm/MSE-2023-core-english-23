@@ -2,7 +2,7 @@ package core.english.mse2023.service.impl;
 
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.exception.SubscriptionAlreadyCanceledException;
-import core.english.mse2023.exception.SubscriptionDoesNotExistsException;
+import core.english.mse2023.exception.NoSuchSubscriptionException;
 import core.english.mse2023.model.Family;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.Subscription;
@@ -102,15 +102,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     @Transactional
-    public void cancelSubscription(UUID subscriptionId) throws SubscriptionDoesNotExistsException, SubscriptionAlreadyCanceledException {
+    public void cancelSubscription(UUID subscriptionId) {
         Subscription subscription = subscriptionRepository.getSubscriptionsById(subscriptionId);
 
         if (subscription == null) {
-            throw new SubscriptionDoesNotExistsException(String.format("Subscription %s does not exists.", subscriptionId));
+            throw new NoSuchSubscriptionException(String.format("Subscription %s does not exists.", subscriptionId));
         }
 
         if (subscription.getStatus() == SubscriptionStatus.CANCELLED) {
-            throw new SubscriptionAlreadyCanceledException(String.format("Subscription %s has already been cancelled.", subscriptionId));
+            throw new SubscriptionAlreadyCanceledException(subscriptionId.toString());
         }
 
         subscription.setStatus(SubscriptionStatus.CANCELLED);

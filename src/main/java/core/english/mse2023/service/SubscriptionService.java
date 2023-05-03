@@ -2,7 +2,7 @@ package core.english.mse2023.service;
 
 import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.exception.SubscriptionAlreadyCanceledException;
-import core.english.mse2023.exception.SubscriptionDoesNotExistsException;
+import core.english.mse2023.exception.NoSuchSubscriptionException;
 import core.english.mse2023.model.Subscription;
 
 import java.util.List;
@@ -54,8 +54,8 @@ public interface SubscriptionService {
     /**
      * Cancels subscription and all lessons attached to it
      * @param subscriptionId UUID of subscription
-     * @throws SubscriptionDoesNotExistsException If subscription with given UUID doesn't exist
+     * @throws NoSuchSubscriptionException If subscription with given UUID doesn't exist
      * @throws SubscriptionAlreadyCanceledException If subscription already canceled
      */
-    void cancelSubscription(UUID subscriptionId) throws SubscriptionDoesNotExistsException, SubscriptionAlreadyCanceledException;
+    void cancelSubscription(UUID subscriptionId);
 }

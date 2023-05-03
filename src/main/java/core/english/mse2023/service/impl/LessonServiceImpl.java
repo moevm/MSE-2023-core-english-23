@@ -1,9 +1,8 @@
 package core.english.mse2023.service.impl;
 
-import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.exception.LessonAlreadyFinishedException;
 import core.english.mse2023.exception.LessonDateOutsideSubscriptionException;
-import core.english.mse2023.exception.LessonDoesNotExistsException;
+import core.english.mse2023.exception.NoSuchLessonException;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonHistory;
 import core.english.mse2023.model.LessonInfo;
@@ -63,7 +62,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Transactional
     @Override
-    public Lesson createLesson(Subscription subscription, Timestamp date, String topic, String link) throws IllegalUserInputException {
+    public Lesson createLesson(Subscription subscription, Timestamp date, String topic, String link) {
         Lesson lesson = Lesson.builder()
                 .status((date != null && date.after(new Date())) ? ENDED : NOT_STARTED_YET)
                 .subscription(subscription)
@@ -82,11 +81,11 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public Lesson finishLesson(UUID lessonId) throws LessonDoesNotExistsException, LessonAlreadyFinishedException {
+    public Lesson finishLesson(UUID lessonId) {
         Lesson lesson = getLessonById(lessonId);
 
         if (lesson == null) {
-            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+            throw new NoSuchLessonException(String.format("Lesson %s doesn't exist", lessonId));
         }
 
         LessonStatus status = lesson.getStatus();
@@ -103,11 +102,11 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public Lesson cancelLesson(UUID lessonId, LessonStatus lessonStatus) throws LessonDoesNotExistsException {
+    public Lesson cancelLesson(UUID lessonId, LessonStatus lessonStatus) {
         Lesson lesson = getLessonById(lessonId);
 
         if (lesson == null) {
-            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+            throw new NoSuchLessonException(String.format("Lesson %s doesn't exist", lessonId));
         }
 
         LessonStatus status = lesson.getStatus();
@@ -127,12 +126,12 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public void setAttendance(UUID lessonId, AttendanceType attendanceType) throws LessonDoesNotExistsException {
+    public void setAttendance(UUID lessonId, AttendanceType attendanceType) {
 
         Lesson lesson = getLessonById(lessonId);
 
         if (lesson == null) {
-            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+            throw new NoSuchLessonException(String.format("Lesson %s doesn't exist", lessonId));
         }
 
         if (attendanceType == AttendanceType.ATTENDED || attendanceType == AttendanceType.SKIPPED) {
@@ -147,12 +146,12 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public void setTeacherCommentForParent(String comment, UUID lessonId) throws LessonDoesNotExistsException {
+    public void setTeacherCommentForParent(String comment, UUID lessonId) {
 
         Lesson lesson = getLessonById(lessonId);
 
         if (lesson == null) {
-            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+            throw new NoSuchLessonException(String.format("Lesson %s doesn't exist", lessonId));
         }
 
         LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
@@ -163,12 +162,12 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public void setTeacherHomeworkComment(String comment, UUID lessonId) throws LessonDoesNotExistsException {
+    public void setTeacherHomeworkComment(String comment, UUID lessonId) {
 
         Lesson lesson = getLessonById(lessonId);
 
         if (lesson == null) {
-            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+            throw new NoSuchLessonException(String.format("Lesson %s doesn't exist", lessonId));
         }
 
         LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
@@ -179,16 +178,16 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public Lesson setLessonDate(Timestamp date, UUID lessonId) throws LessonDoesNotExistsException, LessonDateOutsideSubscriptionException {
+    public Lesson setLessonDate(Timestamp date, UUID lessonId) {
         Lesson lesson = getLessonById(lessonId);
 
         if (lesson == null) {
-            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+            throw new NoSuchLessonException(String.format("Lesson %s doesn't exist", lessonId));
         }
 
         // Если не попадает в пределы подписки
         if (date.after(lesson.getSubscription().getEndDate()) || date.before(lesson.getSubscription().getStartDate())) {
-            throw new LessonDateOutsideSubscriptionException("Lesson date cannot be outside subscription boundaries.");
+            throw new LessonDateOutsideSubscriptionException();
         }
 
         lesson.setDate(date);
@@ -204,12 +203,12 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public Lesson setLessonHomeworkCompletion(UUID lessonId, boolean isComplete) throws LessonDoesNotExistsException {
+    public Lesson setLessonHomeworkCompletion(UUID lessonId, boolean isComplete) {
 
         Lesson lesson = getLessonById(lessonId);
 
         if (lesson == null) {
-            throw new LessonDoesNotExistsException(String.format("Lesson %s doesn't exist", lessonId));
+            throw new NoSuchLessonException(String.format("Lesson %s doesn't exist", lessonId));
         }
 
         LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);

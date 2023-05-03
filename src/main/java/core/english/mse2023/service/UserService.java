@@ -1,7 +1,7 @@
 package core.english.mse2023.service;
 
 import core.english.mse2023.exception.UserAlreadyExistsException;
-import core.english.mse2023.exception.UserDoesNotExistsException;
+import core.english.mse2023.exception.NoSuchUserException;
 import core.english.mse2023.model.Family;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -53,24 +53,24 @@ public interface UserService {
      * @return Newly created user
      * @throws UserAlreadyExistsException If user with given telegram ID already exists
      */
-    User createUser(String telegramId, String firstName, String lastName) throws UserAlreadyExistsException;
+    User createUser(String telegramId, String firstName, String lastName);
 
 
     /**
      * Gets user's role by telegram ID
      * @param telegramId User's telegram ID
      * @return Found Role
-     * @throws UserDoesNotExistsException If user with given UUID doesn't exist
+     * @throws NoSuchUserException If user with given UUID doesn't exist
      */
-    UserRole getUserRole(String telegramId) throws UserDoesNotExistsException;
+    UserRole getUserRole(String telegramId);
 
     /**
      * Changes user's role by telegram ID
      * @param telegramId User's telegram ID
      * @param role New role
-     * @throws UserDoesNotExistsException If user with given UUID doesn't exist
+     * @throws NoSuchUserException If user with given UUID doesn't exist
      */
-    void changeUserRole(String telegramId, UserRole role) throws UserDoesNotExistsException;
+    void changeUserRole(String telegramId, UserRole role);
 
     /**
      * Sets user's chat id by telegram ID

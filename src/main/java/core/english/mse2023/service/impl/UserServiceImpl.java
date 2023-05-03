@@ -2,7 +2,7 @@ package core.english.mse2023.service.impl;
 
 
 import core.english.mse2023.exception.UserAlreadyExistsException;
-import core.english.mse2023.exception.UserDoesNotExistsException;
+import core.english.mse2023.exception.NoSuchUserException;
 import core.english.mse2023.model.Family;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -56,11 +56,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User createUser(String telegramId, String firstName, String lastName) throws UserAlreadyExistsException {
+    public User createUser(String telegramId, String firstName, String lastName) {
         User user = getUserByTelegramId(telegramId);
 
         if (user != null)
-            throw new UserAlreadyExistsException(String.format("User with telegram id \"%s\" already exists.", telegramId));
+            throw new UserAlreadyExistsException(telegramId);
 
         user = User.builder()
                 .name(firstName)
@@ -77,22 +77,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserRole getUserRole(String telegramId) throws UserDoesNotExistsException {
+    public UserRole getUserRole(String telegramId) {
         User user = getUserByTelegramId(telegramId);
 
         if (user == null)
-            throw new UserDoesNotExistsException(String.format("User with telegram id %s hasn't been found", telegramId));
+            throw new NoSuchUserException(String.format("User with telegram id %s hasn't been found", telegramId));
 
         return user.getRole();
     }
 
     @Override
     @Transactional
-    public void changeUserRole(String telegramId, UserRole role) throws UserDoesNotExistsException {
+    public void changeUserRole(String telegramId, UserRole role) {
         User user = getUserByTelegramId(telegramId);
 
         if (user == null)
-            throw new UserDoesNotExistsException(String.format("User with telegram id %s hasn't been found", telegramId));
+            throw new NoSuchUserException(String.format("User with telegram id %s hasn't been found", telegramId));
 
         user.setRole(role);
     }

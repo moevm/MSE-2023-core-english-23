@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -39,23 +40,29 @@ public class SetUserRoleHandler implements Handler {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
         UserRole newRole = UserRole.valueOf(buttonData.getData());
 
-        boolean result = service.changeUserRole(update.getCallbackQuery().getFrom().getId().toString(), newRole);
+        List<BotApiMethod<?>> actions = new ArrayList<>();
 
-        SendMessage message = result ?
-                SendMessage.builder()
-                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(String.format(USER_ROLE_SUCCESSFULLY_CHANGED_MESSAGE_TEXT, newRole))
-                        .replyMarkup(replyKeyboardMaker.getMainMenuKeyboard(newRole))
-                        .build()
-                :
-                SendMessage.builder()
-                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(FAILED_TO_CHANGE_USER_ROLE_MESSAGE_TEXT)
-                        .build();
+        if (userRole == newRole) {
+            SendMessage message = SendMessage.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .text(FAILED_TO_CHANGE_USER_ROLE_MESSAGE_TEXT)
+                    .build();
 
+            actions.add(message);
+        } else {
+            service.changeUserRole(update.getCallbackQuery().getFrom().getId().toString(), newRole);
+            SendMessage message = SendMessage.builder()
+                            .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                            .text(String.format(USER_ROLE_SUCCESSFULLY_CHANGED_MESSAGE_TEXT, newRole))
+                            .replyMarkup(replyKeyboardMaker.getMainMenuKeyboard(newRole))
+                            .build();
 
+            actions.add(message);
+        }
 
-        return List.of(message, new AnswerCallbackQuery(update.getCallbackQuery().getId()));
+        actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
+
+        return actions;
     }
 
     @Override

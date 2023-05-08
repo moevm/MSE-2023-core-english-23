@@ -31,7 +31,7 @@ VALUES ('83d80328-bdda-11ed-afa1-0242ac120002', 'f0e1ad2c-bdd3-11ed-afa1-0242ac1
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)
 VALUES ('a63960e2-bdda-11ed-afa1-0242ac120002', 'f0e1a34a-bdd3-11ed-afa1-0242ac120002', 'f0e1b1be-bdd3-11ed-afa1-0242ac120002', 'TIME_BASED', 'NOT_YET_STARTED', 3, NOW() + 1,NOW() + 31, NOW(), NOW());
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)
-VALUES ('a639681c-bdda-11ed-afa1-0242ac120002', 'f0e1a62e-bdd3-11ed-afa1-0242ac120002', 'f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'TIME_BASED', 'CANCELLED', 2, NOW() - 1, NOW() + 364, NOW() - 1, NOW());
+VALUES ('a639681c-bdda-11ed-afa1-0242ac120002', 'f0e1a62e-bdd3-11ed-afa1-0242ac120002', 'f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'TIME_BASED', 'ACTIVE', 2, NOW() - 1, NOW() + 364, NOW() - 1, NOW());
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)
 VALUES ('a6396a88-bdda-11ed-afa1-0242ac120002', 'f0e1a796-bdd3-11ed-afa1-0242ac120002', 'f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'QUANTITY_BASED', 'ACTIVE', 1, NOW() - 3,NOW() + 62, NOW() - 0.15, NOW() - 0.15);
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)

@@ -7,6 +7,7 @@ import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
+import core.english.mse2023.exception.SubscriptionAlreadyCanceledException;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.SubscriptionService;
@@ -18,6 +19,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,23 +42,30 @@ public class CancelSubscriptionHandler implements Handler {
 
         UUID subscriptionId = UUID.fromString(buttonData.getData());
 
-        boolean success = subscriptionService.cancelSubscription(subscriptionId);
+        List<BotApiMethod<?>> actions = new ArrayList<>();
 
-        SendMessage message;
+        try {
+            subscriptionService.cancelSubscription(subscriptionId);
 
-        if (!success) {
-            message = SendMessage.builder()
-                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(ALREADY_CANCELED_TEXT)
-                    .build();
-        } else {
-            message = SendMessage.builder()
+            SendMessage message = SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                     .text(DONE_TEXT)
                     .build();
+
+            actions.add(message);
+
+        } catch (SubscriptionAlreadyCanceledException e) {
+            SendMessage message = SendMessage.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .text(ALREADY_CANCELED_TEXT)
+                    .build();
+
+            actions.add(message);
         }
 
-        return List.of(message, new AnswerCallbackQuery(update.getCallbackQuery().getId()));
+        actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
+
+        return actions;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class GetMoreSubscriptionInfoHandler implements Handler {
         EditMessageReplyMarkup editMessageReplyMarkup = EditMessageReplyMarkup.builder()
                 .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                 .messageId(update.getCallbackQuery().getMessage().getMessageId())
-                .replyMarkup(inlineKeyboardMaker.getSubscriptionLessonsMenu(lessons, buttonData.getData()))
+                .replyMarkup(inlineKeyboardMaker.getSubscriptionLessonsMenu(lessons, buttonData.getData(), userRole))
                 .build();
 
         return List.of(editMessageReplyMarkup, new AnswerCallbackQuery(update.getCallbackQuery().getId()));

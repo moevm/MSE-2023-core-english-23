@@ -13,6 +13,7 @@ import core.english.mse2023.exception.LessonAlreadyFinishedException;
 import core.english.mse2023.exception.LessonHasNotStartedYetException;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
@@ -56,11 +57,12 @@ public class FinishLessonHandler implements Handler {
 
         try {
             Lesson lesson = lessonService.finishLesson(lessonId);
+            LessonInfo lessonInfo = lessonService.getLessonInfoByLessonId(lessonId);
 
             messages.add(EditMessageText.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                     .messageId(update.getCallbackQuery().getMessage().getMessageId())
-                    .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
+                    .text(messageTextMaker.lessonInfoPatternMessageText(lesson, lessonInfo))
                     .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
                             lesson,
                             lessonService.getLessonInfoByLessonId(lessonId),

@@ -1,6 +1,7 @@
 package core.english.mse2023.component;
 
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +16,14 @@ public class MessageTextMaker {
         return String.format(messageTemplate, lastName, name);
     }
 
-    public String lessonInfoPatternMessageText(Lesson lesson) {
+    public String lessonInfoPatternMessageText(Lesson lesson, LessonInfo lessonInfo) {
 
         String messageTemplate = """
                 Данные об уроке
                 Статус: %s
                 Дата проведения: %s
                 Тема: %s
+                Оценка: %s
                 Ссылка: %s
                 """;
 
@@ -35,6 +37,7 @@ public class MessageTextMaker {
                 lesson.getStatus().toString(),
                 lesson.getDate() == null ? NO_DATA_TEXT : dateFormat.format(lesson.getDate()),
                 lesson.getTopic() == null ? NO_DATA_TEXT : lesson.getTopic(),
+                lessonInfo.getScore() == null ? NO_DATA_TEXT : lessonInfo.getScore(),
                 lesson.getLink() == null ? NO_DATA_TEXT : String.format(LINK_PATTERN, lesson.getLink())
         );
     }

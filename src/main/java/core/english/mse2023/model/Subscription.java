@@ -3,10 +3,7 @@ package core.english.mse2023.model;
 import core.english.mse2023.model.dictionary.SubscriptionStatus;
 import core.english.mse2023.model.dictionary.SubscriptionType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
@@ -14,6 +11,7 @@ import java.sql.Timestamp;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "subscription")
 public class Subscription extends BaseEntity {
 

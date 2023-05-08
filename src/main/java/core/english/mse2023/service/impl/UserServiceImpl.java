@@ -1,15 +1,17 @@
 package core.english.mse2023.service.impl;
 
 
+import core.english.mse2023.exception.UserAlreadyExistsException;
 import core.english.mse2023.exception.NoSuchUserException;
+import core.english.mse2023.model.Family;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
+import core.english.mse2023.repository.FamilyRepository;
 import core.english.mse2023.repository.UserRepository;
 import core.english.mse2023.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
@@ -18,41 +20,65 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repository;
 
-    @Transactional
+    private final UserRepository userRepository;
+    private final FamilyRepository familyRepository;
+
     @Override
-    public User getUserOrCreateNewOne(Update update) {
-        String telegramId = update.getMessage().getFrom().getId().toString();
+    @Transactional
+    public User getUserByTelegramId(String telegramId) {
+        return userRepository.findByTelegramId(telegramId);
+    }
 
-        User user = repository.findByTelegramId(telegramId);
+    @Override
+    @Transactional
+    public List<Family> getAllFamiliesWithParent(String parentTelegramId) {
+        return familyRepository.getAllByParent(getUserByTelegramId(parentTelegramId));
+    }
 
-        if (user == null) {
-            user = new User();
-            user.setName(update.getMessage().getFrom().getFirstName());
-            user.setLastName(update.getMessage().getFrom().getLastName());
-            user.setTelegramId(telegramId);
-            user.setRole(UserRole.GUEST);
+    @Override
+    @Transactional
+    public List<User> getAllStudents() {
+        return userRepository.findAllByRole(UserRole.STUDENT);
+    }
 
-            repository.save(user);
-        }
+    @Override
+    public List<User> getAllParents() {
+        return userRepository.findAllByRole(UserRole.PARENT);
+    }
+
+    @Override
+    @Transactional
+    public List<User> getAllTeachers() {
+        return userRepository.findAllByRole(UserRole.TEACHER);
+    }
+
+
+    @Override
+    @Transactional
+    public User createUser(String telegramId, String firstName, String lastName) {
+        User user = getUserByTelegramId(telegramId);
+
+        if (user != null)
+            throw new UserAlreadyExistsException(telegramId);
+
+        user = User.builder()
+                .name(firstName)
+                .lastName(lastName)
+                .telegramId(telegramId)
+                .role(UserRole.GUEST)
+                .build();
+
+        userRepository.save(user);
 
         return user;
     }
 
-    @Override
-    public List<User> getAllStudents() {
-        return repository.findAllByRole(UserRole.STUDENT);
-    }
 
     @Override
-    public List<User> getAllTeachers() {
-        return repository.findAllByRole(UserRole.TEACHER);
-    }
-
-    @Override
-    public UserRole getUserRole(String telegramId) throws NoSuchUserException {
-        User user = repository.findByTelegramId(telegramId);
+    @Transactional
+    public UserRole getUserRole(String telegramId) {
+        User user = getUserByTelegramId(telegramId);
 
         if (user == null)
             throw new NoSuchUserException(String.format("User with telegram id %s hasn't been found", telegramId));
@@ -61,19 +87,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean changeUserRole(String telegramId, UserRole role) {
-        boolean roleHasBeenChanged = false;
+    @Transactional
+    public void changeUserRole(String telegramId, UserRole role) {
+        User user = getUserByTelegramId(telegramId);
 
-        User user = repository.findByTelegramId(telegramId);
+        if (user == null)
+            throw new NoSuchUserException(String.format("User with telegram id %s hasn't been found", telegramId));
 
-        if (user.getRole() != role) {
-            user.setRole(role);
-            repository.save(user);
+        user.setRole(role);
+    }
 
-            roleHasBeenChanged = true;
-        }
+    @Override
+    @Transactional
+    public void setChatIdForUser(String telegramId, String chatId) {
+        User user = getUserByTelegramId(telegramId);
+        user.setChatId(chatId);
+    }
 
-        return roleHasBeenChanged;
+    @Override
+    @Transactional
+    public Family setParentForStudent(String studentTelegramId, String parentTelegramId) {
+        User student = getUserByTelegramId(studentTelegramId);
+        User parent = getUserByTelegramId(parentTelegramId);
+
+        Family family = familyRepository.getByStudent(student);
+
+        family.setParent(parent);
+
+        return family;
     }
 
 }

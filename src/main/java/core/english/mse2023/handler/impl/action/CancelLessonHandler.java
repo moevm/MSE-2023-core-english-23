@@ -42,7 +42,7 @@ public class CancelLessonHandler implements Handler {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
         UUID lessonId = UUID.fromString(buttonData.getData());
-        Lesson lesson = lessonService.cancelLesson(lessonId);
+        Lesson lesson = lessonService.cancelLesson(lessonId, LessonStatus.CANCELLED_BY_TEACHER);
         List<BotApiMethod<?>> messages = new ArrayList<>();
         switch (lesson.getStatus()) {
             case ENDED -> messages.add(SendMessage.builder()

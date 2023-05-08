@@ -1,17 +1,16 @@
 package core.english.mse2023.service.impl;
 
 import core.english.mse2023.dto.SubscriptionCreationDTO;
+import core.english.mse2023.exception.SubscriptionAlreadyCanceledException;
+import core.english.mse2023.exception.NoSuchSubscriptionException;
 import core.english.mse2023.model.Family;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.Subscription;
-import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.model.dictionary.SubscriptionStatus;
-import core.english.mse2023.repository.FamilyRepository;
-import core.english.mse2023.repository.LessonRepository;
 import core.english.mse2023.repository.SubscriptionRepository;
-import core.english.mse2023.repository.UserRepository;
 import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
+import core.english.mse2023.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,41 +21,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static core.english.mse2023.model.dictionary.LessonStatus.CANCELLED;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
+
+    private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
+
     private final SubscriptionRepository subscriptionRepository;
+
     private final LessonService lessonService;
-    private final UserRepository userRepository;
-    private final FamilyRepository familyRepository;
+    private final UserService userService;
 
-    @Transactional
     @Override
-    public Subscription createSubscription(SubscriptionCreationDTO creationDTO) {
-
-        Subscription subscription = new Subscription();
-
-        subscription.setStartDate(creationDTO.getStartDate());
-        subscription.setEndDate(creationDTO.getEndDate());
-
-        subscription.setType(creationDTO.getType());
-
-        if (subscription.getStartDate().after(new Date())) {
-            subscription.setStatus(SubscriptionStatus.NOT_YET_STARTED);
-        } else {
-            subscription.setStatus(SubscriptionStatus.ACTIVE);
-        }
-
-        subscription.setStudent(userRepository.findByTelegramId(creationDTO.getStudentTelegramId()));
-        subscription.setTeacher(userRepository.findByTelegramId(creationDTO.getTeacherTelegramId()));
-        subscription.setLessonsRest(creationDTO.getLessonsRest());
-
-        subscriptionRepository.save(subscription);
-
-        lessonService.createBaseLessonsForSubscription(subscription);
-
-        return subscription;
+    public Subscription getSubscriptionById(UUID subscriptionId) {
+        return subscriptionRepository.getSubscriptionsById(subscriptionId);
     }
 
     @Override
@@ -71,7 +52,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         List<Subscription> subscriptions = new ArrayList<>();
 
-        for (Family family : familyRepository.getAllByParent(userRepository.findByTelegramId(parentTelegramId))) {
+        for (Family family : userService.getAllFamiliesWithParent(parentTelegramId)) {
             subscriptions.addAll(subscriptionRepository.getAllByStudent(family.getStudent()));
         }
 
@@ -82,31 +63,60 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Transactional
     public List<Subscription> getAllSubscriptionsWithTeacher(String teacherTelegramId) {
 
-        return new ArrayList<>(subscriptionRepository.getAllByTeacher(userRepository.findByTelegramId(teacherTelegramId)));
+        return subscriptionRepository.getAllByTeacher(userService.getUserByTelegramId(teacherTelegramId));
 
     }
 
     @Override
+    @Transactional
     public List<Subscription> getAllSubscriptionsWithStudent(String studentTelegramId) {
-
-        return new ArrayList<>(subscriptionRepository.getAllByStudent(userRepository.findByTelegramId(studentTelegramId)));
+        return subscriptionRepository.getAllByStudent(userService.getUserByTelegramId(studentTelegramId));
     }
+
 
 
     @Override
     @Transactional
-    public boolean cancelSubscription(UUID subscriptionId) {
-        Subscription subscription = subscriptionRepository.getSubscriptionsById(subscriptionId);
+    public void createSubscription(SubscriptionCreationDTO creationDTO) {
 
-        if (subscription.getStatus() == SubscriptionStatus.CANCELLED) {
-            return false;
-        }
-        subscription.setStatus(SubscriptionStatus.CANCELLED);
-
-        lessonService.cancelLessonsFromSubscription(subscriptionId);
+        Subscription subscription = Subscription.builder()
+                .startDate(creationDTO.getStartDate())
+                .endDate(creationDTO.getEndDate())
+                .type(creationDTO.getType())
+                .status(creationDTO.getStartDate().after(new Date()) ? SubscriptionStatus.NOT_YET_STARTED : SubscriptionStatus.ACTIVE)
+                .student(userService.getUserByTelegramId(creationDTO.getStudentTelegramId()))
+                .teacher(userService.getUserByTelegramId(creationDTO.getTeacherTelegramId()))
+                .lessonsRest(creationDTO.getLessonsRest())
+                .build();
 
         subscriptionRepository.save(subscription);
-        return true;
+
+        for (int i = 0; i < subscription.getLessonsRest(); i++) {
+            Lesson lesson = lessonService.createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1)));
+
+            if (i == 0) {
+                lesson.setDate(subscription.getStartDate());
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void cancelSubscription(UUID subscriptionId) {
+        Subscription subscription = subscriptionRepository.getSubscriptionsById(subscriptionId);
+
+        if (subscription == null) {
+            throw new NoSuchSubscriptionException(String.format("Subscription %s does not exists.", subscriptionId));
+        }
+
+        if (subscription.getStatus() == SubscriptionStatus.CANCELLED) {
+            throw new SubscriptionAlreadyCanceledException(subscriptionId.toString());
+        }
+
+        subscription.setStatus(SubscriptionStatus.CANCELLED);
+
+        List<Lesson> lessons = lessonService.getAllLessonsForSubscription(subscriptionId);
+        lessons.forEach(lesson -> lessonService.cancelLesson(lesson.getId(), CANCELLED));
     }
 
 }

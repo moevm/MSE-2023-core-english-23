@@ -26,14 +26,22 @@ public class StartHandler implements Handler {
     private static final String GREETING = "Добро пожаловать, %s. Ваша роль: %s";
 
 
-    private final UserService service;
+    private final UserService userService;
 
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
 
     @Override
     public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
-        User user = service.getUserOrCreateNewOne(update);
+        User user = userService.getUserByTelegramId(update.getMessage().getFrom().getId().toString());
+
+        if (user == null) {
+            user = userService.createUser(
+                    update.getMessage().getFrom().getId().toString(),
+                    update.getMessage().getFrom().getFirstName(),
+                    update.getMessage().getFrom().getLastName()
+            );
+        }
 
         return List.of(SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())

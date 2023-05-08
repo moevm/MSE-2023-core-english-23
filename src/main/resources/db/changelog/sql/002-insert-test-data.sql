@@ -1,25 +1,28 @@
 
-INSERT INTO Users(id, name, lastname, telegram_id, email, password, role, created_when, modified_when)
-VALUES ('f0e1a34a-bdd3-11ed-afa1-0242ac120002', 'Екатерина', 'Смирнова', '501727035', 'katy@gmail.com', 'katy',  'STUDENT', NOW() - 0.04, NOW() - 0.04);
-INSERT INTO Users(id, name, lastname, telegram_id, email, password, role, created_when, modified_when)
-VALUES ('f0e1a62e-bdd3-11ed-afa1-0242ac120002', 'Дарья', 'Потомова', '291891029', 'dpotomova@gmail.com', 'potomova0',  'STUDENT', NOW() - 1, NOW() - 1);
-INSERT INTO Users(id, name, lastname, telegram_id, role, created_when, modified_when)
-VALUES ('f0e1a796-bdd3-11ed-afa1-0242ac120002', 'Анна', 'Ахматова', '33122991',  'STUDENT', NOW(), NOW());
-INSERT INTO Users(id, name, lastname, telegram_id, password, role, created_when, modified_when)
-VALUES ('f0e1ad2c-bdd3-11ed-afa1-0242ac120002', 'Валерия', 'Ахматова', '1267829941',  'valah123',  'STUDENT', NOW() - 3.05, NOW() - 0.007);
-INSERT INTO Users(id, name, lastname, telegram_id, email, role, created_when, modified_when)
-VALUES ('f0e1ad3c-bdd3-11ed-afa1-0242ac120002', 'Иван', 'Ахматов', '56830149', 'ivan@yandex.ru', 'PARENT', NOW() - 2, NOW() - 0.005);
-INSERT INTO Users(id, name, lastname, telegram_id, email,  role, created_when, modified_when)
-VALUES ('f0e1af98-bdd3-11ed-afa1-0242ac120002', 'Пётр', 'Потомов', '139064307', 'potompetr@mail.ru', 'PARENT', NOW() - 5, NOW());
-INSERT INTO Users(id, name, lastname, telegram_id, role, created_when, modified_when)
-VALUES ('f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'Данил', 'Комиссаров', '363133882', 'TEACHER', NOW() - 0.2, NOW() - 0.2);
-INSERT INTO Users(id, name, lastname, telegram_id, email, password, role, created_when, modified_when)
-VALUES ('f0e1b1be-bdd3-11ed-afa1-0242ac120002', 'Ксения', 'Львова', '111030045', 'kslvova@yandex.ru', 'lvovaK',  'TEACHER', NOW() - 1.02, NOW());
-INSERT INTO Users(id, name, lastname, telegram_id, email, password, role, created_when, modified_when)
-VALUES ('f0e1b2d6-bdd3-11ed-afa1-0242ac120002', 'Наталья', 'Юлина', '742410348', 'yulinan@mail.ru', 'Nyulina',  'ADMIN', NOW() - 10.01, NOW() - 10.01);
+-- Без настоящего chat_id уведомления отправляться не будут, т.ч. эти тестовые данные не особо годятся для теста уведомлений
+-- Ожидается ошибка: Error sending message: [400] Bad Request: chat not found
+
+INSERT INTO Users(id, name, lastname, telegram_id, chat_id, email, password, role, created_when, modified_when)
+VALUES ('f0e1a34a-bdd3-11ed-afa1-0242ac120002', 'Екатерина', 'Смирнова', '501727035', '-1001118554477', 'katy@gmail.com', 'katy',  'STUDENT', NOW() - 0.04, NOW() - 0.04);
+INSERT INTO Users(id, name, lastname, telegram_id, chat_id, email, password, role, created_when, modified_when)
+VALUES ('f0e1a62e-bdd3-11ed-afa1-0242ac120002', 'Дарья', 'Потомова', '291891029', '-1001118554476', 'dpotomova@gmail.com', 'potomova0',  'STUDENT', NOW() - 1, NOW() - 1);
+INSERT INTO Users(id, name, lastname, telegram_id, chat_id, role, created_when, modified_when)
+VALUES ('f0e1a796-bdd3-11ed-afa1-0242ac120002', 'Анна', 'Ахматова', '33122991', '-1001118554475',  'STUDENT', NOW(), NOW());
+INSERT INTO Users(id, name, lastname, telegram_id, chat_id, password, role, created_when, modified_when)
+VALUES ('f0e1ad2c-bdd3-11ed-afa1-0242ac120002', 'Валерия', 'Ахматова', '1267829941', '-1001118554474',  'valah123',  'STUDENT', NOW() - 3.05, NOW() - 0.007);
+INSERT INTO Users(id, name, lastname, telegram_id, chat_id, email, role, created_when, modified_when)
+VALUES ('f0e1ad3c-bdd3-11ed-afa1-0242ac120002', 'Иван', 'Ахматов', '56830149', '-1001118554473', 'ivan@yandex.ru', 'PARENT', NOW() - 2, NOW() - 0.005);
+INSERT INTO Users(id, name, lastname, telegram_id, chat_id, email,  role, created_when, modified_when)
+VALUES ('f0e1af98-bdd3-11ed-afa1-0242ac120002', 'Пётр', 'Потомов', '139064307', '-1001118554472', 'potompetr@mail.ru', 'PARENT', NOW() - 5, NOW());
+INSERT INTO Users(id, name, lastname, telegram_id, chat_id, role, created_when, modified_when)
+VALUES ('f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'Данил', 'Комиссаров', '363133882', '-1001118554471', 'TEACHER', NOW() - 0.2, NOW() - 0.2);
+INSERT INTO Users(id, name, lastname, telegram_id, chat_id, email, password, role, created_when, modified_when)
+VALUES ('f0e1b1be-bdd3-11ed-afa1-0242ac120002', 'Ксения', 'Львова', '111030045', '-1001118554470', 'kslvova@yandex.ru', 'lvovaK',  'TEACHER', NOW() - 1.02, NOW());
+INSERT INTO Users(id, name, lastname, telegram_id, chat_id, email, password, role, created_when, modified_when)
+VALUES ('f0e1b2d6-bdd3-11ed-afa1-0242ac120002', 'Наталья', 'Юлина', '742410348', '-1001118554467', 'yulinan@mail.ru', 'Nyulina',  'ADMIN', NOW() - 10.01, NOW() - 10.01);
 
 INSERT INTO Family(id, student_id, parent_id, created_when, modified_when)
-VALUES ('83d7fef0-bdda-11ed-afa1-0242ac120002', 'f0e1a62e-bdd3-11ed-afa1-0242ac120002', 'f0e1af98-bdd3-11ed-afa1-0242ac120002',  NOW() - 1,  NOW() - 1);
+VALUES ('83d7fef0-bdda-11ed-afa1-0242ac120002', 'f0e1a34a-bdd3-11ed-afa1-0242ac120002', 'f0e1af98-bdd3-11ed-afa1-0242ac120002',  NOW() - 1,  NOW() - 1);
 INSERT INTO Family(id, student_id, parent_id, created_when, modified_when)
 VALUES ('83d801e8-bdda-11ed-afa1-0242ac120002', 'f0e1a796-bdd3-11ed-afa1-0242ac120002', 'f0e1ad3c-bdd3-11ed-afa1-0242ac120002', NOW(), NOW());
 INSERT INTO Family(id, student_id, parent_id, created_when, modified_when)
@@ -28,7 +31,7 @@ VALUES ('83d80328-bdda-11ed-afa1-0242ac120002', 'f0e1ad2c-bdd3-11ed-afa1-0242ac1
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)
 VALUES ('a63960e2-bdda-11ed-afa1-0242ac120002', 'f0e1a34a-bdd3-11ed-afa1-0242ac120002', 'f0e1b1be-bdd3-11ed-afa1-0242ac120002', 'TIME_BASED', 'NOT_YET_STARTED', 3, NOW() + 1,NOW() + 31, NOW(), NOW());
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)
-VALUES ('a639681c-bdda-11ed-afa1-0242ac120002', 'f0e1a62e-bdd3-11ed-afa1-0242ac120002', 'f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'TIME_BASED', 'CANCELLED', 2, NOW() - 1, NOW() + 364, NOW() - 1, NOW());
+VALUES ('a639681c-bdda-11ed-afa1-0242ac120002', 'f0e1a62e-bdd3-11ed-afa1-0242ac120002', 'f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'TIME_BASED', 'ACTIVE', 2, NOW() - 1, NOW() + 364, NOW() - 1, NOW());
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)
 VALUES ('a6396a88-bdda-11ed-afa1-0242ac120002', 'f0e1a796-bdd3-11ed-afa1-0242ac120002', 'f0e1b0b0-bdd3-11ed-afa1-0242ac120002', 'QUANTITY_BASED', 'ACTIVE', 1, NOW() - 3,NOW() + 62, NOW() - 0.15, NOW() - 0.15);
 INSERT INTO Subscription(id, student_id, teacher_id, type, status, lessons_rest, start_date, end_date, created_when, modified_when)

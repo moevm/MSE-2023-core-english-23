@@ -5,15 +5,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "users")
 public class User extends BaseEntity {
 
@@ -23,6 +21,9 @@ public class User extends BaseEntity {
 
     @Column(name = "telegram_id", nullable = false, unique = true)
     private String telegramId;
+
+    @Column(name = "chat_id", nullable = false, unique = true)
+    private String chatId;
 
     @Column(name = "email", unique = true)
     private String email;

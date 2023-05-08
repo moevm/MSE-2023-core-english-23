@@ -26,7 +26,7 @@ public interface ButtonCommand {
 
     BotCommand SET_PARENT_FOR_STUDENT = new BotCommand("/setParentForStudent", "Назначить родителя ученику");
 
-    BotCommand GET_ALL_SUBSCRIPTIONS = new BotCommand("/getAllSubscriptions", "Вывести подписки");
+    BotCommand GET_ALL_SUBSCRIPTIONS = new BotCommand("/getAllSubscriptions", "Вывести абонементы");
 
     BotCommand CREATE_SUBSCRIPTION = new BotCommand("/createSubscription", "Создать абонемент");
 

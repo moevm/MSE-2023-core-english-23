@@ -30,8 +30,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CancelSubscriptionHandler implements Handler {
 
-    private final static String DONE_TEXT = "Подписка отменена";
-    private final static String ALREADY_CANCELED_TEXT = "Невозможно отменить подписку. Она ранее уже была отменена!";
+    private final static String DONE_TEXT = "Абонемент отменён.";
+    private final static String ALREADY_CANCELED_TEXT = "Невозможно отменить абонемент. Он уже неактивен.";
 
     private final SubscriptionService subscriptionService;
 

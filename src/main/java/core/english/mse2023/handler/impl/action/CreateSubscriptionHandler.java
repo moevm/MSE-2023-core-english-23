@@ -52,7 +52,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
     private final MessageTextMaker messageTextMaker;
 
-    private static final String START_TEXT = "Для создания новой подписки заполните и отправьте форму с данными " +
+    private static final String START_TEXT = "Для создания нового абонемента заполните и отправьте форму с данными " +
             "\\(каждое поле на новой строке в одном сообщении в том же порядке\\)\\. Пример:\n%s";
 
     private static final String DATA_FORM_TEXT = """
@@ -64,7 +64,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     private static final String STUDENT_CHOOSE_TEXT = "Далее выберите студента, с которым будут проводиться занятия:";
     private static final String TEACHER_CHOOSE_TEXT = "Также выберите учителя, который будет проводить занятия:";
 
-    private static final String SUCCESS_TEXT = "Новая подписка и требуемые уроки созданы.";
+    private static final String SUCCESS_TEXT = "Новый абонемент и требуемые уроки созданы.";
 
     // This cache works in manual mode. It means - no evictions was configured
     private final Cache<String, SubscriptionCreationDTO> subscriptionCreationCache = Caffeine.newBuilder()

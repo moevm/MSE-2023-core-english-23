@@ -52,6 +52,10 @@ public class LessonServiceImpl implements LessonService {
         return lessonRepository.getAllBySubscriptionId(subscriptionId);
     }
 
+    @Override
+    public List<LessonInfo> getAllLessonInfosWithUnfinishedTask() {
+        return lessonInfoRepository.getAllByHomeworkCompletedFalse();
+    }
 
 
     @Override

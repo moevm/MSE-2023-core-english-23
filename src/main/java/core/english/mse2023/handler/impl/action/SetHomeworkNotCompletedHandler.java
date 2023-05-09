@@ -2,6 +2,7 @@ package core.english.mse2023.handler.impl.action;
 
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.StudentRole;
+import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -14,9 +15,11 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +31,8 @@ public class SetHomeworkNotCompletedHandler implements Handler {
 
     private static final String DONE_TEXT = "Домашнее задание для урока \"%s\" установлено, как не выполненное.";
 
+    private final InlineKeyboardMaker inlineKeyboardMaker;
+
     private final LessonService lessonService;
 
     @Override
@@ -38,14 +43,35 @@ public class SetHomeworkNotCompletedHandler implements Handler {
 
         Lesson lesson = lessonService.setLessonHomeworkCompletion(lessonId, false);
 
-        SendMessage doneMessage = SendMessage.builder()
+        List<BotApiMethod<?>> actions = new ArrayList<>();
+
+        actions.add(SendMessage.builder()
                 .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                 .text(String.format(DONE_TEXT, lesson.getTopic()))
-                .build();
+                .build()
+        );
 
-        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(update.getCallbackQuery().getId());
+        if (buttonData.getStateIndex() == 0) {
+            actions.add(EditMessageReplyMarkup.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .messageId(update.getCallbackQuery().getMessage().getMessageId())
+                    .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
+                            lessonService.getLessonById(lessonId),
+                            lessonService.getLessonInfoByLessonId(lessonId),
+                            userRole
+                    ))
+                    .build());
+        } else if (buttonData.getStateIndex() == 1) {
+            actions.add(EditMessageReplyMarkup.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .messageId(update.getCallbackQuery().getMessage().getMessageId())
+                    .replyMarkup(inlineKeyboardMaker.getTaskMenu(lessonService.getLessonInfoByLessonId(lessonId)))
+                    .build());
+        }
 
-        return List.of(doneMessage, answerCallbackQuery);
+        actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
+
+        return actions;
     }
 
     @Override

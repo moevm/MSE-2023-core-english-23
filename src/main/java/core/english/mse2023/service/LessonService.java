@@ -37,6 +37,12 @@ public interface LessonService {
      */
     List<Lesson> getAllLessonsForSubscription(UUID subscriptionId);
 
+    /**
+     * Searches for lessons with unfinished tasks
+     * @return List of LessonInfos of found lessons
+     */
+    List<LessonInfo> getAllLessonInfosWithUnfinishedTask();
+
 
     /**
      * Creates Lesson with minimum data

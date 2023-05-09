@@ -1,6 +1,7 @@
 package core.english.mse2023.component;
 
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import org.springframework.stereotype.Component;
 

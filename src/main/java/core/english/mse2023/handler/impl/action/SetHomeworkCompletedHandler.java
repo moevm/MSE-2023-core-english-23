@@ -12,6 +12,7 @@ import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @Component
 @InlineButtonType
 @StudentRole
+@Slf4j
 @RequiredArgsConstructor
 public class SetHomeworkCompletedHandler implements Handler {
 
@@ -54,54 +56,44 @@ public class SetHomeworkCompletedHandler implements Handler {
 
         actions.add(workDoneMessage);
 
+        EditMessageReplyMarkup editReplyMarkupActionForMenu = null;
+
         if (buttonData.getStateIndex() == 0) {
-            EditMessageReplyMarkup editMessageReplyMarkup = createEditReplyMarkupActionForLessonMenu(
-                    update.getCallbackQuery().getMessage().getChatId().toString(),
-                    update.getCallbackQuery().getMessage().getMessageId(),
-                    lessonId,
-                    userRole
-            );
-
-            actions.add(editMessageReplyMarkup);
+            // For Lesson Menu
+            editReplyMarkupActionForMenu = EditMessageReplyMarkup.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .messageId(update.getCallbackQuery().getMessage().getMessageId())
+                    .replyMarkup(
+                            inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
+                                    lessonService.getLessonById(lessonId),
+                                    lessonService.getLessonInfoByLessonId(lessonId),
+                                    userRole
+                            )
+                    )
+                    .build();
         } else if (buttonData.getStateIndex() == 1) {
-            EditMessageReplyMarkup editMessageReplyMarkup = createEditReplyMarkupActionForTaskMenu(
-                    update.getCallbackQuery().getMessage().getChatId().toString(),
-                    update.getCallbackQuery().getMessage().getMessageId(),
-                    lessonId
-            );
-
-            actions.add(editMessageReplyMarkup);
+            // For Task Menu
+            editReplyMarkupActionForMenu = EditMessageReplyMarkup.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .messageId(update.getCallbackQuery().getMessage().getMessageId())
+                    .replyMarkup(
+                            inlineKeyboardMaker.getTaskMenu(
+                                    lessonService.getLessonInfoByLessonId(lessonId)
+                            )
+                    )
+                    .build();
         }
+
+        if (editReplyMarkupActionForMenu == null) {
+            log.error("Interactive button contains illegal state index: " + buttonData.getStateIndex() + ". Indexes 0 or 1 were expected.");
+            throw new IllegalStateException("Interactive button contains illegal state index: " + buttonData.getStateIndex() + ". Indexes 0 or 1 were expected.");
+        }
+
+        actions.add(editReplyMarkupActionForMenu);
 
         actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
 
         return actions;
-    }
-
-    private EditMessageReplyMarkup createEditReplyMarkupActionForLessonMenu(String chatId, int messageId, UUID lessonId, UserRole userRole) {
-        return EditMessageReplyMarkup.builder()
-                .chatId(chatId)
-                .messageId(messageId)
-                .replyMarkup(
-                        inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
-                                lessonService.getLessonById(lessonId),
-                                lessonService.getLessonInfoByLessonId(lessonId),
-                                userRole
-                        )
-                )
-                .build();
-    }
-
-    private EditMessageReplyMarkup createEditReplyMarkupActionForTaskMenu(String chatId, int messageId, UUID lessonId) {
-        return EditMessageReplyMarkup.builder()
-                .chatId(chatId)
-                .messageId(messageId)
-                .replyMarkup(
-                        inlineKeyboardMaker.getTaskMenu(
-                                lessonService.getLessonInfoByLessonId(lessonId)
-                        )
-                )
-                .build();
     }
 
     private SendMessage createDoneMessage(String chatId, String lessonTopic) {

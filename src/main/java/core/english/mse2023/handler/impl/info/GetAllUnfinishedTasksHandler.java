@@ -19,11 +19,12 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 @StudentRole
@@ -42,6 +43,9 @@ public class GetAllUnfinishedTasksHandler implements Handler {
     private static final String TASK_LINK_PATTERN = "[Ссылка к ИДЗ](%s)";
     private static final String NO_TASKS_TEXT = "Предстоящие (невыполненные) ИДЗ отсутствуют.";
 
+    private static final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
+    private Pattern urlPattern;
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 
@@ -54,6 +58,7 @@ public class GetAllUnfinishedTasksHandler implements Handler {
 
         List<LessonInfo> lessonInfos = lessonService.getAllLessonInfosWithUnfinishedTask();
 
+        urlPattern = Pattern.compile(URL_REGEX);
 
         return createTasksListMessages(lessonInfos, update.getMessage().getChatId().toString());
     }
@@ -62,7 +67,7 @@ public class GetAllUnfinishedTasksHandler implements Handler {
 
         List<BotApiMethod<?>> messages = new ArrayList<>();
 
-        if (lessonInfos.size() == 0) {
+        if (lessonInfos.isEmpty()) {
             messages.add(SendMessage.builder()
                     .chatId(chatId)
                     .text(NO_TASKS_TEXT)
@@ -75,12 +80,15 @@ public class GetAllUnfinishedTasksHandler implements Handler {
         }
 
         for (LessonInfo lessonInfo : lessonInfos) {
-            boolean hasLink = lessonInfo.getTeacherComment().indexOf("http") == 0;
 
             String dateText = dateFormat.format(lessonInfo.getLesson().getDate());
+            String linkString = lessonInfo.getTeacherComment();
+            String parseMode = null;
 
-            if (hasLink) {
-                dateText = dateText.replaceAll("\\.", "\\\\.");
+            if (isURL(lessonInfo.getTeacherComment())) {
+                dateText = prepareForMarkup(dateText);
+                linkString = String.format(TASK_LINK_PATTERN, lessonInfo.getTeacherComment());
+                parseMode = ParseMode.MARKDOWNV2;
             }
 
             SendMessage message = SendMessage.builder()
@@ -88,22 +96,26 @@ public class GetAllUnfinishedTasksHandler implements Handler {
                     .text(String.format(TASK_INFO_PATTERN,
                             lessonInfo.getLesson().getTopic(),
                             dateText,
-                            (hasLink) ? // Проверка на ссылку
-                                    String.format(TASK_LINK_PATTERN, lessonInfo.getTeacherComment()) :
-                                    lessonInfo.getTeacherComment()
+                            linkString
                     ))
                     .replyMarkup(inlineKeyboardMaker.getTaskMenu(lessonInfo))
+                    .parseMode(parseMode)
                     .build();
-
-            if (hasLink) {
-                message.setParseMode(ParseMode.MARKDOWNV2);
-            }
 
             messages.add(message);
         }
 
 
         return messages;
+    }
+
+    private boolean isURL(String text) {
+        Matcher matcher = urlPattern.matcher(text);
+        return matcher.find();
+    }
+
+    private String prepareForMarkup(String text) {
+        return text.replaceAll("\\.", "\\\\.");
     }
 
     @Override

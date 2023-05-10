@@ -47,33 +47,68 @@ public class SetHomeworkCompletedHandler implements Handler {
 
         List<BotApiMethod<?>> actions = new ArrayList<>();
 
-        actions.add(SendMessage.builder()
-                .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .text(String.format(DONE_TEXT, lesson.getTopic()))
-                .build()
+        SendMessage workDoneMessage = createDoneMessage(
+                update.getCallbackQuery().getMessage().getChatId().toString(),
+                lesson.getTopic()
         );
 
+        actions.add(workDoneMessage);
+
         if (buttonData.getStateIndex() == 0) {
-            actions.add(EditMessageReplyMarkup.builder()
-                            .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                            .messageId(update.getCallbackQuery().getMessage().getMessageId())
-                            .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
-                                    lessonService.getLessonById(lessonId),
-                                    lessonService.getLessonInfoByLessonId(lessonId),
-                                    userRole
-                            ))
-                    .build());
+            EditMessageReplyMarkup editMessageReplyMarkup = createEditReplyMarkupActionForLessonMenu(
+                    update.getCallbackQuery().getMessage().getChatId().toString(),
+                    update.getCallbackQuery().getMessage().getMessageId(),
+                    lessonId,
+                    userRole
+            );
+
+            actions.add(editMessageReplyMarkup);
         } else if (buttonData.getStateIndex() == 1) {
-            actions.add(EditMessageReplyMarkup.builder()
-                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .messageId(update.getCallbackQuery().getMessage().getMessageId())
-                    .replyMarkup(inlineKeyboardMaker.getTaskMenu(lessonService.getLessonInfoByLessonId(lessonId)))
-                    .build());
+            EditMessageReplyMarkup editMessageReplyMarkup = createEditReplyMarkupActionForTaskMenu(
+                    update.getCallbackQuery().getMessage().getChatId().toString(),
+                    update.getCallbackQuery().getMessage().getMessageId(),
+                    lessonId
+            );
+
+            actions.add(editMessageReplyMarkup);
         }
 
         actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
 
         return actions;
+    }
+
+    private EditMessageReplyMarkup createEditReplyMarkupActionForLessonMenu(String chatId, int messageId, UUID lessonId, UserRole userRole) {
+        return EditMessageReplyMarkup.builder()
+                .chatId(chatId)
+                .messageId(messageId)
+                .replyMarkup(
+                        inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
+                                lessonService.getLessonById(lessonId),
+                                lessonService.getLessonInfoByLessonId(lessonId),
+                                userRole
+                        )
+                )
+                .build();
+    }
+
+    private EditMessageReplyMarkup createEditReplyMarkupActionForTaskMenu(String chatId, int messageId, UUID lessonId) {
+        return EditMessageReplyMarkup.builder()
+                .chatId(chatId)
+                .messageId(messageId)
+                .replyMarkup(
+                        inlineKeyboardMaker.getTaskMenu(
+                                lessonService.getLessonInfoByLessonId(lessonId)
+                        )
+                )
+                .build();
+    }
+
+    private SendMessage createDoneMessage(String chatId, String lessonTopic) {
+        return SendMessage.builder()
+                .chatId(chatId)
+                .text(String.format(DONE_TEXT, lessonTopic))
+                .build();
     }
 
     @Override

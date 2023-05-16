@@ -9,6 +9,7 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.AttendanceType;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
@@ -43,11 +44,12 @@ public class SetLessonSkippedHandler implements Handler {
         lessonService.setAttendance(lessonId, AttendanceType.SKIPPED);
 
         Lesson lesson = lessonService.getLessonById(lessonId);
+        LessonInfo lessonInfo = lessonService.getLessonInfoByLessonId(lessonId);
 
         return List.of(EditMessageText.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                         .messageId(update.getCallbackQuery().getMessage().getMessageId())
-                        .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
+                        .text(messageTextMaker.lessonInfoPatternMessageText(lesson, lessonInfo))
                         .parseMode(ParseMode.MARKDOWNV2)
                         .replyMarkup(inlineKeyboardMaker.getLessonMainMenuInlineKeyboard(
                                 lesson,

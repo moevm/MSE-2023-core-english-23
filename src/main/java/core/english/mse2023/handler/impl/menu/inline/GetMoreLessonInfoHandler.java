@@ -9,6 +9,7 @@ import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
@@ -40,12 +41,14 @@ public class GetMoreLessonInfoHandler implements Handler {
 
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
-        Lesson lesson = lessonService.getLessonById(UUID.fromString(buttonData.getData()));
+        UUID lessonId = UUID.fromString(buttonData.getData());
 
+        Lesson lesson = lessonService.getLessonById(lessonId);
+        LessonInfo lessonInfo = lessonService.getLessonInfoByLessonId(lessonId);
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .text(messageTextMaker.lessonInfoPatternMessageText(lesson))
+                .text(messageTextMaker.lessonInfoPatternMessageText(lesson, lessonInfo))
                 .build();
 
         message.setParseMode(ParseMode.MARKDOWNV2);

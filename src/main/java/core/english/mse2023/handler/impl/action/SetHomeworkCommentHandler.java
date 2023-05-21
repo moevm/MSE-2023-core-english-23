@@ -7,15 +7,12 @@ import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.dto.SetCommentForParentDTO;
 import core.english.mse2023.dto.SetHomeworkCommentDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
-import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherEvent;
-import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherState;
 import core.english.mse2023.state.setHomeworkComment.SetHomeworkCommentEvent;
 import core.english.mse2023.state.setHomeworkComment.SetHomeworkCommentState;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +22,7 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -52,7 +49,7 @@ public class SetHomeworkCommentHandler implements InteractiveHandler {
     private final StateMachineFactory<SetHomeworkCommentState, SetHomeworkCommentEvent> stateMachineFactory;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
@@ -84,7 +81,7 @@ public class SetHomeworkCommentHandler implements InteractiveHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
+    public List<PartialBotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
 
         SetHomeworkCommentDTO dto = setHomeworkCommentCache.getIfPresent(update.getMessage().getFrom().getId().toString());
 

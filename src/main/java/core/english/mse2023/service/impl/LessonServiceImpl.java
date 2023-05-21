@@ -52,6 +52,14 @@ public class LessonServiceImpl implements LessonService {
         return lessonRepository.getAllBySubscriptionId(subscriptionId);
     }
 
+    @Override
+    public List<Lesson> getAllLessonsForSubscription(UUID subscriptionId, Timestamp startDate, Timestamp endDate) {
+        List<Lesson> lessons = getAllLessonsForSubscription(subscriptionId);
+
+        lessons.removeIf(lesson -> lesson.getDate() == null || lesson.getDate().before(startDate) || lesson.getDate().after(endDate));
+
+        return lessons;
+    }
 
 
     @Override

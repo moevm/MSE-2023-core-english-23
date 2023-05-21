@@ -5,7 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
-import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.LessonCreationDTO;
@@ -23,8 +22,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -42,8 +41,6 @@ import java.util.stream.Collectors;
 @TeacherRole
 @RequiredArgsConstructor
 public class CreateLessonHandler implements InteractiveHandler {
-    private final MessageTextMaker messageTextMaker;
-
     private static final String START_TEXT = "Для создания нового урока заполните и отправьте форму с данными " +
             "\\(каждое поле на новой строке в одном сообщении в том же порядке\\)\\. Пример:\n%s";
 
@@ -67,7 +64,7 @@ public class CreateLessonHandler implements InteractiveHandler {
     private final StateMachineFactory<LessonCreationState, LessonCreationEvent> stateMachineFactory;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         StateMachine<LessonCreationState, LessonCreationEvent> stateMachine =
                 stateMachineFactory.getStateMachine();
@@ -94,7 +91,7 @@ public class CreateLessonHandler implements InteractiveHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> update(Update update, UserRole userRole) throws IllegalUserInputException, IllegalStateException {
+    public List<PartialBotApiMethod<?>> update(Update update, UserRole userRole) throws IllegalUserInputException, IllegalStateException {
 
         LessonCreationDTO dto = lessonCreationCache.getIfPresent(update.getMessage().getFrom().getId().toString());
 

@@ -6,6 +6,7 @@ import core.english.mse2023.resolver.Resolver;
 import core.english.mse2023.service.UserService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -32,8 +33,8 @@ public class Gateway {
         ));
     }
 
-    public List<BotApiMethod<?>> processUpdate(Update update) {
-        List<BotApiMethod<?>> reply = new ArrayList<>();
+    public List<PartialBotApiMethod<?>> processUpdate(Update update) {
+        List<PartialBotApiMethod<?>> reply = new ArrayList<>();
 
         if (update.hasMessage()) {
             try {

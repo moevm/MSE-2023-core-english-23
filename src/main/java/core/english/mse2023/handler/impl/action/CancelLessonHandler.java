@@ -1,8 +1,6 @@
 package core.english.mse2023.handler.impl.action;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
-import core.english.mse2023.aop.annotation.handler.StudentRole;
-import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -15,7 +13,7 @@ import core.english.mse2023.service.LessonService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -38,12 +36,12 @@ public class CancelLessonHandler implements Handler {
     private final LessonService lessonService;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
         UUID lessonId = UUID.fromString(buttonData.getData());
         Lesson lesson = lessonService.cancelLesson(lessonId, LessonStatus.CANCELLED_BY_TEACHER);
-        List<BotApiMethod<?>> messages = new ArrayList<>();
+        List<PartialBotApiMethod<?>> messages = new ArrayList<>();
         switch (lesson.getStatus()) {
             case ENDED -> messages.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())

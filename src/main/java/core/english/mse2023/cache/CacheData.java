@@ -7,6 +7,7 @@ import core.english.mse2023.model.dictionary.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -36,8 +37,8 @@ public class CacheData {
         this.currentStateIndex = 0;
     }
 
-    public List<BotApiMethod<?>> updateData(Update update, UserRole role) {
-        List<BotApiMethod<?>> sendMessageList;
+    public List<PartialBotApiMethod<?>> updateData(Update update, UserRole role) {
+        List<PartialBotApiMethod<?>> sendMessageList;
         try {
             String userId = null;
 

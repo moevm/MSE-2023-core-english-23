@@ -12,6 +12,7 @@ import core.english.mse2023.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -53,7 +54,7 @@ public class GetAllSubscriptionsHandler implements Handler {
     private final InlineKeyboardMaker inlineKeyboardMaker;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         List<Subscription> subscriptions;
 
@@ -75,7 +76,7 @@ public class GetAllSubscriptionsHandler implements Handler {
         return ButtonCommand.GET_ALL_SUBSCRIPTIONS;
     }
 
-    private List<BotApiMethod<?>> createMessagesWithButton(List<Subscription> subscriptions, String chatId, UserRole userRole) {
+    private List<PartialBotApiMethod<?>> createMessagesWithButton(List<Subscription> subscriptions, String chatId, UserRole userRole) {
 
         if (subscriptions.size() == 0 || subscriptions.stream().allMatch((subscription -> subscription.getStatus() == SubscriptionStatus.CANCELLED))) {
             if (userRole == UserRole.PARENT) {
@@ -102,7 +103,7 @@ public class GetAllSubscriptionsHandler implements Handler {
 
         }
 
-        List<BotApiMethod<?>> messages = new ArrayList<>();
+        List<PartialBotApiMethod<?>> messages = new ArrayList<>();
 
         for (Subscription subscription : subscriptions) {
 

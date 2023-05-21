@@ -37,6 +37,16 @@ public interface LessonService {
      */
     List<Lesson> getAllLessonsForSubscription(UUID subscriptionId);
 
+    /**
+     * Searches for all Lessons in certain subscription from certain period of time.
+     * Lessons without a date won't be included
+     * @param subscriptionId Subscription UUID in the database
+     * @param startDate Lower limit of the interval for including lessons
+     * @param endDate Upper limit of the interval for including lessons
+     * @return List of found Lessons. Can be empty.
+     */
+    List<Lesson> getAllLessonsForSubscription(UUID subscriptionId, Timestamp startDate, Timestamp endDate);
+
 
     /**
      * Creates Lesson with minimum data

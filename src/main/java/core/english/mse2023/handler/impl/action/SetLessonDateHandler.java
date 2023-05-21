@@ -6,19 +6,15 @@ import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.dto.SetCommentForParentDTO;
 import core.english.mse2023.dto.SetLessonDateDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.Subscription;
-import core.english.mse2023.model.dictionary.LessonHistoryEventType;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
-import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherEvent;
-import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherState;
 import core.english.mse2023.state.setLessonDate.SetLessonDateEvent;
 import core.english.mse2023.state.setLessonDate.SetLessonDateState;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +24,8 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -78,7 +74,7 @@ public class SetLessonDateHandler implements InteractiveHandler {
 
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
         InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
         StateMachine<SetLessonDateState, SetLessonDateEvent> stateMachine =
@@ -110,7 +106,7 @@ public class SetLessonDateHandler implements InteractiveHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
+    public List<PartialBotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
         SetLessonDateDTO dto = setLessonDateCache.getIfPresent(update.getMessage().getFrom().getId().toString());
 
         if (dto == null) {

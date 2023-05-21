@@ -8,7 +8,7 @@ import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -25,7 +25,7 @@ public class ToMainMenuHandler implements Handler {
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         return List.of(SendMessage.builder()
                         .chatId(update.getMessage().getChatId().toString())

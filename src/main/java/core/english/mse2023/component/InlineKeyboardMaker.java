@@ -58,6 +58,13 @@ public class InlineKeyboardMaker {
                                     0
                             )).row();
                         }
+                        if (lessonInfo.getScore() != null) {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SHOW_MARK,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        }
                     }
                     case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
@@ -101,6 +108,13 @@ public class InlineKeyboardMaker {
                                     0
                             )).row();
                         }
+                        if (lessonInfo.getScore() != null) {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SHOW_MARK,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        }
 
                     }
                     case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
@@ -137,6 +151,20 @@ public class InlineKeyboardMaker {
                         } else {
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                     InlineButtonCommand.SET_COMMENT_FOR_PARENT,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        }
+
+                        if (lessonInfo.getScore() != null) {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SHOW_MARK,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        } else {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SET_MARK_MENU,
                                     lesson.getId().toString(),
                                     0
                             )).row();
@@ -198,6 +226,20 @@ public class InlineKeyboardMaker {
                         } else {
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                     InlineButtonCommand.SET_COMMENT_FOR_PARENT,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        }
+
+                        if (lessonInfo.getScore() != null) {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SHOW_MARK,
+                                    lesson.getId().toString(),
+                                    0
+                            )).row();
+                        } else {
+                            builder.button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SET_MARK_MENU,
                                     lesson.getId().toString(),
                                     0
                             )).row();

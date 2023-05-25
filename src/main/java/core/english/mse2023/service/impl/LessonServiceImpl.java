@@ -178,6 +178,22 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
+    public void setMark(int mark, UUID lessonId) {
+
+        Lesson lesson = getLessonById(lessonId);
+
+        if (lesson == null) {
+            throw new NoSuchLessonException(String.format("Lesson %s doesn't exist", lessonId));
+        }
+
+        LessonInfo lessonInfo = lessonInfoRepository.getLessonInfoByLesson(lesson);
+        lessonInfo.setScore(mark);
+
+        createHistoryEvent(lesson, LessonHistoryEventType.UPDATED);
+    }
+
+    @Override
+    @Transactional
     public Lesson setLessonDate(Timestamp date, UUID lessonId) {
         Lesson lesson = getLessonById(lessonId);
 

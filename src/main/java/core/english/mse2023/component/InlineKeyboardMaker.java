@@ -303,6 +303,32 @@ public class InlineKeyboardMaker {
         return inlineKeyboardMarkup;
     }
 
+    public InlineKeyboardMarkup getTaskMenu(LessonInfo lessonInfo) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        if (lessonInfo.getHomeworkCompleted()) {
+            inlineKeyboardMarkup.setKeyboard(
+                    InlineKeyboardBuilder.instance()
+                            .button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SET_HOMEWORK_NOT_COMPLETED,
+                                    lessonInfo.getLesson().getId().toString(),
+                                    1
+                            )).build().getKeyboard()
+            );
+        } else {
+            inlineKeyboardMarkup.setKeyboard(
+                    InlineKeyboardBuilder.instance()
+                            .button(TelegramInlineButtonsUtils.createInlineButton(
+                                    InlineButtonCommand.SET_HOMEWORK_COMPLETED,
+                                    lessonInfo.getLesson().getId().toString(),
+                                    1
+                            )).build().getKeyboard()
+            );
+        }
+
+        return inlineKeyboardMarkup;
+    }
+
     public InlineKeyboardMarkup getSubscriptionLessonsMenu(List<Lesson> lessons, String subscriptionId, UserRole userRole) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 

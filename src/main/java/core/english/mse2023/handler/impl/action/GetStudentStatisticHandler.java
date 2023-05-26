@@ -3,22 +3,19 @@ package core.english.mse2023.handler.impl.action;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.BaseFont;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.dto.GetStudentStatisticDTO;
 import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.dto.ThymeleafLessonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.exception.UnexpectedUpdateType;
 import core.english.mse2023.handler.InteractiveHandler;
-import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
-import core.english.mse2023.service.LessonService;
+import core.english.mse2023.service.PDFService;
 import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.state.getStudentStatistic.GetStudentStatisticEvent;
 import core.english.mse2023.state.getStudentStatistic.GetStudentStatisticState;
@@ -27,9 +24,6 @@ import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -41,11 +35,6 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.*;
 import java.sql.Timestamp;
@@ -66,7 +55,7 @@ import java.time.format.*;
 @Slf4j
 public class GetStudentStatisticHandler implements InteractiveHandler {
 
-    private final ResourceLoader resourceLoader;
+    private static final String PDF_TEMPLATE_NAME = "thymeleaf_template";
 
     private static final String USER_DATA_PATTERN = "%s%s";
 
@@ -89,7 +78,7 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
 
 
     private final SubscriptionService subscriptionService;
-    private final LessonService lessonService;
+    private final PDFService pdfService;
 
 
     @Override
@@ -163,10 +152,8 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
 
                 stateMachine.sendEvent(GetStudentStatisticEvent.ENTER_INTERVAL);
 
-                List<Lesson> lessons = lessonService.getAllLessonsForSubscription(dto.getStudentSubscription().getId(), dto.getStartDate(), dto.getEndDate());
-
                 try {
-                    messages.add(createPDFDocument(lessons, dto, update.getMessage().getChatId().toString()));
+                    messages.add(createPDFDocument(dto, update.getMessage().getChatId().toString()));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -251,8 +238,14 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
         return inlineKeyboardMarkup;
     }
 
-    private SendDocument createPDFDocument(List<Lesson> lessons, GetStudentStatisticDTO getStudentStatisticDTO, String chatId) throws DocumentException, IOException {
-        InputStream generatedPDF = generatePdfFromHtml(parseThymeleafTemplate(lessons, getStudentStatisticDTO));
+    private SendDocument createPDFDocument(GetStudentStatisticDTO getStudentStatisticDTO, String chatId) throws DocumentException, IOException {
+
+        InputStream generatedPDF = pdfService.generateStudentStatisticsPDF(
+                PDF_TEMPLATE_NAME,
+                getStudentStatisticDTO.getStudentSubscription(),
+                getStudentStatisticDTO.getStartDate(),
+                getStudentStatisticDTO.getEndDate()
+        );
 
         InputFile inputFile = new InputFile(generatedPDF, "Statistic.pdf");
 
@@ -263,64 +256,6 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
                 .build();
     }
 
-    private String parseThymeleafTemplate(List<Lesson> lessons, GetStudentStatisticDTO getStudentStatisticDTO) {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-
-        TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
-
-
-        User student = getStudentStatisticDTO.getStudentSubscription().getStudent();
-        List<ThymeleafLessonDTO> lessonDTOS = new ArrayList<>();
-
-        for (Lesson lesson : lessons) {
-            ThymeleafLessonDTO lessonDTO = ThymeleafLessonDTO.builder()
-                    .topic(lesson.getTopic())
-                    .date(dateFormat.format(lesson.getDate()))
-                    .status(lesson.getStatus().toString())
-                    .build();
-            lessonDTOS.add(lessonDTO);
-        }
-
-
-        Context context = new Context();
-        context.setVariable(
-                "student",
-                String.format(USER_DATA_PATTERN,
-                        (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
-                        student.getName() // Student's name (always present)
-                ));
-        context.setVariable("startDate", dateFormat.format(getStudentStatisticDTO.getStartDate()));
-        context.setVariable("endDate", dateFormat.format(getStudentStatisticDTO.getEndDate()));
-        context.setVariable("lessons", lessonDTOS);
-
-        return templateEngine.process("template" + File.separator + "thymeleaf_template", context);
-    }
-
-    private InputStream generatePdfFromHtml(String html) throws DocumentException, IOException {
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        ITextRenderer renderer = new ITextRenderer();
-        loadFonts(renderer);
-        renderer.setDocumentFromString(html);
-        renderer.layout();
-        renderer.createPDF(outputStream);
-
-        renderer.finishPDF();
-
-        return new ByteArrayInputStream(outputStream.toByteArray());
-    }
-
-    private void loadFonts(ITextRenderer renderer) throws IOException, DocumentException {
-        Resource[] resources = ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources("classpath*:./fonts/*.ttf");
-
-        for (Resource res: resources) {
-            renderer.getFontResolver().addFont("fonts" + File.separator + res.getFilename(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-        }
-    }
 
     @Override
     public BotCommand getCommandObject() {

@@ -12,12 +12,9 @@ import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.Family;
-import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
-import core.english.mse2023.state.setLessonDate.SetLessonDateEvent;
-import core.english.mse2023.state.setLessonDate.SetLessonDateState;
 import core.english.mse2023.state.setParentForStudent.SetParentForStudentEvent;
 import core.english.mse2023.state.setParentForStudent.SetParentForStudentState;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
@@ -30,17 +27,14 @@ import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -66,7 +60,7 @@ public class SetParentForStudentHandler implements InteractiveHandler {
 
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
         StateMachine<SetParentForStudentState, SetParentForStudentEvent> stateMachine =
                 stateMachineFactory.getStateMachine();
         stateMachine.start();
@@ -89,7 +83,7 @@ public class SetParentForStudentHandler implements InteractiveHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
+    public List<PartialBotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
         SetParentForStudentDTO dto = setParentForStudentCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
 
         if (dto == null) {
@@ -101,7 +95,7 @@ public class SetParentForStudentHandler implements InteractiveHandler {
 
         InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
-        List<BotApiMethod<?>> actions = new ArrayList<>();
+        List<PartialBotApiMethod<?>> actions = new ArrayList<>();
 
         if (stateMachine.getState().getId() == SetParentForStudentState.STUDENT_CHOOSING) {
 

@@ -1,38 +1,29 @@
 package core.english.mse2023.tgbot;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.Expiry;
-import com.github.benmanes.caffeine.cache.RemovalCause;
-import core.english.mse2023.aop.annotation.handler.InlineButtonType;
-import core.english.mse2023.cache.CacheData;
 import core.english.mse2023.config.BotConfig;
-import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.gateway.Gateway;
-import core.english.mse2023.handler.Handler;
-import core.english.mse2023.handler.InteractiveHandler;
-import core.english.mse2023.resolver.Resolver;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.*;
+import org.telegram.telegrambots.meta.api.methods.stickers.AddStickerToSet;
+import org.telegram.telegrambots.meta.api.methods.stickers.CreateNewStickerSet;
+import org.telegram.telegrambots.meta.api.methods.stickers.SetStickerSetThumb;
+import org.telegram.telegrambots.meta.api.methods.stickers.UploadStickerFile;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     private final BotConfig config;
-
-    // Cache for storing last used commands with require users input
 
     private final Gateway gateway;
 
@@ -61,9 +52,9 @@ public class TelegramBot extends TelegramLongPollingBot {
      *
      * @param methods - list of bot api methods to execute
      */
-    public void executeBotApiMethods(List<BotApiMethod<?>> methods) {
+    public void executeBotApiMethods(List<PartialBotApiMethod<?>> methods) {
         if (methods == null) return;
-        for (BotApiMethod<?> method : methods) {
+        for (PartialBotApiMethod<?> method : methods) {
             try {
                 execute(method);
                 log.info("Reply sent");
@@ -73,5 +64,43 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    public void execute(PartialBotApiMethod<?> method) throws TelegramApiException {
 
+        if (method instanceof SendDocument sendDocument) {
+            execute(sendDocument);
+        } else if (method instanceof SendPhoto sendPhoto) {
+            execute(sendPhoto);
+        } else if (method instanceof SendVideo sendVideo) {
+            execute(sendVideo);
+        } else if (method instanceof SendVideoNote sendVideoNote) {
+            execute(sendVideoNote);
+        } else if (method instanceof SendSticker sendSticker) {
+            execute(sendSticker);
+        } else if (method instanceof SendAudio sendAudio) {
+            execute(sendAudio);
+        } else if (method instanceof SendVoice sendVoice) {
+            execute(sendVoice);
+        } else if (method instanceof SendMediaGroup sendMediaGroup) {
+            execute(sendMediaGroup);
+        } else if (method instanceof SetChatPhoto setChatPhoto) {
+            execute(setChatPhoto);
+        } else if (method instanceof AddStickerToSet addStickerToSet) {
+            execute(addStickerToSet);
+        } else if (method instanceof SetStickerSetThumb setStickerSetThumb) {
+            execute(setStickerSetThumb);
+        } else if (method instanceof CreateNewStickerSet createNewStickerSet) {
+            execute(createNewStickerSet);
+        } else if (method instanceof UploadStickerFile uploadStickerFile) {
+            execute(uploadStickerFile);
+        } else if (method instanceof EditMessageMedia editMessageMedia) {
+            execute(editMessageMedia);
+        } else if (method instanceof SendAnimation sendAnimation) {
+            execute(sendAnimation);
+        } else if (method instanceof BotApiMethod<?> botApiMethod) {
+            execute(botApiMethod);
+        } else {
+            throw new TelegramApiException("Unexpected PartialBotApiMethod tried to execute. Method: " + method.getClass().getName());
+        }
+
+    }
 }

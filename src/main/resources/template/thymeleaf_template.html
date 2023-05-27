@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            font-family: Tahoma, Geneva, sans-serif;
+        }
+        .title {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .main-title {
+            font-size: 35px;
+            letter-spacing: 0;
+            word-spacing: 0;
+            color: #000000;
+            font-weight: 700;
+            text-decoration: none;
+            font-style: normal;
+            font-variant: normal;
+            text-transform: none;
+        }
+
+        .subtitle {
+            font-size: 27px;
+            letter-spacing: 0;
+            word-spacing: 0;
+            color: #000000;
+            font-weight: 400;
+            text-decoration: none;
+            font-style: normal;
+            font-variant: normal;
+            text-transform: none;
+        }
+
+        .wrapper {
+            margin: 20px 50px 20px 50px;
+        }
+
+        table.redTable {
+            border: 1px solid #A40000;
+            background-color: #EEE7DB;
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+        }
+
+        table.redTable td, table.redTable th {
+            border: 1px solid #AAAAAA;
+            padding: 3px 2px;
+        }
+
+        table.redTable tbody td {
+            font-size: 14px;
+            color: #000000;
+        }
+
+        table.redTable tbody td.no-lessons {
+            font-size: 24px;
+        }
+
+        table.redTable tr:nth-child(even) {
+            background: #F5C8BF;
+        }
+
+        table.redTable thead {
+            background: #A40808;
+        }
+
+        table.redTable thead th {
+            font-size: 19px;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-align: center;
+        }
+
+        table.redTable tfoot td {
+            font-size: 13px;
+        }
+
+        table.redTable tfoot .links a{
+            display: inline-block;
+            background: #FFFFFF;
+            color: #A40808;
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">
+        <div class="main-title" th:text="'Статистика по ученику ' + ${student}"/>
+        <div class="subtitle" th:text="'Учебный период с ' + ${startDate} + ' по ' + ${endDate}">Учебный период</div>
+    </div>
+
+    <div class="wrapper">
+        <table class="redTable">
+            <thead>
+            <tr>
+                <th>Тема</th>
+                <th>Дата</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${lessons.isEmpty()}">
+                <td colspan="3" class="no-lessons">Занятий не найдено</td>
+            </tr>
+            <tr th:each="lesson : ${lessons}">
+                <td th:text="${lesson.getTopic()}"/>
+                <td th:text="${lesson.getDate()}"/>
+                <td th:text="${lesson.getStatus()}"/>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

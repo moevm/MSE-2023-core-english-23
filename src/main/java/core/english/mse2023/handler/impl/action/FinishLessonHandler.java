@@ -3,25 +3,23 @@ package core.english.mse2023.handler.impl.action;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
-import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.LessonAlreadyFinishedException;
-import core.english.mse2023.exception.LessonHasNotStartedYetException;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -47,13 +45,13 @@ public class FinishLessonHandler implements Handler {
     private final LessonService lessonService;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
         UUID lessonId = UUID.fromString(buttonData.getData());
 
-        List<BotApiMethod<?>> messages = new ArrayList<>();
+        List<PartialBotApiMethod<?>> messages = new ArrayList<>();
 
         try {
             Lesson lesson = lessonService.finishLesson(lessonId);

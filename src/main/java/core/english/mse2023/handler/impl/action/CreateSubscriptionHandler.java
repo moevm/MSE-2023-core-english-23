@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -80,7 +81,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     private final StateMachineFactory<SubscriptionCreationState, SubscriptionCreationEvent> stateMachineFactory;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         StateMachine<SubscriptionCreationState, SubscriptionCreationEvent> stateMachine =
                 stateMachineFactory.getStateMachine();
@@ -108,8 +109,8 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> update(Update update, UserRole userRole) throws IllegalUserInputException, IllegalStateException {
-        ArrayList<BotApiMethod<?>> messages = new ArrayList<>();
+    public List<PartialBotApiMethod<?>> update(Update update, UserRole userRole) throws IllegalUserInputException, IllegalStateException {
+        ArrayList<PartialBotApiMethod<?>> messages = new ArrayList<>();
 
         SubscriptionCreationDTO dto;
 

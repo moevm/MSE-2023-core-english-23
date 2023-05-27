@@ -8,6 +8,7 @@ import core.english.mse2023.handler.Handler;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.dictionary.UserRole;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -51,8 +52,8 @@ public abstract class Resolver {
         return textCommandHandlers.get(searchingCommand);
     }
 
-    public List<BotApiMethod<?>> resolve(Update update, UserRole role) {
-        List<BotApiMethod<?>> reply = new ArrayList<>();
+    public List<PartialBotApiMethod<?>> resolve(Update update, UserRole role) {
+        List<PartialBotApiMethod<?>> reply = new ArrayList<>();
 
         if (update.hasMessage() && update.getMessage().hasText()) {
 

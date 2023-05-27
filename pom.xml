@@ -21,6 +21,8 @@
         <h2-driver.version>1.4.200</h2-driver.version>
         <caffeine.version>2.5.5</caffeine.version>
         <statemachine.version>3.2.0</statemachine.version>
+        <thymeleaf.version>3.1.1.RELEASE</thymeleaf.version>
+        <flying-saucer-pdf.version>9.1.22</flying-saucer-pdf.version>
     </properties>
     <dependencies>
         <dependency>
@@ -75,6 +77,16 @@
             <groupId>org.springframework.statemachine</groupId>
             <artifactId>spring-statemachine-core</artifactId>
             <version>${statemachine.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>${thymeleaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf</artifactId>
+            <version>${flying-saucer-pdf.version}</version>
         </dependency>
     </dependencies>
 

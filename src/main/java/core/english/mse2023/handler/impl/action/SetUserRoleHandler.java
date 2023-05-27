@@ -13,10 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +35,12 @@ public class SetUserRoleHandler implements Handler {
     private final UserService service;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
         UserRole newRole = UserRole.valueOf(buttonData.getData());
 
-        List<BotApiMethod<?>> actions = new ArrayList<>();
+        List<PartialBotApiMethod<?>> actions = new ArrayList<>();
 
         if (userRole == newRole) {
             SendMessage message = SendMessage.builder()

@@ -8,18 +8,13 @@ import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SetCommentForParentDTO;
-import core.english.mse2023.dto.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
-import core.english.mse2023.model.Lesson;
-import core.english.mse2023.model.dictionary.SubscriptionType;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherEvent;
 import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherState;
-import core.english.mse2023.state.subcription.SubscriptionCreationEvent;
-import core.english.mse2023.state.subcription.SubscriptionCreationState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,8 +22,7 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -57,7 +51,7 @@ public class SetCommentForParentHandler implements InteractiveHandler {
     private final StateMachineFactory<SetCommentForTeacherState, SetCommentForTeacherEvent> stateMachineFactory;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
@@ -89,7 +83,7 @@ public class SetCommentForParentHandler implements InteractiveHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
+    public List<PartialBotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
 
         SetCommentForParentDTO dto = setCommentForTeacherCache.getIfPresent(update.getMessage().getFrom().getId().toString());
 

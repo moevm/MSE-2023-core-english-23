@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -40,14 +40,14 @@ public class SetHomeworkCompletedHandler implements Handler {
     private final LessonService lessonService;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
         UUID lessonId = UUID.fromString(buttonData.getData());
 
         Lesson lesson = lessonService.setLessonHomeworkCompletion(lessonId, true);
 
-        List<BotApiMethod<?>> actions = new ArrayList<>();
+        List<PartialBotApiMethod<?>> actions = new ArrayList<>();
 
         SendMessage workDoneMessage = createDoneMessage(
                 update.getCallbackQuery().getMessage().getChatId().toString(),

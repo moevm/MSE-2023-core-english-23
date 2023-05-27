@@ -22,6 +22,7 @@ public class ReplyKeyboardMaker {
         switch (role) {
             case STUDENT -> {
                 KeyboardRow row = new KeyboardRow();
+                row.add(new KeyboardButton(ButtonCommand.GET_ALL_UNFINISHED_TASKS.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.GET_ALL_SUBSCRIPTIONS.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
                 keyboard.add(row);

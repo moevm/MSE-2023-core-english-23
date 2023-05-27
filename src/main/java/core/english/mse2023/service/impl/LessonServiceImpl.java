@@ -60,6 +60,11 @@ public class LessonServiceImpl implements LessonService {
 
         return lessons;
     }
+  
+    @Override
+    public List<LessonInfo> getAllLessonInfosWithUnfinishedTask() {
+        return lessonInfoRepository.getAllByHomeworkCompletedFalse();
+    }
 
 
     @Override

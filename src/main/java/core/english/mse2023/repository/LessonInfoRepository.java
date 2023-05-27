@@ -13,4 +13,8 @@ public interface LessonInfoRepository extends JpaRepository<LessonInfo, UUID> {
     LessonInfo getLessonInfoByLesson(Lesson lesson);
 
     LessonInfo getLessonInfoByLessonId(UUID lessonId);
+
+    List<LessonInfo> getAllByHomeworkCompletedFalse();
+
+
 }

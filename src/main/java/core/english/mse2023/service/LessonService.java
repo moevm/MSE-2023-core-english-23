@@ -46,6 +46,12 @@ public interface LessonService {
      * @return List of found Lessons. Can be empty.
      */
     List<Lesson> getAllLessonsForSubscription(UUID subscriptionId, Timestamp startDate, Timestamp endDate);
+  
+    /**
+     * Searches for lessons with unfinished tasks
+     * @return List of LessonInfos of found lessons
+     */
+    List<LessonInfo> getAllLessonInfosWithUnfinishedTask();
 
 
     /**

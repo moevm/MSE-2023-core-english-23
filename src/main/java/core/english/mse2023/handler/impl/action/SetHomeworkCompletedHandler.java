@@ -47,7 +47,7 @@ public class SetHomeworkCompletedHandler implements Handler {
 
         Lesson lesson = lessonService.setLessonHomeworkCompletion(lessonId, true);
 
-        List<BotApiMethod<?>> actions = new ArrayList<>();
+        List<PartialBotApiMethod<?>> actions = new ArrayList<>();
 
         SendMessage workDoneMessage = createDoneMessage(
                 update.getCallbackQuery().getMessage().getChatId().toString(),

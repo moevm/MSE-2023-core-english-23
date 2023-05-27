@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -54,7 +55,7 @@ public class GetAllUnfinishedTasksHandler implements Handler {
     private final LessonService lessonService;
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         List<LessonInfo> lessonInfos = lessonService.getAllLessonInfosWithUnfinishedTask();
 
@@ -63,9 +64,9 @@ public class GetAllUnfinishedTasksHandler implements Handler {
         return createTasksListMessages(lessonInfos, update.getMessage().getChatId().toString());
     }
 
-    private List<BotApiMethod<?>> createTasksListMessages(List<LessonInfo> lessonInfos, String chatId) {
+    private List<PartialBotApiMethod<?>> createTasksListMessages(List<LessonInfo> lessonInfos, String chatId) {
 
-        List<BotApiMethod<?>> messages = new ArrayList<>();
+        List<PartialBotApiMethod<?>> messages = new ArrayList<>();
 
         if (lessonInfos.isEmpty()) {
             messages.add(SendMessage.builder()

@@ -108,6 +108,13 @@ public interface LessonService {
     void setTeacherCommentForParent(String comment, UUID lessonId);
 
     /**
+     * Sets mark of the lesson
+     * @param mark Score of the lesson
+     * @param lessonId UUID of the lesson
+     * @throws NoSuchLessonException If there is no lesson with given UUID
+     */
+    void setMark(int mark, UUID lessonId);
+    /**
      * Sets homework to the lesson
      * @param comment Text of the homework
      * @param lessonId UUID of the lesson

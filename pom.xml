@@ -23,6 +23,7 @@
         <statemachine.version>3.2.0</statemachine.version>
         <thymeleaf.version>3.1.1.RELEASE</thymeleaf.version>
         <flying-saucer-pdf.version>9.1.22</flying-saucer-pdf.version>
+        <xchart.version>3.8.3</xchart.version>
     </properties>
     <dependencies>
         <dependency>
@@ -87,6 +88,11 @@
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-pdf</artifactId>
             <version>${flying-saucer-pdf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.knowm.xchart</groupId>
+            <artifactId>xchart</artifactId>
+            <version>${xchart.version}</version>
         </dependency>
     </dependencies>
 

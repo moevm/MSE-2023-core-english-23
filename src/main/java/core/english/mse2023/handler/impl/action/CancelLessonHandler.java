@@ -2,11 +2,13 @@ package core.english.mse2023.handler.impl.action;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.component.InlineKeyboardMaker;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.LessonStatus;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
@@ -28,12 +30,13 @@ import java.util.UUID;
 @InlineButtonType
 @AdminRole
 public class CancelLessonHandler implements Handler {
-    private static final String DONE_TEXT = "Выбранный урок отменён.";
+    private static final String DONE_TEXT = "Урок отменён.";
     private static final String ENDED_TEXT = "Невозможно отменить урок. Он уже завершён.";
     private static final String IN_PROGRESS_TEXT = "Невозможно отменить урок. Он уже начат.";
 
     private final InlineKeyboardMaker inlineKeyboardMaker;
     private final LessonService lessonService;
+    private final MessageTextMaker messageTextMaker;
 
     @Override
     public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
@@ -42,14 +45,15 @@ public class CancelLessonHandler implements Handler {
         UUID lessonId = UUID.fromString(buttonData.getData());
         Lesson lesson = lessonService.cancelLesson(lessonId, LessonStatus.CANCELLED_BY_TEACHER);
         List<PartialBotApiMethod<?>> messages = new ArrayList<>();
+
         switch (lesson.getStatus()) {
             case ENDED -> messages.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(ENDED_TEXT)
+                    .text(ENDED_TEXT + messageTextMaker.moreLessonInfoPatternMessageText(lesson))
                     .build());
             case IN_PROGRESS -> messages.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(IN_PROGRESS_TEXT)
+                    .text(IN_PROGRESS_TEXT + messageTextMaker.moreLessonInfoPatternMessageText(lesson))
                     .build());
             default -> {
                 messages.add(EditMessageReplyMarkup.builder()
@@ -61,7 +65,7 @@ public class CancelLessonHandler implements Handler {
                                 userRole)).build());
                 messages.add(SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(DONE_TEXT)
+                        .text(DONE_TEXT + messageTextMaker.moreLessonInfoPatternMessageText(lesson))
                         .build());
             }
         }

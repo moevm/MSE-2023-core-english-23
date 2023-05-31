@@ -1,10 +1,13 @@
 package core.english.mse2023.handler.impl.info;
 
 import core.english.mse2023.aop.annotation.handler.*;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
+import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +30,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShowHomeworkCommentHandler implements Handler {
     private static final String DATA_PATTERN = "Комментарий учителя (домашнее задание): %s";
-
     private final LessonService lessonService;
+    private final MessageTextMaker messageTextMaker;
 
     @Override
     public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
@@ -36,13 +39,15 @@ public class ShowHomeworkCommentHandler implements Handler {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
         UUID lessonId = UUID.fromString(buttonData.getData());
+        LessonInfo lessonInfo = lessonService.getLessonInfoByLessonId(lessonId);
+        Lesson lesson = lessonService.getLessonById(lessonId);
 
-        String comment = lessonService.getLessonInfoByLessonId(lessonId).getTeacherComment();
+        String comment = lessonInfo.getTeacherComment();
 
         return List.of(
                 SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(String.format(DATA_PATTERN, comment))
+                        .text(String.format(DATA_PATTERN, comment) + messageTextMaker.moreLessonInfoPatternMessageText(lesson))
                         .build(),
                 new AnswerCallbackQuery(update.getCallbackQuery().getId())
         );

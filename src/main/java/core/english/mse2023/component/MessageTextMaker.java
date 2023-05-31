@@ -20,9 +20,9 @@ public class MessageTextMaker {
 
         String messageTemplate = """
                 Данные об уроке
+                Тема: %s
                 Статус: %s
                 Дата проведения: %s
-                Тема: %s
                 Оценка: %s
                 Ссылка: %s
                 """;
@@ -34,11 +34,32 @@ public class MessageTextMaker {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd\\.MM\\.yyyy");
 
         return String.format(messageTemplate,
+                lesson.getTopic() == null ? NO_DATA_TEXT : lesson.getTopic(),
                 lesson.getStatus().toString(),
                 lesson.getDate() == null ? NO_DATA_TEXT : dateFormat.format(lesson.getDate()),
-                lesson.getTopic() == null ? NO_DATA_TEXT : lesson.getTopic(),
                 lessonInfo.getScore() == null ? NO_DATA_TEXT : lessonInfo.getScore(),
                 lesson.getLink() == null ? NO_DATA_TEXT : String.format(LINK_PATTERN, lesson.getLink())
+        );
+    }
+
+    public String moreLessonInfoPatternMessageText(Lesson lesson) {
+
+        String messageTemplate = """
+                
+                
+                Урок: %s
+                Статус: %s
+                Дата проведения: %s
+                """;
+
+        String NO_DATA_TEXT = "Не установлена";
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+        return String.format(messageTemplate,
+                lesson.getTopic() == null ? NO_DATA_TEXT : lesson.getTopic(),
+                lesson.getStatus().toString(),
+                lesson.getDate() == null ? NO_DATA_TEXT : dateFormat.format(lesson.getDate())
         );
     }
 }

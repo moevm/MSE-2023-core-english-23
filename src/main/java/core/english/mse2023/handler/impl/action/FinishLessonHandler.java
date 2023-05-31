@@ -37,8 +37,6 @@ import java.util.UUID;
 public class FinishLessonHandler implements Handler {
 
     private static final String ALREADY_FINISHED_TEXT = "Урок не может быть повторно завершен!";
-    private static final String NOT_STARTED_YET_TEXT = "Урок еще не начался. Невозможно завершить!";
-
     private final InlineKeyboardMaker inlineKeyboardMaker;
     private final MessageTextMaker messageTextMaker;
 

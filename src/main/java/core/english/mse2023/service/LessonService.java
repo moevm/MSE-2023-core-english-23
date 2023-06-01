@@ -11,6 +11,7 @@ import core.english.mse2023.model.dictionary.LessonHistoryEventType;
 import core.english.mse2023.model.dictionary.LessonStatus;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,13 +47,12 @@ public interface LessonService {
      * @return List of found Lessons. Can be empty.
      */
     List<Lesson> getAllLessonsForSubscription(UUID subscriptionId, Timestamp startDate, Timestamp endDate);
-  
+
     /**
      * Searches for lessons with unfinished tasks
      * @return List of LessonInfos of found lessons
      */
     List<LessonInfo> getAllLessonInfosWithUnfinishedTask();
-
 
     /**
      * Creates Lesson with minimum data
@@ -90,6 +90,12 @@ public interface LessonService {
      */
     Lesson cancelLesson(UUID lessonId, LessonStatus lessonStatus);
 
+    /**
+     * Searches for all Lessons which has date and are yet to happen (within threshold) and sets them alerted.
+     * @param threshold How far in advance before the start of the lesson is required to be alerted
+     * @return List of found Lessons. Can be empty.
+     */
+    List<Lesson> setAllLessonsWithinThresholdAlerted(Duration threshold);
 
     /**
      * Sets attendance in lesson

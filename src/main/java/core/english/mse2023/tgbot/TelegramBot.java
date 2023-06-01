@@ -44,6 +44,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(@NotNull Update update) {
+        System.out.println(update.getMessage().getChatId().toString());
         executeBotApiMethods(gateway.processUpdate(update));
     }
 

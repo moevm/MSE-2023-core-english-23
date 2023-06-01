@@ -45,6 +45,7 @@ public class ReplyKeyboardMaker {
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton(ButtonCommand.STATISTICS.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.DATA.getDescription()));
+                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE_FOR_GUEST.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
                 keyboard.add(row);
             }

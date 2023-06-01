@@ -4,8 +4,6 @@ package core.english.mse2023.handler.impl.action;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
-import core.english.mse2023.aop.annotation.handler.TextCommandType;
-import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -16,14 +14,13 @@ import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -36,7 +33,7 @@ public class SetMarkMenuHandler implements Handler {
     private static final String MESSAGE = "Выберите оценку:";
 
     @Override
-    public List<BotApiMethod<?>> handle(Update update, UserRole userRole) {
+    public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
         InlineButtonDTO inlineButtonDTO = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
         return List.of(SendMessage.builder()

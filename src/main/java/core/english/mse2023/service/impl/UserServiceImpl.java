@@ -48,6 +48,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getAllGuests() {
+        return userRepository.findAllByRole(UserRole.GUEST);
+    }
+
+    @Override
     @Transactional
     public List<User> getAllTeachers() {
         return userRepository.findAllByRole(UserRole.TEACHER);
@@ -56,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User createUser(String telegramId, String firstName, String lastName) {
+    public User createUser(String telegramId, String firstName, String lastName, String chatId) {
         User user = getUserByTelegramId(telegramId);
 
         if (user != null)
@@ -67,6 +72,7 @@ public class UserServiceImpl implements UserService {
                 .lastName(lastName)
                 .telegramId(telegramId)
                 .role(UserRole.GUEST)
+                .chatId(chatId)
                 .build();
 
         userRepository.save(user);
@@ -115,6 +121,19 @@ public class UserServiceImpl implements UserService {
         family.setParent(parent);
 
         return family;
+    }
+
+    @Override
+    @Transactional
+    public User setRoleForUser(String chosenGuestTelegramId, UserRole chosenRole) {
+        User user = getUserByTelegramId(chosenGuestTelegramId);
+
+        if (user == null)
+            throw new NoSuchUserException(String.format("User with telegram id %s hasn't been found", chosenGuestTelegramId));
+
+        user.setRole(chosenRole);
+
+        return user;
     }
 
 }

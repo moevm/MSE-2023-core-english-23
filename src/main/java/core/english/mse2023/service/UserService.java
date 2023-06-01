@@ -37,6 +37,12 @@ public interface UserService {
      */
     List<User> getAllParents();
 
+    /**
+     * Gets all Guests in database
+     * @return All guests
+     */
+    List<User> getAllGuests();
+
 
     /**
      * Gets all Teachers in database
@@ -53,7 +59,7 @@ public interface UserService {
      * @return Newly created user
      * @throws UserAlreadyExistsException If user with given telegram ID already exists
      */
-    User createUser(String telegramId, String firstName, String lastName);
+    User createUser(String telegramId, String firstName, String lastName, String chatId);
 
 
     /**
@@ -86,4 +92,12 @@ public interface UserService {
      * @return Family that has been changed
      */
     Family setParentForStudent(String studentTelegramId, String parentTelegramId);
+
+    /**
+     * Sets new Role for chosen Guest
+     * @param chosenGuestTelegramId Chosen Guest Telegram ID
+     * @param chosenRole New Role
+     * @return User that has been changed
+     */
+    User setRoleForUser(String chosenGuestTelegramId, UserRole chosenRole);
 }

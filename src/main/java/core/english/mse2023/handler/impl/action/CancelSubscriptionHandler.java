@@ -24,7 +24,6 @@ import java.util.UUID;
 
 @Component
 @AdminRole
-@TeacherRole
 @InlineButtonType
 @RequiredArgsConstructor
 public class CancelSubscriptionHandler implements Handler {

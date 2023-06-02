@@ -66,13 +66,6 @@ public class InlineKeyboardMaker {
                             )).row();
                         }
                     }
-                    case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
-                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_CANCEL_COMMENT,
-                                lesson.getId().toString(),
-                                0
-                        )).row();
-                    }
                     case NOT_STARTED_YET -> {
                         builder.button(TelegramInlineButtonsUtils.createInlineButton(
                                         InlineButtonCommand.CANCEL_LESSON,
@@ -115,14 +108,6 @@ public class InlineKeyboardMaker {
                                     0
                             )).row();
                         }
-
-                    }
-                    case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
-                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_CANCEL_COMMENT,
-                                lesson.getId().toString(),
-                                0
-                        )).row();
                     }
                 }
 
@@ -183,13 +168,6 @@ public class InlineKeyboardMaker {
                                     0
                             )).row();
                         }
-                    }
-                    case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
-                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_CANCEL_COMMENT,
-                                lesson.getId().toString(),
-                                0
-                        )).row();
                     }
                     case NOT_STARTED_YET -> {
                         builder
@@ -258,13 +236,6 @@ public class InlineKeyboardMaker {
                                     0
                             )).row();
                         }
-                    }
-                    case CANCELLED_BY_TEACHER, CANCELLED_BY_STUDENT, CANCELLED -> {
-                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_CANCEL_COMMENT,
-                                lesson.getId().toString(),
-                                0
-                        )).row();
                     }
                     case NOT_STARTED_YET -> {
                         builder

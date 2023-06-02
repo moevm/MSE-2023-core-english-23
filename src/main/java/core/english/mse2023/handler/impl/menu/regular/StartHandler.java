@@ -39,7 +39,8 @@ public class StartHandler implements Handler {
             user = userService.createUser(
                     update.getMessage().getFrom().getId().toString(),
                     update.getMessage().getFrom().getFirstName(),
-                    update.getMessage().getFrom().getLastName()
+                    update.getMessage().getFrom().getLastName(),
+                    update.getMessage().getChatId().toString()
             );
         }
 

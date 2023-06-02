@@ -21,6 +21,7 @@ create table lesson
     created_when    timestamp(6) not null,
     modified_when   timestamp(6) not null,
     date            timestamp(6),
+    alerted         bool,
     link            varchar(255),
     status          varchar(255) not null,
     topic           varchar(255),

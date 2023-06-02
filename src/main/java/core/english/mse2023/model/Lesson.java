@@ -25,6 +25,9 @@ public class Lesson extends BaseEntity {
     @Column(name = "date")
     private Timestamp date;
 
+    @Column(name = "alerted")
+    private Boolean alerted;
+
     @Column(name = "topic")
     private String topic;
 

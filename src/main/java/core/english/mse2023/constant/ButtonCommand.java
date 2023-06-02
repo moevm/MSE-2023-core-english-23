@@ -21,6 +21,8 @@ public interface ButtonCommand {
 
     BotCommand ASSIGN_ROLE = new BotCommand("/assignRole", "Назначить роль");
 
+    BotCommand ASSIGN_ROLE_FOR_GUEST = new BotCommand("/assignRoleForGuest", "Назначить роль гостю");
+
     BotCommand GET_ALL_TEACHERS = new BotCommand("/getAllTeachers", "Все учителя");
     BotCommand GET_ALL_STUDENTS = new BotCommand("/getAllStudents", "Все студенты");
 

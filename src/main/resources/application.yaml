@@ -20,11 +20,10 @@ spring:
     password: password
     user: sa
     url: jdbc:h2:./h2-test
-
+notification:
+  upcoming-lesson-threshold: PT2H
+  upcoming-lesson-cron: '0 0 * * * *'
 bot:
-#  name: core_english_test_bot
-#  token: 5962810244:AAG0QSUXQi0etiagdEDI4mkuXrvRSpH70yo
-#  chatId: 5962810244
-  name: java_test_private_bot
-  token: 5911814557:AAE4R_zTy9BUgHdYDpSo6qinuaRHnhsTG88
-  chatId: 291891029
+  name: core_english_test_bot
+  token: 5962810244:AAG0QSUXQi0etiagdEDI4mkuXrvRSpH70yo
+  chatId: 5962810244

@@ -31,7 +31,7 @@ public class MessageTextMaker {
 
         String LINK_PATTERN = "[Перейти](%s)";
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd\\.MM\\.yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd\\.MM\\.yyyy HH:mm");
 
         return String.format(messageTemplate,
                 lesson.getStatus().toString(),

@@ -18,7 +18,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -60,7 +63,7 @@ public class LessonServiceImpl implements LessonService {
 
         return lessons;
     }
-  
+
     @Override
     public List<LessonInfo> getAllLessonInfosWithUnfinishedTask() {
         return lessonInfoRepository.getAllByHomeworkCompletedFalse();
@@ -108,6 +111,8 @@ public class LessonServiceImpl implements LessonService {
 
         lesson.setStatus(ENDED);
 
+        lesson.setAlerted(true);
+
         createHistoryEvent(lesson, LessonHistoryEventType.UPDATED);
 
         return lesson;
@@ -136,6 +141,20 @@ public class LessonServiceImpl implements LessonService {
         return lesson;
     }
 
+
+    @Override
+    @Transactional
+    public List<Lesson> setAllLessonsWithinThresholdAlerted(Duration threshold) {
+        return lessonRepository.findAll().stream()
+                .filter(lesson ->
+                        lesson.getStatus() == NOT_STARTED_YET &&
+                                lesson.getAlerted() != null &&
+                                !lesson.getAlerted() &&
+                                Timestamp.from(Instant.now().plus(threshold)).after(lesson.getDate())
+                )
+                .peek(lesson -> lesson.setAlerted(true))
+                .toList();
+    }
 
     @Override
     @Transactional
@@ -224,6 +243,8 @@ public class LessonServiceImpl implements LessonService {
         if (lesson.getDate().before(new Date())) {
             lesson.setStatus(ENDED);
         }
+
+        lesson.setAlerted(false);
 
         createHistoryEvent(lesson, LessonHistoryEventType.UPDATED);
 

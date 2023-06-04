@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 @Component
 @TextCommandType
 @AdminRole
-@TeacherRole
 @RequiredArgsConstructor
 public class CreateSubscriptionHandler implements InteractiveHandler {
 

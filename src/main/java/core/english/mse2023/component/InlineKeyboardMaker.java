@@ -45,11 +45,6 @@ public class InlineKeyboardMaker {
                 }
                 switch (lesson.getStatus()) {
                     case ENDED -> {
-                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_LESSON_RESULTS,
-                                lesson.getId().toString(),
-                                0
-                        )).row();
 
                         if (lessonInfo.getTeacherComment() != null) {
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
@@ -79,12 +74,6 @@ public class InlineKeyboardMaker {
             case PARENT -> {
                 switch (lesson.getStatus()) {
                     case ENDED -> {
-                        builder
-                                .button(TelegramInlineButtonsUtils.createInlineButton(
-                                        InlineButtonCommand.GET_LESSON_RESULTS,
-                                        lesson.getId().toString(),
-                                        0
-                                )).row();
 
                         if (lessonInfo.getTeacherCommentForParent() != null){
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
@@ -121,11 +110,6 @@ public class InlineKeyboardMaker {
             case TEACHER -> {
                 switch (lesson.getStatus()) {
                     case ENDED -> {
-                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_LESSON_RESULTS,
-                                lesson.getId().toString(),
-                                0
-                        )).row();
 
                         if (lessonInfo.getTeacherCommentForParent() != null) {
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(
@@ -189,11 +173,6 @@ public class InlineKeyboardMaker {
             case ADMIN -> {
                 switch (lesson.getStatus()) {
                     case ENDED -> {
-                        builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                                InlineButtonCommand.GET_LESSON_RESULTS,
-                                lesson.getId().toString(),
-                                0
-                        )).row();
 
                         if (lessonInfo.getTeacherCommentForParent() != null) {
                             builder.button(TelegramInlineButtonsUtils.createInlineButton(

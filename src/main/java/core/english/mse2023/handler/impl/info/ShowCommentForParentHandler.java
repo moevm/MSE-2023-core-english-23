@@ -4,10 +4,13 @@ import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.ParentRole;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
+import core.english.mse2023.model.Lesson;
+import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +33,7 @@ import java.util.UUID;
 public class ShowCommentForParentHandler implements Handler {
 
     private static final String DATA_PATTERN = "Комментарий для родителя: %s";
-
+    private final MessageTextMaker messageTextMaker;
     private final LessonService lessonService;
 
     @Override
@@ -39,13 +42,15 @@ public class ShowCommentForParentHandler implements Handler {
         InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
 
         UUID lessonId = UUID.fromString(buttonData.getData());
+        LessonInfo lessonInfo = lessonService.getLessonInfoByLessonId(lessonId);
+        Lesson lesson = lessonService.getLessonById(lessonId);
 
-        String comment = lessonService.getLessonInfoByLessonId(lessonId).getTeacherCommentForParent();
+        String comment = lessonInfo.getTeacherCommentForParent();
 
         return List.of(
                 SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(String.format(DATA_PATTERN, comment))
+                        .text(String.format(DATA_PATTERN, comment) + messageTextMaker.moreLessonInfoPatternMessageText(lesson))
                         .build(),
                 new AnswerCallbackQuery(update.getCallbackQuery().getId())
         );

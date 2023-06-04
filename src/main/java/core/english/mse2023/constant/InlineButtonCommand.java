@@ -24,7 +24,6 @@ public interface InlineButtonCommand {
 
     BotCommand GET_MORE_USER_INFO = new BotCommand("/getMoreUserInfo", "");
 
-    BotCommand GET_LESSON_RESULTS = new BotCommand("/getLessonResults", "Показать результаты занятия");
     BotCommand GET_CANCEL_COMMENT = new BotCommand("/getCancelComment", "Показать причину отмены занятия");
     BotCommand FINISH_LESSON = new BotCommand("/finishLesson", "Закончить урок");
 

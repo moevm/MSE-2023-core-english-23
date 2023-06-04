@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 @Component
 @InlineButtonType
 @AdminRole
-@TeacherRole
 @RequiredArgsConstructor
 public class CreateLessonHandler implements InteractiveHandler {
     private static final String START_TEXT = "Для создания нового урока заполните и отправьте форму с данными " +

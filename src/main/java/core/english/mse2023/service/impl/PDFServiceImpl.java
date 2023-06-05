@@ -2,6 +2,7 @@ package core.english.mse2023.service.impl;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.dto.ThymeleafLessonDTO;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonInfo;
@@ -39,14 +40,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PDFServiceImpl implements PDFService {
 
-    private static final String USER_DATA_PATTERN = "%s%s";
-
-
     private final ResourceLoader resourceLoader;
 
 
     private final LessonService lessonService;
 
+    private final MessageTextMaker messageTextMaker;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -97,10 +96,8 @@ public class PDFServiceImpl implements PDFService {
         Context context = new Context();
         context.setVariable(
                 "student",
-                String.format(USER_DATA_PATTERN,
-                        (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
-                        student.getName() // Student's name (always present)
-                ));
+                messageTextMaker.userDataPatternMessageText(student.getName(), student.getLastName())
+                );
         context.setVariable("startDate", dateFormat.format(startDate));
         context.setVariable("endDate", dateFormat.format(endDate));
         context.setVariable("lessons", lessonDTOS);

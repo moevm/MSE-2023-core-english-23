@@ -12,6 +12,7 @@ import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -31,7 +32,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetHomeworkNotCompletedHandler implements Handler {
 
-    private static final String DONE_TEXT = "Домашнее задание для урока \"%s\" установлено, как не выполненное.";
+    @Value("${handlers.set-homework-not-completed-handler.done-text}")
+    private String doneText;
 
     private final InlineKeyboardMaker inlineKeyboardMaker;
 
@@ -97,7 +99,7 @@ public class SetHomeworkNotCompletedHandler implements Handler {
     private SendMessage createDoneMessage(String chatId, String lessonTopic) {
         return SendMessage.builder()
                 .chatId(chatId)
-                .text(String.format(DONE_TEXT, lessonTopic))
+                .text(String.format(doneText, lessonTopic))
                 .build();
     }
 

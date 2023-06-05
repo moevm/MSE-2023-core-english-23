@@ -7,6 +7,7 @@ import core.english.mse2023.tgbot.TelegramBot;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
@@ -21,10 +22,12 @@ import java.util.UUID;
 @Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
-    private static final String LESSON_DATE_CHANGED_NOTIFICATION_TEXT = "Урок \"%s\" с одной из ваших подписок сменил дату проведения на %s";
-    private static final String UPCOMING_LESSON_NOTIFICATION_TEXT = "Урок \"%s\" с одной из ваших подписок начнется менее, чем через %s. Точное начало урока: %s";
+    @Value("${services.notification-service.lesson-date-changed-notification-text}")
+    private String lessonDateChangedNotificationText;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    @Value("${services.notification-service.upcoming-lesson-notification-text}")
+    private String upcomingLessonNotificationText;
+
     private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 
@@ -41,7 +44,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         telegramBot.executeBotApiMethods(List.of(SendMessage.builder()
                 .chatId(lesson.getSubscription().getStudent().getChatId())
-                .text(String.format(LESSON_DATE_CHANGED_NOTIFICATION_TEXT, lesson.getTopic(), dateFormat.format(lesson.getDate())))
+                .text(String.format(lessonDateChangedNotificationText, lesson.getTopic(), dateTimeFormat.format(lesson.getDate())))
                 .build()));
     }
 
@@ -51,7 +54,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         telegramBot.executeBotApiMethods(List.of(SendMessage.builder()
                 .chatId(lesson.getSubscription().getStudent().getChatId())
-                .text(String.format(UPCOMING_LESSON_NOTIFICATION_TEXT,
+                .text(String.format(upcomingLessonNotificationText,
                         lesson.getTopic(),
                         getThresholdText(threshold),
                         dateTimeFormat.format(lesson.getDate())))

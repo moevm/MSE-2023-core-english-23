@@ -14,6 +14,7 @@ import core.english.mse2023.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ import static core.english.mse2023.model.dictionary.LessonStatus.CANCELLED;
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-    private static final String LESSON_TOPIC_TEMPLATE = "Урок №%s";
+    @Value("${services.subscription-service.lesson-topic-template}")
+    private String lessonTopicTemplate;
 
     private final SubscriptionRepository subscriptionRepository;
 
@@ -92,7 +94,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionRepository.save(subscription);
 
         for (int i = 0; i < subscription.getLessonsRest(); i++) {
-            Lesson lesson = lessonService.createLesson(subscription, String.format(LESSON_TOPIC_TEMPLATE, (i + 1)));
+            Lesson lesson = lessonService.createLesson(subscription, String.format(lessonTopicTemplate, (i + 1)));
 
             if (i == 0) {
                 lesson.setDate(subscription.getStartDate());

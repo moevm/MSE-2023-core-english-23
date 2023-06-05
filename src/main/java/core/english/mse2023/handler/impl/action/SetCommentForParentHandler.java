@@ -18,6 +18,7 @@ import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherState
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -37,8 +38,12 @@ import java.util.UUID;
 @TeacherRole
 @RequiredArgsConstructor
 public class SetCommentForParentHandler implements InteractiveHandler {
-    private static final String START_TEXT = "Введите следующим сообщением текст комментария для родителя.";
-    private static final String SUCCESS_TEXT = "Комментарий успешно сохранен.";
+
+    @Value("${handlers.set-comment-for-parent-handler.start-text}")
+    private String startText;
+
+    @Value("${handlers.set-comment-for-parent-handler.success-text}")
+    private String successText;
 
 
     private final LessonService lessonService;
@@ -71,7 +76,7 @@ public class SetCommentForParentHandler implements InteractiveHandler {
 
         message = SendMessage.builder()
                 .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .text(START_TEXT)
+                .text(startText)
                 .build();
 
         return List.of(message, new AnswerCallbackQuery(update.getCallbackQuery().getId()));
@@ -108,7 +113,7 @@ public class SetCommentForParentHandler implements InteractiveHandler {
         // Sending buttons with students. Data from them will be used in the next state
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(SUCCESS_TEXT)
+                .text(successText)
                 .build();
 
         return List.of(sendMessage);

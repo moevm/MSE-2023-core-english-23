@@ -6,7 +6,8 @@ import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,20 +19,22 @@ import java.util.List;
 @Component
 @TextCommandType
 @AllRoles
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ToMainMenuHandler implements Handler {
 
-    private static final String MESSAGE = "Вы вернулись в ГЛАВНОЕ МЕНЮ";
+    @Value("${handlers.to-main-menu-handler.message}")
+    private String message;
+
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override
     public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         return List.of(SendMessage.builder()
-                        .chatId(update.getMessage().getChatId().toString())
-                        .text(MESSAGE)
-                        .replyMarkup(replyKeyboardMaker.getMainMenuKeyboard(userRole))
-                        .build());
+                .chatId(update.getMessage().getChatId().toString())
+                .text(message)
+                .replyMarkup(replyKeyboardMaker.getMainMenuKeyboard(userRole))
+                .build());
     }
 
     @Override

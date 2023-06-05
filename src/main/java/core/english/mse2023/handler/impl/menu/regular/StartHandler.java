@@ -9,6 +9,7 @@ import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -23,8 +24,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StartHandler implements Handler {
 
-    private static final String GREETING = "Добро пожаловать, %s. Ваша роль: %s";
-
+    @Value("${handlers.start-handler.greeting}")
+    private String greeting;
 
     private final UserService userService;
 
@@ -46,7 +47,7 @@ public class StartHandler implements Handler {
 
         return List.of(SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(String.format(GREETING, user.getName(), user.getRole()))
+                .text(String.format(greeting, user.getName(), user.getRole()))
                 .replyMarkup(replyKeyboardMaker.getMainMenuKeyboard(userRole))
                 .build());
     }

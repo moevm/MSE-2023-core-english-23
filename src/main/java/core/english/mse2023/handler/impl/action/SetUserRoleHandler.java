@@ -10,9 +10,9 @@ import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -27,8 +27,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SetUserRoleHandler implements Handler {
 
-    private final static String USER_ROLE_SUCCESSFULLY_CHANGED_MESSAGE_TEXT = "Ваша роль изменена на: %s";
-    private final static String FAILED_TO_CHANGE_USER_ROLE_MESSAGE_TEXT = "Невозможно сменить роль на такую же, как у вас.";
+    @Value("${handlers.set-user-role-handler.user-role-successfully-changed-message-text}")
+    private String userRoleSuccessfullyChangedMessageText;
+
+    @Value("${handlers.set-user-role-handler.failed-to-change-user-role-message-text}")
+    private String failedToChangeUserRoleMessageText;
 
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
@@ -45,17 +48,17 @@ public class SetUserRoleHandler implements Handler {
         if (userRole == newRole) {
             SendMessage message = SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(FAILED_TO_CHANGE_USER_ROLE_MESSAGE_TEXT)
+                    .text(failedToChangeUserRoleMessageText)
                     .build();
 
             actions.add(message);
         } else {
             service.changeUserRole(update.getCallbackQuery().getFrom().getId().toString(), newRole);
             SendMessage message = SendMessage.builder()
-                            .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                            .text(String.format(USER_ROLE_SUCCESSFULLY_CHANGED_MESSAGE_TEXT, newRole))
-                            .replyMarkup(replyKeyboardMaker.getMainMenuKeyboard(newRole))
-                            .build();
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .text(String.format(userRoleSuccessfullyChangedMessageText, newRole))
+                    .replyMarkup(replyKeyboardMaker.getMainMenuKeyboard(newRole))
+                    .build();
 
             actions.add(message);
         }

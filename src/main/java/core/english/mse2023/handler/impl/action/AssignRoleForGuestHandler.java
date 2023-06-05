@@ -21,6 +21,7 @@ import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -39,15 +40,21 @@ import java.util.List;
 @TextCommandType
 @AdminRole
 @RequiredArgsConstructor
-public class AssignRoleForGuest implements InteractiveHandler {
+public class AssignRoleForGuestHandler implements InteractiveHandler {
 
-    private static final String CHOOSE_GUEST_TEXT = "Выберите гостя:";
+    @Value("${handlers.assign-role-for-guest-handler.choose-guest-text}")
+    private String chooseGuestText;
 
-    private static final String GUESTS_NOT_FOUND = "Незарегистрированных пользователей в системе не найдено.";
+    @Value("${handlers.assign-role-for-guest-handler.guests-not-found-text}")
+    private String guestsNotFoundText;
 
-    private static final String CHOOSE_ROLE_TEXT = "Выберите новую роль гостю:";
+    @Value("${handlers.assign-role-for-guest-handler.choose-role-text}")
+    private String chooseRoleText;
 
-    private static final String SUCCESS_TEXT = "Для пользователя \"%s\" успешно установлена роль \"%s\"";
+    @Value("${handlers.assign-role-for-guest-handler.success-text}")
+    private String successText;
+
+
     private final MessageTextMaker messageTextMaker;
 
     private final UserService userService;
@@ -76,7 +83,7 @@ public class AssignRoleForGuest implements InteractiveHandler {
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(students.isEmpty() ? GUESTS_NOT_FOUND : CHOOSE_GUEST_TEXT)
+                .text(students.isEmpty() ? guestsNotFoundText : chooseGuestText)
                 .replyMarkup(getGuestsButtons(students, stateMachine.getState().getId().getIndex()))
                 .build();
 
@@ -106,7 +113,7 @@ public class AssignRoleForGuest implements InteractiveHandler {
 
             actions.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(CHOOSE_ROLE_TEXT)
+                    .text(chooseRoleText)
                     .replyMarkup(getRolesButtons(stateMachine.getState().getId().getIndex()))
                     .build());
             actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
@@ -120,11 +127,8 @@ public class AssignRoleForGuest implements InteractiveHandler {
 
             actions.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(String.format(SUCCESS_TEXT,
-                            messageTextMaker.userDataPatternMessageText(
-                                    (user.getLastName() != null) ? (user.getLastName() + " ") : "", // Student's last name if present
-                                    user.getName() // Student's name (always present)
-                            ),
+                    .text(String.format(successText,
+                            messageTextMaker.userDataPatternMessageText(user.getName(), user.getLastName()),
                             user.getRole().getString()
                     ))
                     .build());
@@ -148,10 +152,7 @@ public class AssignRoleForGuest implements InteractiveHandler {
                             ButtonCommand.ASSIGN_ROLE_FOR_GUEST.getCommand(),
                             user.getTelegramId(),
                             stateIndex,
-                            messageTextMaker.userDataPatternMessageText(
-                                    (user.getLastName() != null) ? (user.getLastName() + " ") : "", // Student's last name if present
-                                    user.getName() // Student's name (always present)
-                            )
+                            messageTextMaker.userDataPatternMessageText(user.getName(), user.getLastName())
                     ))
                     .row();
         }

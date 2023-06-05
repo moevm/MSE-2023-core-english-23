@@ -6,6 +6,7 @@ import com.lowagie.text.DocumentException;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.GetStudentStatisticDTO;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -258,7 +259,7 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
 
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.STUDENT_STATISTICS;
     }
 

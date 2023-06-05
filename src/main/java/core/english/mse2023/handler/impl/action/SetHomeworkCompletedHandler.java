@@ -3,7 +3,7 @@ package core.english.mse2023.handler.impl.action;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.StudentRole;
 import core.english.mse2023.component.InlineKeyboardMaker;
-import core.english.mse2023.component.MessageTextMaker;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -18,7 +18,6 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
@@ -104,7 +103,7 @@ public class SetHomeworkCompletedHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.SET_HOMEWORK_COMPLETED;
     }
 }

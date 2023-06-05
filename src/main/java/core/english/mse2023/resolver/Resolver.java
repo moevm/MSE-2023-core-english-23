@@ -2,6 +2,7 @@ package core.english.mse2023.resolver;
 
 import core.english.mse2023.cache.CacheData;
 import core.english.mse2023.cache.CacheManager;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public abstract class Resolver {
 
     private final CacheManager cacheManager;
-    private final Map<BotCommand, Handler> textCommandHandlers;
+    private final Map<Command, Handler> textCommandHandlers;
     private final Map<String, Handler> inlineButtonsHandlers;
 
     private static final String NO_COMMAND_MESSAGE_TEXT = "Введенный текст не является командой или у вас недостаточно прав для ее использования.";
@@ -42,14 +43,12 @@ public abstract class Resolver {
     }
 
     private Handler getHandler(String command) {
-        BotCommand searchingCommand = new BotCommand();
-        for (BotCommand botCommand : textCommandHandlers.keySet()) {
+        for (Command botCommand : textCommandHandlers.keySet()) {
             if (botCommand.getCommand().equals(command) || botCommand.getDescription().equals(command)) {
-                searchingCommand = botCommand;
-                break;
+                return textCommandHandlers.get(botCommand);
             }
         }
-        return textCommandHandlers.get(searchingCommand);
+        return null;
     }
 
     public List<PartialBotApiMethod<?>> resolve(Update update, UserRole role) {

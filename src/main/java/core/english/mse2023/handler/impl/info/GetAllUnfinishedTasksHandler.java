@@ -4,17 +4,13 @@ import core.english.mse2023.aop.annotation.handler.StudentRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
-import core.english.mse2023.constant.InlineButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
-import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
-import core.english.mse2023.util.builder.InlineKeyboardBuilder;
-import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -120,7 +116,7 @@ public class GetAllUnfinishedTasksHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.GET_ALL_UNFINISHED_TASKS;
     }
 }

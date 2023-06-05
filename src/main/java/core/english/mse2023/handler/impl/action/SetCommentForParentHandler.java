@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SetCommentForParentDTO;
@@ -78,7 +79,7 @@ public class SetCommentForParentHandler implements InteractiveHandler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.SET_COMMENT_FOR_PARENT;
     }
 

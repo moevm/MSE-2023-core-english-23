@@ -1,36 +1,51 @@
 package core.english.mse2023.constant;
 
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import lombok.Getter;
+
+public enum ButtonCommand implements Command {
+
+    START("/start", "Start"),
+    TO_MAIN_MENU("/toMainMenu", "В главное меню"),
+
+    STATISTICS("/statistics", "Статистика"),
+    CHILDREN_STATISTICS("/statistics", "Статистика по детям"),
+    MY_STATISTICS("/myStatistics", "Моя статистика"),
+
+    SCHOOL_STATISTICS("/schoolStatistics", "Статистика по школе"),
+    TEACHER_STATISTICS("/teacherStatistics", "Статистика по преподавателю"),
+    STUDENT_STATISTICS("/studentStatistics", "Статистика по ученику"),
+
+    DATA("/data", "Работа с данными"),
+    ASSIGN_ROLE("/assignRole", "Назначить роль"),
+    ASSIGN_ROLE_FOR_GUEST("/assignRoleForGuest", "Назначить роль гостю"),
+
+    GET_ALL_TEACHERS("/getAllTeachers", "Все учителя"),
+    GET_ALL_STUDENTS("/getAllStudents", "Все студенты"),
+
+    SET_PARENT_FOR_STUDENT("/setParentForStudent", "Назначить родителя ученику"),
+
+    GET_ALL_SUBSCRIPTIONS("/getAllSubscriptions", "Вывести абонементы"),
+    GET_ALL_UNFINISHED_TASKS("/getAllUnfinishedTasks", "Вывести предстоящие ИДЗ"),
+
+    CREATE_SUBSCRIPTION("/createSubscription", "Создать абонемент"),
+    WORK_WITH_SUBSCRIPTIONS("/workWithSubscriptions", "Работа с абонементами");
 
 
-public interface ButtonCommand {
+    private final String command;
+    private final String description;
+    ButtonCommand(String command, String description) {
+        this.command = command;
+        this.description = description;
+    }
 
-    BotCommand START = new BotCommand("/start", "Start");
 
-    BotCommand TO_MAIN_MENU = new BotCommand("/toMainMenu", "В главное меню");
+    @Override
+    public String getCommand() {
+        return command;
+    }
 
-    BotCommand STATISTICS = new BotCommand("/statistics", "Статистика");
-
-    BotCommand SCHOOL_STATISTICS = new BotCommand("/schoolStatistics", "Статистика по школе");
-    BotCommand TEACHER_STATISTICS = new BotCommand("/teacherStatistics", "Статистика по преподавателю");
-    BotCommand STUDENT_STATISTICS = new BotCommand("/studentStatistics", "Статистика по ученику");
-
-    BotCommand DATA = new BotCommand("/data", "Работа с данными");
-
-    BotCommand ASSIGN_ROLE = new BotCommand("/assignRole", "Назначить роль");
-
-    BotCommand ASSIGN_ROLE_FOR_GUEST = new BotCommand("/assignRoleForGuest", "Назначить роль гостю");
-
-    BotCommand GET_ALL_TEACHERS = new BotCommand("/getAllTeachers", "Все учителя");
-    BotCommand GET_ALL_STUDENTS = new BotCommand("/getAllStudents", "Все студенты");
-
-    BotCommand SET_PARENT_FOR_STUDENT = new BotCommand("/setParentForStudent", "Назначить родителя ученику");
-
-    BotCommand GET_ALL_SUBSCRIPTIONS = new BotCommand("/getAllSubscriptions", "Вывести абонементы");
-    BotCommand GET_ALL_UNFINISHED_TASKS = new BotCommand("/getAllUnfinishedTasks", "Вывести предстоящие ИДЗ");
-
-    BotCommand CREATE_SUBSCRIPTION = new BotCommand("/createSubscription", "Создать абонемент");
-
-    BotCommand WORK_WITH_SUBSCRIPTIONS = new BotCommand("/workWithSubscriptions", "Работа с абонементами");
-
+    @Override
+    public String getDescription() {
+        return description;
+    }
 }

@@ -5,6 +5,7 @@ import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.component.MessageTextMaker;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -17,7 +18,6 @@ import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -80,7 +80,7 @@ public class FinishLessonHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.FINISH_LESSON;
     }
 }

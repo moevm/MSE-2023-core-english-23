@@ -3,10 +3,10 @@ package core.english.mse2023.handler.impl.action;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
-import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SubscriptionCreationDTO;
@@ -29,7 +29,6 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -325,7 +324,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.CREATE_SUBSCRIPTION;
     }
 

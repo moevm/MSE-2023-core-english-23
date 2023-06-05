@@ -6,6 +6,7 @@ import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.SetParentForStudentDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -26,7 +27,6 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -165,7 +165,7 @@ public class SetParentForStudentHandler implements InteractiveHandler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.SET_PARENT_FOR_STUDENT;
     }
 

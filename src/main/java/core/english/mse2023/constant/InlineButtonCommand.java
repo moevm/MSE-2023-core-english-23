@@ -1,48 +1,57 @@
 package core.english.mse2023.constant;
 
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+public enum InlineButtonCommand implements Command {
+    GET_MORE_SUBSCRIPTION_INFO("/subscriptionGetMore", "Подробнее"),
+    GET_MORE_LESSON_INFO("/lessonGetMore", "%s"),
+    CANCEL_SUBSCRIPTION("/cancelSubscription", "Отменить абонемент"),
+    MAIN_MENU_SUBSCRIPTION("/mainMenuSubscription", "◄ Назад в главное меню ◄"),
 
-/**
- * Commands for inline buttons. Be mindful to make commands small enough to fit in 64 bytes in the InlineButton.
- * @see core.english.mse2023.dto.InlineButtonDTO
- */
-public interface InlineButtonCommand {
-    BotCommand GET_MORE_SUBSCRIPTION_INFO = new BotCommand("/subscriptionGetMore", "Подробнее");
-    BotCommand GET_MORE_LESSON_INFO = new BotCommand("/lessonGetMore", "%s");
-    BotCommand CANCEL_SUBSCRIPTION = new BotCommand("/cancelSubscription", "Отменить абонемент");
-    BotCommand MAIN_MENU_SUBSCRIPTION = new BotCommand("/mainMenuSubscription", "◄ Назад в главное меню ◄");
+    SET_LESSON_ATTENDED("/setLessonAttended", "Посетил"),
+    SET_LESSON_SKIPPED("/setLessonSkipped", "Пропустил"),
+    SET_HOMEWORK_COMPLETED("/setHomeworkCompleted", "ИДЗ сделано"),
+    SET_HOMEWORK_NOT_COMPLETED("/setHomeworkNotCompleted", "ИДЗ не сделано"),
+    MAIN_MENU_LESSON("/mainMenuLesson", "◄ Назад в главное меню ◄"),
+    GET_ATTENDANCE_MENU("/getAttendanceMenu", "Отметить посещение"),
 
-    BotCommand SET_LESSON_ATTENDED = new BotCommand("/setLessonAttended", "Посетил");
-    BotCommand SET_LESSON_SKIPPED = new BotCommand("/setLessonSkipped", "Пропустил");
-    BotCommand SET_HOMEWORK_COMPLETED = new BotCommand("/setHomeworkCompleted", "ИДЗ сделано");
-    BotCommand SET_HOMEWORK_NOT_COMPLETED = new BotCommand("/setHomeworkNotCompleted", "ИДЗ не сделано");
-    BotCommand MAIN_MENU_LESSON = new BotCommand("/mainMenuLesson", "◄ Назад в главное меню ◄");
-    BotCommand GET_ATTENDANCE_MENU = new BotCommand("/getAttendanceMenu", "Отметить посещение");
+    SET_USER_ROLE("/setUserRole", ""),
+    GET_MORE_USER_INFO("/getMoreUserInfo", ""),
 
+    GET_CANCEL_COMMENT("/getCancelComment", "Показать причину отмены занятия"),
+    FINISH_LESSON("/finishLesson", "Закончить урок"),
 
-    BotCommand SET_USER_ROLE = new BotCommand("/setUserRole", "");
+    SET_COMMENT_FOR_PARENT("/setCommentForParent", "Оставить комментарий Родителю"),
+    SHOW_COMMENT_FOR_PARENT("/showCommentForParent", "Показать комментарий для Родителя"),
+    SET_HOMEWORK_COMMENT("/setHomeworkComment", "Оставить домашнее задание (комментарий)"),
+    SHOW_HOMEWORK_COMMENT("/showHomeworkComment", "Показать домашнее задание (комментарий)"),
 
-    BotCommand GET_MORE_USER_INFO = new BotCommand("/getMoreUserInfo", "");
+    SET_MARK_MENU("/setMarkMenu", "Добавить оценку за занятие"),
+    SET_MARK("/setMark", "Добавить оценку за занятие"),
+    SHOW_MARK("/showMark", "Показать оценку за занятие"),
 
-    BotCommand FINISH_LESSON = new BotCommand("/finishLesson", "Закончить урок");
+    CHANGE_LESSON_DATA("/changeLessonData", "Изменить данные занятия"),
+    SET_LESSON_DATE("/setLessonDate", "Назначить дату"),
+    CANCEL_LESSON("/cancelLesson", "Отменить урок"),
+    CREATE_LESSON("/createLesson", "Добавить урок"),
 
-    BotCommand SET_COMMENT_FOR_PARENT = new BotCommand("/setCommentForParent", "Оставить комментарий Родителю");
-    BotCommand SHOW_COMMENT_FOR_PARENT = new BotCommand("/showCommentForParent", "Показать комментарий для Родителя");
-    BotCommand SET_HOMEWORK_COMMENT = new BotCommand("/setHomeworkComment", "Оставить домашнее задание (комментарий)");
-    BotCommand SHOW_HOMEWORK_COMMENT = new BotCommand("/showHomeworkComment", "Показать домашнее задание (комментарий)");
-
-    BotCommand SET_MARK_MENU = new BotCommand("/setMarkMenu", "Добавить оценку за занятие");
-
-    BotCommand SET_MARK = new BotCommand("/setMark", "Добавить оценку за занятие");
-
-    BotCommand SHOW_MARK = new BotCommand("/showMark", "Показать оценку за занятие");
-    BotCommand CHANGE_LESSON_DATA = new BotCommand("/changeLessonData", "Изменить данные занятия");
-
-    BotCommand CANCEL_LESSON = new BotCommand("/cancelLesson", "Отменить урок");
-    BotCommand SET_FAMILY_COMMENT = new BotCommand("/setFamilyComment", "Дать отзыв");
-    BotCommand SET_LESSON_DATE = new BotCommand("/setLessonDate", "Назначить дату");
-    BotCommand CREATE_LESSON = new BotCommand("/createLesson", "Добавить урок");
+    SET_FAMILY_COMMENT("/setFamilyComment", "Дать отзыв");
 
 
+    private final String command;
+    private final String description;
 
+    InlineButtonCommand(String command, String description) {
+        this.command = command;
+        this.description = description;
+    }
+
+
+    @Override
+    public String getCommand() {
+        return command;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
 }

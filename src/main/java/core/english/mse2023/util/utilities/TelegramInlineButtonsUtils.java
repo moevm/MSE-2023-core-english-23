@@ -1,5 +1,6 @@
 package core.english.mse2023.util.utilities;
 
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import lombok.experimental.UtilityClass;
@@ -21,7 +22,7 @@ public class TelegramInlineButtonsUtils {
                 .build();
     }
 
-    public InlineKeyboardButton createInlineButton(BotCommand commandObject, String data, int stateIndex) {
+    public InlineKeyboardButton createInlineButton(Command commandObject, String data, int stateIndex) {
         return InlineKeyboardButton.builder()
                 .callbackData(InlineButtonDTOEncoder.encode(
                         InlineButtonDTO.builder()
@@ -34,7 +35,7 @@ public class TelegramInlineButtonsUtils {
                 .build();
     }
 
-    public InlineKeyboardButton createInlineButtonWithDescriptionOverride(BotCommand commandObject, String descriptionOverride, String data, int stateIndex) {
+    public InlineKeyboardButton createInlineButtonWithDescriptionOverride(Command commandObject, String descriptionOverride, String data, int stateIndex) {
         return InlineKeyboardButton.builder()
                 .callbackData(InlineButtonDTOEncoder.encode(
                         InlineButtonDTO.builder()

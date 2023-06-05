@@ -3,6 +3,7 @@ package core.english.mse2023.handler.impl.action;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.StudentRole;
 import core.english.mse2023.component.InlineKeyboardMaker;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -102,7 +103,7 @@ public class SetHomeworkNotCompletedHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.SET_HOMEWORK_NOT_COMPLETED;
     }
 }

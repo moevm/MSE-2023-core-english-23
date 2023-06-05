@@ -1,5 +1,6 @@
 package core.english.mse2023.handler;
 
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -31,7 +32,7 @@ public interface Handler {
      * Returns handler's command
      * @return Handler's command
      */
-    BotCommand getCommandObject();
+    Command getCommandObject();
 
 
 }

@@ -105,6 +105,7 @@ public class CreateLessonHandler implements InteractiveHandler {
             log.error("Update method has been called, but interactive handler has the wrong state. User id: {}", update.getMessage().getFrom().getId());
             throw new IllegalStateException(String.format("DATE_CHOOSING state expected. Current state: %s", stateMachine.getState().toString()));
         }
+        stateMachine.sendEvent(LessonCreationEvent.CHOOSE_DATE);
         stateMachine.sendEvent(LessonCreationEvent.CHOOSE_TOPIC);
         stateMachine.sendEvent(LessonCreationEvent.CHOOSE_LINK);
 

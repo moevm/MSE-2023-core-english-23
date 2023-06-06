@@ -6,7 +6,7 @@ import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.dto.SetLessonDateDTO;
+import core.english.mse2023.dto.interactiveHandler.SetLessonDateDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;

@@ -43,7 +43,9 @@ import java.util.List;
 public class SetParentForStudentHandler implements InteractiveHandler {
 
     private static final String CHOOSE_STUDENT_TEXT = "Выберите ученика:";
+    private static final String STUDENTS_NOT_FOUND = "Учеников в системе не найдено.";
     private static final String CHOOSE_PARENT_TEXT = "Выберите родителя:";
+    private static final String PARENTS_NOT_FOUND = "Родителей в системе не найдено.";
     private static final String SUCCESS_TEXT = "Для ученика \"%s\" успешно установлен родитель \"%s\"";
 
     private final MessageTextMaker messageTextMaker;
@@ -71,6 +73,16 @@ public class SetParentForStudentHandler implements InteractiveHandler {
         setParentForStudentCache.put(update.getMessage().getFrom().getId().toString(), dto);
 
         List<User> students = userService.getAllStudents();
+
+        if (students.isEmpty()) {
+            stateMachine.stop();
+            SendMessage message = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(STUDENTS_NOT_FOUND)
+                    .build();
+
+            return List.of(message);
+        }
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
@@ -104,11 +116,19 @@ public class SetParentForStudentHandler implements InteractiveHandler {
 
             List<User> parents = userService.getAllParents();
 
-            actions.add(SendMessage.builder()
-                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(CHOOSE_PARENT_TEXT)
-                    .replyMarkup(getUsersButtons(parents, stateMachine.getState().getId().getIndex()))
-                    .build());
+            if (parents.isEmpty()) {
+                stateMachine.stop();
+                actions.add(SendMessage.builder()
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                        .text(PARENTS_NOT_FOUND)
+                        .build());
+            } else {
+                actions.add(SendMessage.builder()
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                        .text(CHOOSE_PARENT_TEXT)
+                        .replyMarkup(getUsersButtons(parents, stateMachine.getState().getId().getIndex()))
+                        .build());
+            }
             actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
         } else if (stateMachine.getState().getId() == SetParentForStudentState.PARENT_CHOOSING) {
 

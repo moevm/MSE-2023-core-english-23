@@ -44,7 +44,6 @@ public class ReplyKeyboardMaker {
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton(ButtonCommand.STATISTICS.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.DATA.getDescription()));
-                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE_FOR_GUEST.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
                 keyboard.add(row);
             }
@@ -107,6 +106,9 @@ public class ReplyKeyboardMaker {
         ))));
         keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
                 ButtonCommand.GET_ALL_SUBSCRIPTIONS.getDescription()
+        ))));
+        keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
+                ButtonCommand.ASSIGN_ROLE_FOR_GUEST.getDescription()
         ))));
         keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
                 ButtonCommand.CREATE_SUBSCRIPTION.getDescription()

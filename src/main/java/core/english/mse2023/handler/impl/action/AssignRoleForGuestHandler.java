@@ -39,7 +39,7 @@ import java.util.List;
 @TextCommandType
 @AdminRole
 @RequiredArgsConstructor
-public class AssignRoleForGuest implements InteractiveHandler {
+public class AssignRoleForGuestHandler implements InteractiveHandler {
 
     private static final String CHOOSE_GUEST_TEXT = "Выберите гостя:";
 
@@ -72,19 +72,31 @@ public class AssignRoleForGuest implements InteractiveHandler {
 
         assignRoleForGuestCache.put(update.getMessage().getFrom().getId().toString(), dto);
 
-        List<User> students = userService.getAllGuests();
+        List<User> guests = userService.getAllGuests();
+
+        if (guests.isEmpty()) {
+            stateMachine.stop();
+            SendMessage message = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(GUESTS_NOT_FOUND)
+                    .build();
+            return List.of(message);
+        }
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(students.isEmpty() ? GUESTS_NOT_FOUND : CHOOSE_GUEST_TEXT)
-                .replyMarkup(getGuestsButtons(students, stateMachine.getState().getId().getIndex()))
+                .text(CHOOSE_GUEST_TEXT)
+                .replyMarkup(getGuestsButtons(guests, stateMachine.getState().getId().getIndex()))
                 .build();
-
         return List.of(message);
     }
 
     @Override
     public List<PartialBotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
+        if (update.getCallbackQuery() == null) {
+            return new ArrayList<>();
+        }
+
         AssignRoleForGuestDTO dto = assignRoleForGuestCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
 
         if (dto == null) {

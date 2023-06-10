@@ -60,6 +60,7 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
     private static final String USER_DATA_PATTERN = "%s%s";
 
     private static final String CHOOSE_STUDENT_QUERY_TEXT = "Выберите ученика для которого нужно сгенерировать статистику:";
+    private static final String STUDENTS_NOT_FOUND = "Учеников в системе не найдено.";
     private static final String ENTER_INTERVAL_QUERY_TEXT = "Укажите промежуток для получения статистики по приведенному шаблону:\n%s";
     private static final String DATA_FORM_TEXT = """
             `startDate: 11\\.03\\.2023`
@@ -98,6 +99,16 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
 
 
         List<Subscription> subscriptionsWithTeacher = subscriptionService.getAllSubscriptionsWithTeacher(teacherTelegramId);
+
+        if (subscriptionsWithTeacher.isEmpty()) {
+            stateMachine.stop();
+            SendMessage message = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(STUDENTS_NOT_FOUND)
+                    .build();
+
+            return List.of(message);
+        }
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())

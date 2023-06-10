@@ -7,7 +7,6 @@ import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.dictionary.UserRole;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -65,10 +64,11 @@ public abstract class Resolver {
 
                 if (handler instanceof InteractiveHandler interactiveHandler) {
 
-                    cacheManager.cache(update.getMessage().getFrom().getId().toString(), new CacheData(interactiveHandler));
+                    CacheData commandData = new CacheData(interactiveHandler);
+                    cacheManager.cache(update.getMessage().getFrom().getId().toString(), commandData);
 
-                    reply = interactiveHandler.handle(update, role);
-
+                    reply = commandData.handleData(update, role);
+                    cacheManager.triggerTimeBasedEvictionChecker(update.getMessage().getFrom().getId().toString());
 
                 } else {
                     reply = handler.handle(update, role);
@@ -117,9 +117,11 @@ public abstract class Resolver {
                 if (handler != null) {
                     if (handler instanceof InteractiveHandler interactiveHandler) {
 
-                        cacheManager.cache(update.getCallbackQuery().getFrom().getId().toString(), new CacheData(interactiveHandler));
+                        CacheData commandData = new CacheData(interactiveHandler);
+                        cacheManager.cache(update.getMessage().getFrom().getId().toString(), commandData);
 
-                        reply = interactiveHandler.handle(update, role);
+                        reply = commandData.handleData(update, role);
+                        cacheManager.triggerTimeBasedEvictionChecker(update.getMessage().getFrom().getId().toString());
 
                     } else {
                         reply = handler.handle(update, role);

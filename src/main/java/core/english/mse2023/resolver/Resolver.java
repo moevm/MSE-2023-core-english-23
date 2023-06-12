@@ -5,6 +5,7 @@ import core.english.mse2023.cache.CacheManager;
 import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
+import core.english.mse2023.exception.NoSuchCommandException;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -48,7 +49,8 @@ public abstract class Resolver {
                 return textCommandHandlers.get(botCommand);
             }
         }
-        return null;
+
+        throw new NoSuchCommandException();
     }
 
     public List<PartialBotApiMethod<?>> resolve(Update update, UserRole role) {
@@ -58,9 +60,8 @@ public abstract class Resolver {
 
             String command = update.getMessage().getText();
 
-            Handler handler = getHandler(command);
-
-            if (handler != null) {
+            try {
+                Handler handler = getHandler(command);
 
                 if (handler instanceof InteractiveHandler interactiveHandler) {
 
@@ -68,12 +69,10 @@ public abstract class Resolver {
 
                     reply = interactiveHandler.handle(update, role);
 
-
                 } else {
                     reply = handler.handle(update, role);
                 }
-
-            } else {
+            } catch (NoSuchCommandException noSuchCommandException) {
                 // If the message is not a command
 
                 // Checking if any command is in progress for this user
@@ -89,8 +88,6 @@ public abstract class Resolver {
                             .text(NO_COMMAND_MESSAGE_TEXT)
                             .build());
                 }
-
-
             }
 
         } else if (update.hasCallbackQuery()) {

@@ -1,4 +1,4 @@
-package core.english.mse2023.dto;
+package core.english.mse2023.dto.interactiveHandler;
 
 
 import core.english.mse2023.model.dictionary.SubscriptionType;

@@ -7,7 +7,7 @@ import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.dto.LessonCreationDTO;
+import core.english.mse2023.dto.interactiveHandler.LessonCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
@@ -44,7 +44,7 @@ public class CreateLessonHandler implements InteractiveHandler {
             "\\(каждое поле на новой строке в одном сообщении в том же порядке\\)\\. Пример:\n%s";
 
     private static final String DATA_FORM_TEXT = """
-            `date: 20\\.03\\.2023`
+            `date: 20\\.03\\.2023 13:36`
             `topic: Topic of lesson`
             `link: https://example.link.com`
             """;
@@ -57,7 +57,7 @@ public class CreateLessonHandler implements InteractiveHandler {
     private final LessonService lessonService;
     private final SubscriptionService subscriptionService;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     @Qualifier("lessonCreationStateMachineFactory")
     private final StateMachineFactory<LessonCreationState, LessonCreationEvent> stateMachineFactory;

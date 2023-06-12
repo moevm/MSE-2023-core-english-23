@@ -24,38 +24,34 @@ public class NotificationServiceImpl implements NotificationService {
     private static final String LESSON_DATE_CHANGED_NOTIFICATION_TEXT = "Урок \"%s\" с одной из ваших подписок сменил дату проведения на %s";
     private static final String UPCOMING_LESSON_NOTIFICATION_TEXT = "Урок \"%s\" с одной из ваших подписок начнется менее, чем через %s. Точное начало урока: %s";
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
-
-    private final TelegramBot telegramBot;
 
     private final LessonService lessonService;
 
     @Override
     @Transactional
-    public void sendLessonDateChangedNotification(UUID lessonId) {
+    public SendMessage getLessonDateChangedNotificationMessage(UUID lessonId) {
         Lesson lesson = lessonService.getLessonById(lessonId);
 
         log.info("Sending Lesson Date Changed notification to student with telegram id: " + lesson.getSubscription().getStudent().getTelegramId());
 
-        telegramBot.executeBotApiMethods(List.of(SendMessage.builder()
+        return SendMessage.builder()
                 .chatId(lesson.getSubscription().getStudent().getChatId())
-                .text(String.format(LESSON_DATE_CHANGED_NOTIFICATION_TEXT, lesson.getTopic(), dateFormat.format(lesson.getDate())))
-                .build()));
+                .text(String.format(LESSON_DATE_CHANGED_NOTIFICATION_TEXT, lesson.getTopic(), dateTimeFormat.format(lesson.getDate())))
+                .build();
     }
 
     @Override
-    public void sendUpcomingLessonNotification(Lesson lesson, Duration threshold) {
+    public SendMessage getUpcomingLessonNotificationMessage(Lesson lesson, Duration threshold) {
         log.info("Sending Upcoming Lesson notification to student with telegram id: " + lesson.getSubscription().getStudent().getTelegramId());
 
-        telegramBot.executeBotApiMethods(List.of(SendMessage.builder()
+        return SendMessage.builder()
                 .chatId(lesson.getSubscription().getStudent().getChatId())
                 .text(String.format(UPCOMING_LESSON_NOTIFICATION_TEXT,
                         lesson.getTopic(),
                         getThresholdText(threshold),
                         dateTimeFormat.format(lesson.getDate())))
-                .build()));
+                .build();
     }
 
     private String getThresholdText(Duration threshold) {

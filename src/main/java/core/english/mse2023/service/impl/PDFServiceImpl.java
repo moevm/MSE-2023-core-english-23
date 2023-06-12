@@ -32,7 +32,6 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -48,7 +47,7 @@ public class PDFServiceImpl implements PDFService {
     private final LessonService lessonService;
 
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 
     @Override
@@ -75,7 +74,7 @@ public class PDFServiceImpl implements PDFService {
         for (Lesson lesson : lessons) {
             ThymeleafLessonDTO lessonDTO = ThymeleafLessonDTO.builder()
                     .topic(lesson.getTopic())
-                    .date(dateFormat.format(lesson.getDate()))
+                    .date(dateTimeFormat.format(lesson.getDate()))
                     .status(lesson.getStatus().toString())
                     .build();
             lessonDTOS.add(lessonDTO);
@@ -101,8 +100,8 @@ public class PDFServiceImpl implements PDFService {
                         (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
                         student.getName() // Student's name (always present)
                 ));
-        context.setVariable("startDate", dateFormat.format(startDate));
-        context.setVariable("endDate", dateFormat.format(endDate));
+        context.setVariable("startDate", dateTimeFormat.format(startDate));
+        context.setVariable("endDate", dateTimeFormat.format(endDate));
         context.setVariable("lessons", lessonDTOS);
         context.setVariable("marksPieChartIsEmpty", markData.isEmpty());
         context.setVariable("marksPieChart", marksPieChartString);

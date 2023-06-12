@@ -9,7 +9,7 @@ import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.Command;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.dto.SubscriptionCreationDTO;
+import core.english.mse2023.dto.interactiveHandler.SubscriptionCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.UnexpectedUpdateType;
 import core.english.mse2023.handler.InteractiveHandler;

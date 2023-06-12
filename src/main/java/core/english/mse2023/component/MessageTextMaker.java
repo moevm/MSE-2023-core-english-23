@@ -10,16 +10,16 @@ import java.text.SimpleDateFormat;
 @Component
 public class MessageTextMaker {
 
-    @Value("${message-text-maker.lesson-info-pattern-text}")
+    @Value("${messages.text-maker.lesson-info-pattern}")
     private String lessonInfoPatternText;
 
-    @Value("${message-text-maker.more-lesson-info-pattern-text}")
+    @Value("${messages.text-maker.more-lesson-info-pattern}")
     private String moreLessonInfoPatternText;
 
-    @Value("${message-text-maker.data-missing-text}")
+    @Value("${messages.text-maker.data-missing}")
     private String dataMissingText;
 
-    @Value("${message-text-maker.link-pattern-text}")
+    @Value("${messages.text-maker.link-pattern}")
     private String linkPatternText;
 
 

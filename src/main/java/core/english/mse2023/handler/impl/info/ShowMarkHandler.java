@@ -30,7 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShowMarkHandler implements Handler {
 
-    @Value("${handlers.show-mark-handler.data-pattern}")
+    @Value("${messages.handlers.show-mark-handler.data-pattern}")
     private String dataPattern;
 
     private final LessonService lessonService;

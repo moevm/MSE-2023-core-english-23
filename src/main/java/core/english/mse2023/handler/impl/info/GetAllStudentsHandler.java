@@ -28,10 +28,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetAllStudentsHandler implements Handler {
 
-    @Value("${handlers.get-all-students-handler.start-text}")
+    @Value("${messages.handlers.get-all-students-handler.start}")
     private String startText;
 
-    @Value("${handlers.get-all-students-handler.no-students-text}")
+    @Value("${messages.handlers.get-all-students-handler.no-students}")
     private String noStudentsText;
 
     private final MessageTextMaker messageTextMaker;

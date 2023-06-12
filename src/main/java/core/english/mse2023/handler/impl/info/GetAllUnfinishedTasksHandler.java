@@ -29,16 +29,16 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class GetAllUnfinishedTasksHandler implements Handler {
 
-    @Value("${handlers.get-all-unfinished-tasks-handler.start-text}")
+    @Value("${messages.handlers.get-all-unfinished-tasks-handler.start}")
     private String startText;
 
-    @Value("${handlers.get-all-unfinished-tasks-handler.task-info-pattern}")
+    @Value("${messages.handlers.get-all-unfinished-tasks-handler.task-info-pattern}")
     private String taskInfoPattern;
 
-    @Value("${handlers.get-all-unfinished-tasks-handler.task-link-pattern}")
+    @Value("${messages.handlers.get-all-unfinished-tasks-handler.task-link-pattern}")
     private String taskLinkPattern;
 
-    @Value("${handlers.get-all-unfinished-tasks-handler.no-tasks-text}")
+    @Value("${messages.handlers.get-all-unfinished-tasks-handler.no-tasks}")
     private String noTasksText;
 
     private static final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";

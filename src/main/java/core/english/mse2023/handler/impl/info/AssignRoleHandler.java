@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AssignRoleHandler implements Handler {
 
-    @Value("${handlers.assign-role-handler.message}")
+    @Value("${messages.handlers.assign-role-handler.message}")
     private String message;
 
     @Override

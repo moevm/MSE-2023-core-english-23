@@ -30,7 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetMarkHandler implements Handler {
 
-    @Value("${handlers.set-mark-handler.message}")
+    @Value("${messages.handlers.set-mark-handler.message}")
     private String message;
 
     private final LessonService lessonService;

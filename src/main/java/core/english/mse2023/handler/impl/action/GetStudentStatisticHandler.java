@@ -57,19 +57,19 @@ import java.time.format.*;
 @Slf4j
 public class GetStudentStatisticHandler implements InteractiveHandler {
 
-    @Value("${handlers.get-student-statistic-handler.pdf-template-name}")
+    @Value("${statistics.student.pdf-template-name}")
     private String pdfTemplateName;
 
-    @Value("${handlers.get-student-statistic-handler.choose-student-query-text}")
+    @Value("${messages.handlers.get-student-statistic-handler.choose-student-query}")
     private String chooseStudentQueryText;
 
-    @Value("${handlers.get-student-statistic-handler.enter-interval-query-text}")
+    @Value("${messages.handlers.get-student-statistic-handler.enter-interval-query}")
     private String enterIntervalQueryText;
 
-    @Value("${handlers.get-student-statistic-handler.data-form-text}")
+    @Value("${messages.handlers.get-student-statistic-handler.data-form}")
     private String dataFormText;
 
-    @Value("${handlers.get-student-statistic-handler.complete-text}")
+    @Value("${messages.handlers.get-student-statistic-handler.complete}")
     private String completeText;
 
 

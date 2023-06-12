@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Component
 public class Gateway {
 
-    @Value("${gateway.failed-to-identify-text}")
+    @Value("${messages.gateway.failed-to-identify}")
     private String failedToIdentifyText;
 
     private final UserService userService;

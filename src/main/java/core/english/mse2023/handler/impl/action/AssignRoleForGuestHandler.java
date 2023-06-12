@@ -42,16 +42,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AssignRoleForGuestHandler implements InteractiveHandler {
 
-    @Value("${handlers.assign-role-for-guest-handler.choose-guest-text}")
+    @Value("${messages.handlers.assign-role-for-guest-handler.choose-guest}")
     private String chooseGuestText;
 
-    @Value("${handlers.assign-role-for-guest-handler.guests-not-found-text}")
+    @Value("${messages.handlers.assign-role-for-guest-handler.guests-not-found}")
     private String guestsNotFoundText;
 
-    @Value("${handlers.assign-role-for-guest-handler.choose-role-text}")
+    @Value("${messages.handlers.assign-role-for-guest-handler.choose-role}")
     private String chooseRoleText;
 
-    @Value("${handlers.assign-role-for-guest-handler.success-text}")
+    @Value("${messages.handlers.assign-role-for-guest-handler.success}")
     private String successText;
 
 

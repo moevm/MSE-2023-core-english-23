@@ -45,13 +45,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetLessonDateHandler implements InteractiveHandler {
 
-    @Value("${handlers.set-lesson-date-handler.start-text}")
+    @Value("${messages.handlers.set-lesson-date-handler.start}")
     private String startText;
 
-    @Value("${handlers.set-lesson-date-handler.data-form-text}")
+    @Value("${messages.handlers.set-lesson-date-handler.data-form}")
     private String dataFormText;
 
-    @Value("${handlers.set-lesson-date-handler.success-text}")
+    @Value("${messages.handlers.set-lesson-date-handler.success}")
     private String successText;
 
 

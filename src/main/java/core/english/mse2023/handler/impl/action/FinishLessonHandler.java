@@ -36,7 +36,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FinishLessonHandler implements Handler {
 
-    @Value("${handlers.finish-lesson-handler.already-finished-text}")
+    @Value("${messages.handlers.finish-lesson-handler.already-finished}")
     private String alreadyFinishedText;
 
     private final InlineKeyboardMaker inlineKeyboardMaker;

@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ToMainMenuHandler implements Handler {
 
-    @Value("${handlers.to-main-menu-handler.message}")
+    @Value("${messages.handlers.to-main-menu-handler.message}")
     private String message;
 
     private final ReplyKeyboardMaker replyKeyboardMaker;

@@ -29,7 +29,7 @@ import static core.english.mse2023.model.dictionary.LessonStatus.CANCELLED;
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-    @Value("${services.subscription-service.lesson-topic-template}")
+    @Value("${messages.services.subscription-service.lesson-topic}")
     private String lessonTopicTemplate;
 
     private final SubscriptionRepository subscriptionRepository;

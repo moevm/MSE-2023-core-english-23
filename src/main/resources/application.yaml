@@ -35,184 +35,183 @@ notification:
   upcoming-lesson-threshold: PT2H
   upcoming-lesson-cron: '0 0 * * * *'
 
-
-message-text-maker:
-  lesson-info-pattern-text: |
-    Данные об уроке
-    Тема: %s
-    Статус: %s
-    Дата проведения: %s
-    Оценка: %s
-    Ссылка: %s
-  more-lesson-info-pattern-text: |
-    
-    
-    Урок: %s
-    Статус: %s
-    Дата проведения: %s
-  data-missing-text: 'Не установлена'
-  link-pattern-text: '[Перейти](%s)'
-
-
-gateway:
-  failed-to-identify-text: 'Не удалось найти вас в системе. Напишите /start для начала работы или свяжитесь со службой поддержки.'
-
-
-services:
-  notification-service:
-    lesson-date-changed-notification-text: 'Урок "%s" с одной из ваших подписок сменил дату проведения на %s'
-    upcoming-lesson-notification-text: 'Урок "%s" с одной из ваших подписок начнется менее, чем через %s. Точное начало урока: %s'
-  subscription-service:
-    lesson-topic-template: 'Урок №%s'
-
-
-
-handlers:
-  assign-role-for-guest-handler:
-    choose-guest-text: 'Выберите гостя:'
-    guests-not-found-text: 'Незарегистрированных пользователей в системе не найдено.'
-    choose-role-text: 'Выберите новую роль гостю:'
-    success-text: 'Для пользователя "%s" успешно установлена роль "%s"'
-
-  cancel-lesson-handler:
-    done-text: 'Урок отменён.'
-    ended-text: 'Невозможно отменить урок. Он уже завершён.'
-    in-progress-text: 'Невозможно отменить урок. Он уже начат.'
-
-  cancel-subscription-handler:
-    done-text: 'Абонемент отменён.'
-    already-canceled-text: 'Невозможно отменить абонемент. Он уже неактивен.'
-
-  create-lesson-handler:
-    start-text: |
-      Для создания нового урока заполните и отправьте форму с данными \(каждое поле на новой строке в одном сообщении в том же порядке\)\. Пример:
-      %s
-    data-form-text: |
-      `date: 20\.03\.2023`
-      `topic: Topic of lesson`
-      `link: https://example.link.com`
-    subscription-not-active-text: 'Подписка, для которой вы пытаетесь добавить урок, уже не активна.'
-
-  create-subscription-handler:
-    start-text: |
-      Для создания нового абонемента заполните и отправьте форму с данными \(каждое поле на новой строке в одном сообщении в том же порядке\)\. Пример:
-      %s
-    data-form-text: |
-      `startDate: 11\.03\.2023`
-      `endDate: 30\.04\.2023`
-      `lessonAmount: 7`
-
-  finish-lesson-handler:
-    already-finished-text: 'Урок не может быть повторно завершен!'
-
-  get-student-statistic-handler:
+statistics:
+  student:
     pdf-template-name: 'thymeleaf_template'
-    choose-student-query-text: 'Выберите ученика для которого нужно сгенерировать статистику:'
-    enter-interval-query-text: |
-      Укажите промежуток для получения статистики по приведенному шаблону:
-      %s
-    data-form-text: |
-      `startDate: 11\.03\.2023`
-      `endDate: 30\.04\.2023`
-    complete-text: 'Сгенерированный файл статистики'
 
-  set-comment-for-parent-handler:
-    start-text: 'Введите следующим сообщением текст комментария для родителя.'
-    success-text: 'Комментарий успешно сохранен.'
-
-  set-homework-comment-handler:
-    start-text: 'Введите следующим сообщением текст комментария (ссылку на домашнее задание).'
-    success-text: 'Комментарий успешно сохранен.'
-
-  set-homework-completed-handler:
-    done-text: 'Домашнее задание для урока "%s" установлено, как выполненное.'
-
-  set-homework-not-completed-handler:
-    done-text: 'Домашнее задание для урока "%s" установлено, как не выполненное.'
-
-  set-lesson-date-handler:
-    start-text: |
-      Для того, чтобы установить дату проведения урока, введите ее согласно данному формату:
-      
-      %s
-      
-      Обратите внимание, что дата проведения не должна выходить за пределы абонимента:
-          Начало абонимента: %s
-          Конец абонимента: %s
-    data-form-text: '`27\.03\.2023`'
-    success-text: 'Дата проведения урока "%s" упешно установлена.'
-
-  set-mark-handler:
-    message: 'Занятию установлена оценка: %s'
-
-  set-mark-menu-handler:
-    message: 'Выберите оценку:'
-
-  set-parent-for-student-handler:
-    choose-student-text: 'Выберите ученика:'
-    choose-parent-text: 'Выберите родителя:'
-    success-text: 'Для ученика "%s" успешно установлен родитель "%s"'
-
-  set-user-role-handler:
-    user-role-successfully-changed-message-text: 'Ваша роль изменена на: %s'
-    failed-to-change-user-role-message-text: 'Невозможно сменить роль на такую же, как у вас.'
-
-  assign-role-handler:
-    message: 'Выберите новую роль:'
-
-  get-all-students-handler:
-    start-text: 'Список зарегистрированных студентов:'
-    no-students-text: 'Зарегистрированные студенты отсутствуют в системе.'
-
-  get-all-subscriptions-handler:
-    no-family-subscriptions-text: 'В вашей семье нет активных абонементов.'
-    no-teacher-subscriptions-text: 'Нет активных абонементов, в которых вы являетесь преподавателем.'
-    no-student-subscriptions-text: 'Нет активных абонементов, в которых вы являетесь студентом.'
-    no-subscriptions-text: 'В системе нет активных абонементов.'
-    data-pattern: |
-      Тип: %s
+messages:
+  text-maker:
+    lesson-info-pattern: |
+      Данные об уроке
+      Тема: %s
       Статус: %s
-      Уроков осталось: %d
-
-      Учитель: %s
-      Студент: %s
-
-      Дата начала: %s,
-      Дата завершения: %s
-
-  get-all-teachers-handler:
-    start-text: 'Список зарегистрированных преподавателей:'
-    no-teachers-text: 'Зарегистрированные преподаватели отсутствуют в системе.'
-
-  get-all-unfinished-tasks-handler:
-    start-text: 'Список предстоящих (невыполненных) ИДЗ:'
-    task-info-pattern: |
-      Тема занятия: %s
       Дата проведения: %s
-      Задание: %s
-    task-link-pattern: '[Ссылка к ИДЗ](%s)'
-    no-tasks-text: 'Предстоящие (невыполненные) ИДЗ отсутствуют.'
+      Оценка: %s
+      Ссылка: %s
+    more-lesson-info-pattern: |
+      
+      
+      Урок: %s
+      Статус: %s
+      Дата проведения: %s
+    data-missing: 'Не установлена'
+    link-pattern: '[Перейти](%s)'
 
-  show-comment-for-parent-handler:
-    data-pattern: 'Комментарий для родителя: %s'
+  gateway:
+    failed-to-identify: 'Не удалось найти вас в системе. Напишите /start для начала работы или свяжитесь со службой поддержки.'
 
-  show-homework-comment-handler:
-    data-pattern: 'Комментарий учителя (домашнее задание): %s'
+  services:
+    notification-service:
+      lesson-date-changed-notification: 'Урок "%s" с одной из ваших подписок сменил дату проведения на %s'
+      upcoming-lesson-notification: 'Урок "%s" с одной из ваших подписок начнется менее, чем через %s. Точное начало урока: %s'
+    subscription-service:
+      lesson-topic: 'Урок №%s'
 
-  show-mark-handler:
-    data-pattern: 'Оценка за занятие: %s'
+  handlers:
+    assign-role-for-guest-handler:
+      choose-guest: 'Выберите гостя:'
+      guests-not-found: 'Незарегистрированных пользователей в системе не найдено.'
+      choose-role: 'Выберите новую роль гостю:'
+      success: 'Для пользователя "%s" успешно установлена роль "%s"'
 
-  data-menu-handler:
-    message: 'Вы перешли в раздел РАБОТА С ДАННЫМИ'
+    cancel-lesson-handler:
+      done: 'Урок отменён.'
+      ended: 'Невозможно отменить урок. Он уже завершён.'
+      in-progress: 'Невозможно отменить урок. Он уже начат.'
 
-  get-statistics-menu-handler:
-    message: 'Вы перешли в раздел СТАТИСТИКА'
+    cancel-subscription-handler:
+      done: 'Абонемент отменён.'
+      already-canceled: 'Невозможно отменить абонемент. Он уже неактивен.'
 
-  start-handler:
-    greeting: 'Добро пожаловать, %s. Ваша роль: %s'
+    create-lesson-handler:
+      start: |
+        Для создания нового урока заполните и отправьте форму с данными \(каждое поле на новой строке в одном сообщении в том же порядке\)\. Пример:
+        %s
+      data-form: |
+        `date: 20\.03\.2023`
+        `topic: Topic of lesson`
+        `link: https://example.link.com`
+      subscription-not-active: 'Подписка, для которой вы пытаетесь добавить урок, уже не активна.'
 
-  to-main-menu-handler:
-    message: 'Вы вернулись в ГЛАВНОЕ МЕНЮ'
+    create-subscription-handler:
+      start: |
+        Для создания нового абонемента заполните и отправьте форму с данными \(каждое поле на новой строке в одном сообщении в том же порядке\)\. Пример:
+        %s
+      data-form: |
+        `startDate: 11\.03\.2023`
+        `endDate: 30\.04\.2023`
+        `lessonAmount: 7`
 
-  work-with-subscriptions-handler:
-    message: 'Вы перешли в раздел РАБОТА С АБОНЕМЕНТАМИ'
+    finish-lesson-handler:
+      already-finished: 'Урок не может быть повторно завершен!'
+
+    get-student-statistic-handler:
+      choose-student-query: 'Выберите ученика для которого нужно сгенерировать статистику:'
+      enter-interval-query: |
+        Укажите промежуток для получения статистики по приведенному шаблону:
+        %s
+      data-form: |
+        `startDate: 11\.03\.2023`
+        `endDate: 30\.04\.2023`
+      complete: 'Сгенерированный файл статистики'
+
+    set-comment-for-parent-handler:
+      start: 'Введите следующим сообщением текст комментария для родителя.'
+      success: 'Комментарий успешно сохранен.'
+
+    set-homework-comment-handler:
+      start: 'Введите следующим сообщением текст комментария (ссылку на домашнее задание).'
+      success: 'Комментарий успешно сохранен.'
+
+    set-homework-completed-handler:
+      done: 'Домашнее задание для урока "%s" установлено, как выполненное.'
+
+    set-homework-not-completed-handler:
+      done: 'Домашнее задание для урока "%s" установлено, как не выполненное.'
+
+    set-lesson-date-handler:
+      start: |
+        Для того, чтобы установить дату проведения урока, введите ее согласно данному формату:
+        
+        %s
+        
+        Обратите внимание, что дата проведения не должна выходить за пределы абонимента:
+            Начало абонимента: %s
+            Конец абонимента: %s
+      data-form: '`27\.03\.2023`'
+      success: 'Дата проведения урока "%s" упешно установлена.'
+
+    set-mark-handler:
+      message: 'Занятию установлена оценка: %s'
+
+    set-mark-menu-handler:
+      message: 'Выберите оценку:'
+
+    set-parent-for-student-handler:
+      choose-student: 'Выберите ученика:'
+      choose-parent: 'Выберите родителя:'
+      success: 'Для ученика "%s" успешно установлен родитель "%s"'
+
+    set-user-role-handler:
+      user-role-successfully-changed-message: 'Ваша роль изменена на: %s'
+      failed-to-change-user-role-message: 'Невозможно сменить роль на такую же, как у вас.'
+
+    assign-role-handler:
+      message: 'Выберите новую роль:'
+
+    get-all-students-handler:
+      start: 'Список зарегистрированных студентов:'
+      no-students: 'Зарегистрированные студенты отсутствуют в системе.'
+
+    get-all-subscriptions-handler:
+      no-family-subscriptions: 'В вашей семье нет активных абонементов.'
+      no-teacher-subscriptions: 'Нет активных абонементов, в которых вы являетесь преподавателем.'
+      no-student-subscriptions: 'Нет активных абонементов, в которых вы являетесь студентом.'
+      no-subscriptions: 'В системе нет активных абонементов.'
+      data-pattern: |
+        Тип: %s
+        Статус: %s
+        Уроков осталось: %d
+  
+        Учитель: %s
+        Студент: %s
+  
+        Дата начала: %s,
+        Дата завершения: %s
+
+    get-all-teachers-handler:
+      start: 'Список зарегистрированных преподавателей:'
+      no-teachers: 'Зарегистрированные преподаватели отсутствуют в системе.'
+
+    get-all-unfinished-tasks-handler:
+      start: 'Список предстоящих (невыполненных) ИДЗ:'
+      task-info-pattern: |
+        Тема занятия: %s
+        Дата проведения: %s
+        Задание: %s
+      task-link-pattern: '[Ссылка к ИДЗ](%s)'
+      no-tasks: 'Предстоящие (невыполненные) ИДЗ отсутствуют.'
+
+    show-comment-for-parent-handler:
+      data-pattern: 'Комментарий для родителя: %s'
+
+    show-homework-comment-handler:
+      data-pattern: 'Комментарий учителя (домашнее задание): %s'
+
+    show-mark-handler:
+      data-pattern: 'Оценка за занятие: %s'
+
+    data-menu-handler:
+      message: 'Вы перешли в раздел РАБОТА С ДАННЫМИ'
+
+    get-statistics-menu-handler:
+      message: 'Вы перешли в раздел СТАТИСТИКА'
+
+    start-handler:
+      greeting: 'Добро пожаловать, %s. Ваша роль: %s'
+
+    to-main-menu-handler:
+      message: 'Вы вернулись в ГЛАВНОЕ МЕНЮ'
+
+    work-with-subscriptions-handler:
+      message: 'Вы перешли в раздел РАБОТА С АБОНЕМЕНТАМИ'

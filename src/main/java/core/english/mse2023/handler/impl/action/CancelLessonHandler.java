@@ -36,13 +36,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CancelLessonHandler implements Handler {
 
-    @Value("${handlers.cancel-lesson-handler.done-text}")
+    @Value("${messages.handlers.cancel-lesson-handler.done}")
     private String doneText;
 
-    @Value("${handlers.cancel-lesson-handler.ended-text}")
+    @Value("${messages.handlers.cancel-lesson-handler.ended}")
     private String endedText;
 
-    @Value("${handlers.cancel-lesson-handler.in-progress-text}")
+    @Value("${messages.handlers.cancel-lesson-handler.in-progress}")
     private String inProgressText;
 
     private final InlineKeyboardMaker inlineKeyboardMaker;

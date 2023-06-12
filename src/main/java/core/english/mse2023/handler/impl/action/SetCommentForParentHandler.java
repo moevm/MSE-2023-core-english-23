@@ -39,10 +39,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetCommentForParentHandler implements InteractiveHandler {
 
-    @Value("${handlers.set-comment-for-parent-handler.start-text}")
+    @Value("${messages.handlers.set-comment-for-parent-handler.start}")
     private String startText;
 
-    @Value("${handlers.set-comment-for-parent-handler.success-text}")
+    @Value("${messages.handlers.set-comment-for-parent-handler.success}")
     private String successText;
 
 

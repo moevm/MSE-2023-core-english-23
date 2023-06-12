@@ -43,13 +43,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SetParentForStudentHandler implements InteractiveHandler {
 
-    @Value("${handlers.set-parent-for-student-handler.choose-student-text}")
+    @Value("${messages.handlers.set-parent-for-student-handler.choose-student}")
     private String chooseStudentText;
 
-    @Value("${handlers.set-parent-for-student-handler.choose-parent-text}")
+    @Value("${messages.handlers.set-parent-for-student-handler.choose-parent}")
     private String chooseParentText;
 
-    @Value("${handlers.set-parent-for-student-handler.success-text}")
+    @Value("${messages.handlers.set-parent-for-student-handler.success}")
     private String successText;
 
     private final MessageTextMaker messageTextMaker;

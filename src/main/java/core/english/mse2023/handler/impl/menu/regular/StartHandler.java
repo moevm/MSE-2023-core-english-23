@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StartHandler implements Handler {
 
-    @Value("${handlers.start-handler.greeting}")
+    @Value("${messages.handlers.start-handler.greeting}")
     private String greeting;
 
     private final UserService userService;

@@ -1,6 +1,7 @@
 package core.english.mse2023.service;
 
 import core.english.mse2023.model.Lesson;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -8,15 +9,17 @@ import java.util.UUID;
 public interface NotificationService {
 
     /**
-     * Sends notification to student that his lesson date has been changed
+     * Creates notification message to student that his lesson date has been changed
      * @param lessonId UUID of the lesson whose date was changed
+     * @return New SendMessage object with notification data
      */
-    void sendLessonDateChangedNotification(UUID lessonId);
+    SendMessage getLessonDateChangedNotificationMessage(UUID lessonId);
 
     /**
-     * Sends notification to student that his lesson will start soon
+     * Creates notification message to student that his lesson will start soon
      * @param lesson Lesson to notify about
      * @param threshold How far in advance before the start of the lesson is required to be alerted
+     * @return New SendMessage object with notification data
      */
-    void sendUpcomingLessonNotification(Lesson lesson, Duration threshold);
+    SendMessage getUpcomingLessonNotificationMessage(Lesson lesson, Duration threshold);
 }

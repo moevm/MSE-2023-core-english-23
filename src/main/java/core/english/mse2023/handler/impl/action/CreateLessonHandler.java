@@ -7,7 +7,7 @@ import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.dto.LessonCreationDTO;
+import core.english.mse2023.dto.interactiveHandler.LessonCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
@@ -62,7 +62,7 @@ public class CreateLessonHandler implements InteractiveHandler {
     private final LessonService lessonService;
     private final SubscriptionService subscriptionService;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     @Qualifier("lessonCreationStateMachineFactory")
     private final StateMachineFactory<LessonCreationState, LessonCreationEvent> stateMachineFactory;

@@ -6,7 +6,7 @@ import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.dto.SetLessonDateDTO;
+import core.english.mse2023.dto.interactiveHandler.SetLessonDateDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
@@ -14,6 +14,7 @@ import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.Subscription;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
+import core.english.mse2023.service.NotificationService;
 import core.english.mse2023.service.SubscriptionService;
 import core.english.mse2023.state.setLessonDate.SetLessonDateEvent;
 import core.english.mse2023.state.setLessonDate.SetLessonDateState;
@@ -54,13 +55,12 @@ public class SetLessonDateHandler implements InteractiveHandler {
     @Value("${messages.handlers.set-lesson-date-handler.success}")
     private String successText;
 
-
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    private static final SimpleDateFormat dateOutputFormat = new SimpleDateFormat("dd\\.MM\\.yyyy");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    private static final SimpleDateFormat dateOutputFormat = new SimpleDateFormat("dd\\.MM\\.yyyy HH:mm");
 
 
     private final LessonService lessonService;
-    private final SubscriptionService subscriptionService;
+    private final NotificationService notificationService;
 
     // This cache works in manual mode. It means - no evictions was configured
     private final Cache<String, SetLessonDateDTO> setLessonDateCache = Caffeine.newBuilder()
@@ -131,6 +131,9 @@ public class SetLessonDateHandler implements InteractiveHandler {
 
         Lesson lesson = lessonService.setLessonDate(dto.getDate(), dto.getLessonId());
 
+        SendMessage notificationMessage = notificationService.getLessonDateChangedNotificationMessage(lesson.getId());
+
+
         stateMachine.sendEvent(SetLessonDateEvent.ENTER_DATE);
 
         // Sending buttons with students. Data from them will be used in the next state
@@ -140,7 +143,7 @@ public class SetLessonDateHandler implements InteractiveHandler {
                 .text(String.format(successText, lesson.getTopic()))
                 .build();
 
-        return List.of(sendMessage);
+        return List.of(sendMessage, notificationMessage);
     }
 
     @Override

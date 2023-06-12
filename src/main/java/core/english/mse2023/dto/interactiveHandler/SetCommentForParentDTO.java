@@ -1,4 +1,4 @@
-package core.english.mse2023.dto;
+package core.english.mse2023.dto.interactiveHandler;
 
 import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherEvent;
 import core.english.mse2023.state.setCommentForTeacher.SetCommentForTeacherState;

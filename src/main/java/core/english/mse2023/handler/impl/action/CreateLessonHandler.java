@@ -4,10 +4,9 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
-import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
-import core.english.mse2023.dto.LessonCreationDTO;
+import core.english.mse2023.dto.interactiveHandler.LessonCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
@@ -38,7 +37,6 @@ import java.util.stream.Collectors;
 @Component
 @InlineButtonType
 @AdminRole
-@TeacherRole
 @RequiredArgsConstructor
 public class CreateLessonHandler implements InteractiveHandler {
     private static final String START_TEXT = "Для создания нового урока заполните и отправьте форму с данными " +

@@ -1,6 +1,6 @@
 package core.english.mse2023.service;
 
-import core.english.mse2023.dto.SubscriptionCreationDTO;
+import core.english.mse2023.dto.interactiveHandler.SubscriptionCreationDTO;
 import core.english.mse2023.exception.SubscriptionAlreadyCanceledException;
 import core.english.mse2023.exception.NoSuchSubscriptionException;
 import core.english.mse2023.model.Subscription;

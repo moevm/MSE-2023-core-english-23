@@ -26,35 +26,32 @@ public class NotificationServiceImpl implements NotificationService {
 
     private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-
-    private final TelegramBot telegramBot;
-
     private final LessonService lessonService;
 
     @Override
     @Transactional
-    public void sendLessonDateChangedNotification(UUID lessonId) {
+    public SendMessage getLessonDateChangedNotificationMessage(UUID lessonId) {
         Lesson lesson = lessonService.getLessonById(lessonId);
 
         log.info("Sending Lesson Date Changed notification to student with telegram id: " + lesson.getSubscription().getStudent().getTelegramId());
 
-        telegramBot.executeBotApiMethods(List.of(SendMessage.builder()
+        return SendMessage.builder()
                 .chatId(lesson.getSubscription().getStudent().getChatId())
                 .text(String.format(LESSON_DATE_CHANGED_NOTIFICATION_TEXT, lesson.getTopic(), dateTimeFormat.format(lesson.getDate())))
-                .build()));
+                .build();
     }
 
     @Override
-    public void sendUpcomingLessonNotification(Lesson lesson, Duration threshold) {
+    public SendMessage getUpcomingLessonNotificationMessage(Lesson lesson, Duration threshold) {
         log.info("Sending Upcoming Lesson notification to student with telegram id: " + lesson.getSubscription().getStudent().getTelegramId());
 
-        telegramBot.executeBotApiMethods(List.of(SendMessage.builder()
+        return SendMessage.builder()
                 .chatId(lesson.getSubscription().getStudent().getChatId())
                 .text(String.format(UPCOMING_LESSON_NOTIFICATION_TEXT,
                         lesson.getTopic(),
                         getThresholdText(threshold),
                         dateTimeFormat.format(lesson.getDate())))
-                .build()));
+                .build();
     }
 
     private String getThresholdText(Duration threshold) {

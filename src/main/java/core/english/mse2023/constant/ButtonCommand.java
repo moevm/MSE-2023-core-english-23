@@ -10,8 +10,6 @@ public interface ButtonCommand {
     BotCommand TO_MAIN_MENU = new BotCommand("/toMainMenu", "В главное меню");
 
     BotCommand STATISTICS = new BotCommand("/statistics", "Статистика");
-    BotCommand CHILDREN_STATISTICS = new BotCommand("/statistics", "Статистика по детям");
-    BotCommand MY_STATISTICS = new BotCommand("/myStatistics", "Моя статистика");
 
     BotCommand SCHOOL_STATISTICS = new BotCommand("/schoolStatistics", "Статистика по школе");
     BotCommand TEACHER_STATISTICS = new BotCommand("/teacherStatistics", "Статистика по преподавателю");

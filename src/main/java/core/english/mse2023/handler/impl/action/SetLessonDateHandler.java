@@ -55,10 +55,10 @@ public class SetLessonDateHandler implements InteractiveHandler {
                 Конец абонимента: %s
             """;
 
-    private static final String DATA_FORM_TEXT = "`27\\.03\\.2023`";
+    private static final String DATA_FORM_TEXT = "`27\\.03\\.2023 13:36`";
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    private static final SimpleDateFormat dateOutputFormat = new SimpleDateFormat("dd\\.MM\\.yyyy");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    private static final SimpleDateFormat dateOutputFormat = new SimpleDateFormat("dd\\.MM\\.yyyy HH:mm");
 
     private static final String SUCCESS_TEXT = "Дата проведения урока \"%s\" упешно установлена.";
 

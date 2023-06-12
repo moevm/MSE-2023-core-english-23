@@ -24,7 +24,6 @@ public class NotificationServiceImpl implements NotificationService {
     private static final String LESSON_DATE_CHANGED_NOTIFICATION_TEXT = "Урок \"%s\" с одной из ваших подписок сменил дату проведения на %s";
     private static final String UPCOMING_LESSON_NOTIFICATION_TEXT = "Урок \"%s\" с одной из ваших подписок начнется менее, чем через %s. Точное начало урока: %s";
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     private final LessonService lessonService;
@@ -38,7 +37,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         return SendMessage.builder()
                 .chatId(lesson.getSubscription().getStudent().getChatId())
-                .text(String.format(LESSON_DATE_CHANGED_NOTIFICATION_TEXT, lesson.getTopic(), dateFormat.format(lesson.getDate())))
+                .text(String.format(LESSON_DATE_CHANGED_NOTIFICATION_TEXT, lesson.getTopic(), dateTimeFormat.format(lesson.getDate())))
                 .build();
     }
 

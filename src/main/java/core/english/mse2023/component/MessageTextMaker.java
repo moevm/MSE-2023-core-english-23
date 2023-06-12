@@ -31,7 +31,7 @@ public class MessageTextMaker {
 
         String LINK_PATTERN = "[Перейти](%s)";
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd\\.MM\\.yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd\\.MM\\.yyyy HH:mm");
 
         return String.format(messageTemplate,
                 lesson.getTopic() == null ? NO_DATA_TEXT : lesson.getTopic(),
@@ -54,7 +54,7 @@ public class MessageTextMaker {
 
         String NO_DATA_TEXT = "Не установлена";
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
         return String.format(messageTemplate,
                 lesson.getTopic() == null ? NO_DATA_TEXT : lesson.getTopic(),

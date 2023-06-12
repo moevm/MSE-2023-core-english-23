@@ -31,7 +31,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShowHomeworkCommentHandler implements Handler {
 
-    @Value("${messages.handlers.show-homework-comment-handler.data-pattern}")
+    @Value("${messages.handlers.show-homework-comment.data-pattern}")
     private String dataPattern;
 
     private final LessonService lessonService;

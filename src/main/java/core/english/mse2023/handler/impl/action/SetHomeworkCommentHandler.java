@@ -39,10 +39,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetHomeworkCommentHandler implements InteractiveHandler {
 
-    @Value("${messages.handlers.set-homework-comment-handler.start}")
+    @Value("${messages.handlers.set-homework-comment.start}")
     private String startText;
 
-    @Value("${messages.handlers.set-homework-comment-handler.success}")
+    @Value("${messages.handlers.set-homework-comment.success}")
     private String successText;
 
 

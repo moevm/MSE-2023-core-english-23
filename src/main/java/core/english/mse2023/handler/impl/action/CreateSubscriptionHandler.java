@@ -51,10 +51,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CreateSubscriptionHandler implements InteractiveHandler {
 
-    @Value("${messages.handlers.create-subscription-handler.start}")
+    @Value("${messages.handlers.create-subscription.start}")
     private String startText;
 
-    @Value("${messages.handlers.create-subscription-handler.data-form}")
+    @Value("${messages.handlers.create-subscription.data-form}")
     private String dataFormText;
 
     private static final String STUDENT_CHOOSE_TEXT = "Далее выберите студента, с которым будут проводиться занятия:";

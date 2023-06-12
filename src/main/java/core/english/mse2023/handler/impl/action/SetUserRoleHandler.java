@@ -27,10 +27,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SetUserRoleHandler implements Handler {
 
-    @Value("${messages.handlers.set-user-role-handler.user-role-successfully-changed-message}")
+    @Value("${messages.handlers.set-user-role.user-role-successfully-changed-message}")
     private String userRoleSuccessfullyChangedMessageText;
 
-    @Value("${messages.handlers.set-user-role-handler.failed-to-change-user-role-message}")
+    @Value("${messages.handlers.set-user-role.failed-to-change-user-role-message}")
     private String failedToChangeUserRoleMessageText;
 
     private final ReplyKeyboardMaker replyKeyboardMaker;

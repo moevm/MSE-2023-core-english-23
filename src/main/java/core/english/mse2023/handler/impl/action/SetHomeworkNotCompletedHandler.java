@@ -32,7 +32,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetHomeworkNotCompletedHandler implements Handler {
 
-    @Value("${messages.handlers.set-homework-not-completed-handler.done}")
+    @Value("${messages.handlers.set-homework-not-completed.done}")
     private String doneText;
 
     private final InlineKeyboardMaker inlineKeyboardMaker;

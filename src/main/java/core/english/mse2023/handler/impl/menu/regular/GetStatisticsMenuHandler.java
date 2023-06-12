@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetStatisticsMenuHandler implements Handler {
 
-    @Value("${messages.handlers.get-statistics-menu-handler.message}")
+    @Value("${messages.handlers.get-statistics-menu.message}")
     private String message;
 
     private final ReplyKeyboardMaker replyKeyboardMaker;

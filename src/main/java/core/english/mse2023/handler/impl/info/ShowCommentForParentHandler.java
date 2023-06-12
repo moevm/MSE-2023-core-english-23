@@ -33,7 +33,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShowCommentForParentHandler implements Handler {
 
-    @Value("${messages.handlers.show-comment-for-parent-handler.data-pattern}")
+    @Value("${messages.handlers.show-comment-for-parent.data-pattern}")
     private String dataPattern;
 
     private final MessageTextMaker messageTextMaker;

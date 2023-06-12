@@ -30,10 +30,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CancelSubscriptionHandler implements Handler {
 
-    @Value("${messages.handlers.cancel-subscription-handler.done}")
+    @Value("${messages.handlers.cancel-subscription.done}")
     private String doneText;
 
-    @Value("${messages.handlers.cancel-subscription-handler.already-canceled}")
+    @Value("${messages.handlers.cancel-subscription.already-canceled}")
     private String alreadyCanceledText;
 
 

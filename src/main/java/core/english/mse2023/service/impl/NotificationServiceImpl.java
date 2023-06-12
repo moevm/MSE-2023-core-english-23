@@ -22,10 +22,10 @@ import java.util.UUID;
 @Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
-    @Value("${messages.services.notification-service.lesson-date-changed-notification}")
+    @Value("${messages.services.notification.lesson-date-changed-notification}")
     private String lessonDateChangedNotificationText;
 
-    @Value("${messages.services.notification-service.upcoming-lesson-notification}")
+    @Value("${messages.services.notification.upcoming-lesson-notification}")
     private String upcomingLessonNotificationText;
 
     private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");

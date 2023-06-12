@@ -60,16 +60,16 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
     @Value("${statistics.student.pdf-template-name}")
     private String pdfTemplateName;
 
-    @Value("${messages.handlers.get-student-statistic-handler.choose-student-query}")
+    @Value("${messages.handlers.get-student-statistic.choose-student-query}")
     private String chooseStudentQueryText;
 
-    @Value("${messages.handlers.get-student-statistic-handler.enter-interval-query}")
+    @Value("${messages.handlers.get-student-statistic.enter-interval-query}")
     private String enterIntervalQueryText;
 
-    @Value("${messages.handlers.get-student-statistic-handler.data-form}")
+    @Value("${messages.handlers.get-student-statistic.data-form}")
     private String dataFormText;
 
-    @Value("${messages.handlers.get-student-statistic-handler.complete}")
+    @Value("${messages.handlers.get-student-statistic.complete}")
     private String completeText;
 
 

@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WorkWithSubscriptionsHandler implements Handler {
 
-    @Value("${messages.handlers.work-with-subscriptions-handler.message}")
+    @Value("${messages.handlers.work-with-subscriptions.message}")
     private String message;
 
     private final ReplyKeyboardMaker replyKeyboardMaker;

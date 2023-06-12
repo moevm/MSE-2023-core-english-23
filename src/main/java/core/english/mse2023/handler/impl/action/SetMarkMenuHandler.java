@@ -31,7 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SetMarkMenuHandler implements Handler {
 
-    @Value("${messages.handlers.set-mark-menu-handler.message}")
+    @Value("${messages.handlers.set-mark-menu.message}")
     private String message;
 
     @Override

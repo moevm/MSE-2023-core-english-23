@@ -46,13 +46,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetLessonDateHandler implements InteractiveHandler {
 
-    @Value("${messages.handlers.set-lesson-date-handler.start}")
+    @Value("${messages.handlers.set-lesson-date.start}")
     private String startText;
 
-    @Value("${messages.handlers.set-lesson-date-handler.data-form}")
+    @Value("${messages.handlers.set-lesson-date.data-form}")
     private String dataFormText;
 
-    @Value("${messages.handlers.set-lesson-date-handler.success}")
+    @Value("${messages.handlers.set-lesson-date.success}")
     private String successText;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");

@@ -45,13 +45,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CreateLessonHandler implements InteractiveHandler {
 
-    @Value("${messages.handlers.create-lesson-handler.start}")
+    @Value("${messages.handlers.create-lesson.start}")
     private String startText;
 
-    @Value("${messages.handlers.create-lesson-handler.data-form}")
+    @Value("${messages.handlers.create-lesson.data-form}")
     private String dataFormText;
 
-    @Value("${messages.handlers.create-lesson-handler.subscription-not-active}")
+    @Value("${messages.handlers.create-lesson.subscription-not-active}")
     private String subscriptionNotActiveText;
 
     private static final String SUCCESS_TEXT = "Новый урок добавлен.";

@@ -28,19 +28,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetAllSubscriptionsHandler implements Handler {
 
-    @Value("${messages.handlers.get-all-subscriptions-handler.no-family-subscriptions}")
+    @Value("${messages.handlers.get-all-subscriptions.no-family-subscriptions}")
     private String noFamilySubscriptionsText;
 
-    @Value("${messages.handlers.get-all-subscriptions-handler.no-teacher-subscriptions}")
+    @Value("${messages.handlers.get-all-subscriptions.no-teacher-subscriptions}")
     private String noTeacherSubscriptionsText;
 
-    @Value("${messages.handlers.get-all-subscriptions-handler.no-student-subscriptions}")
+    @Value("${messages.handlers.get-all-subscriptions.no-student-subscriptions}")
     private String noStudentSubscriptionsText;
 
-    @Value("${messages.handlers.get-all-subscriptions-handler.no-subscriptions}")
+    @Value("${messages.handlers.get-all-subscriptions.no-subscriptions}")
     private String noSubscriptionsText;
 
-    @Value("${messages.handlers.get-all-subscriptions-handler.data-pattern}")
+    @Value("${messages.handlers.get-all-subscriptions.data-pattern}")
     private String dataPattern;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");

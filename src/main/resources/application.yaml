@@ -61,29 +61,29 @@ messages:
     failed-to-identify: 'Не удалось найти вас в системе. Напишите /start для начала работы или свяжитесь со службой поддержки.'
 
   services:
-    notification-service:
+    notification:
       lesson-date-changed-notification: 'Урок "%s" с одной из ваших подписок сменил дату проведения на %s'
       upcoming-lesson-notification: 'Урок "%s" с одной из ваших подписок начнется менее, чем через %s. Точное начало урока: %s'
-    subscription-service:
+    subscription:
       lesson-topic: 'Урок №%s'
 
   handlers:
-    assign-role-for-guest-handler:
+    assign-role-for-guest:
       choose-guest: 'Выберите гостя:'
       guests-not-found: 'Незарегистрированных пользователей в системе не найдено.'
       choose-role: 'Выберите новую роль гостю:'
       success: 'Для пользователя "%s" успешно установлена роль "%s"'
 
-    cancel-lesson-handler:
+    cancel-lesson:
       done: 'Урок отменён.'
       ended: 'Невозможно отменить урок. Он уже завершён.'
       in-progress: 'Невозможно отменить урок. Он уже начат.'
 
-    cancel-subscription-handler:
+    cancel-subscription:
       done: 'Абонемент отменён.'
       already-canceled: 'Невозможно отменить абонемент. Он уже неактивен.'
 
-    create-lesson-handler:
+    create-lesson:
       start: |
         Для создания нового урока заполните и отправьте форму с данными \(каждое поле на новой строке в одном сообщении в том же порядке\)\. Пример:
         %s
@@ -93,7 +93,7 @@ messages:
         `link: https://example.link.com`
       subscription-not-active: 'Подписка, для которой вы пытаетесь добавить урок, уже не активна.'
 
-    create-subscription-handler:
+    create-subscription:
       start: |
         Для создания нового абонемента заполните и отправьте форму с данными \(каждое поле на новой строке в одном сообщении в том же порядке\)\. Пример:
         %s
@@ -102,10 +102,10 @@ messages:
         `endDate: 30\.04\.2023`
         `lessonAmount: 7`
 
-    finish-lesson-handler:
+    finish-lesson:
       already-finished: 'Урок не может быть повторно завершен!'
 
-    get-student-statistic-handler:
+    get-student-statistic:
       choose-student-query: 'Выберите ученика для которого нужно сгенерировать статистику:'
       enter-interval-query: |
         Укажите промежуток для получения статистики по приведенному шаблону:
@@ -115,21 +115,21 @@ messages:
         `endDate: 30\.04\.2023`
       complete: 'Сгенерированный файл статистики'
 
-    set-comment-for-parent-handler:
+    set-comment-for-parent:
       start: 'Введите следующим сообщением текст комментария для родителя.'
       success: 'Комментарий успешно сохранен.'
 
-    set-homework-comment-handler:
+    set-homework-comment:
       start: 'Введите следующим сообщением текст комментария (ссылку на домашнее задание).'
       success: 'Комментарий успешно сохранен.'
 
-    set-homework-completed-handler:
+    set-homework-completed:
       done: 'Домашнее задание для урока "%s" установлено, как выполненное.'
 
-    set-homework-not-completed-handler:
+    set-homework-not-completed:
       done: 'Домашнее задание для урока "%s" установлено, как не выполненное.'
 
-    set-lesson-date-handler:
+    set-lesson-date:
       start: |
         Для того, чтобы установить дату проведения урока, введите ее согласно данному формату:
         
@@ -141,29 +141,29 @@ messages:
       data-form: '`27\.03\.2023`'
       success: 'Дата проведения урока "%s" упешно установлена.'
 
-    set-mark-handler:
+    set-mark:
       message: 'Занятию установлена оценка: %s'
 
-    set-mark-menu-handler:
+    set-mark-menu:
       message: 'Выберите оценку:'
 
-    set-parent-for-student-handler:
+    set-parent-for-student:
       choose-student: 'Выберите ученика:'
       choose-parent: 'Выберите родителя:'
       success: 'Для ученика "%s" успешно установлен родитель "%s"'
 
-    set-user-role-handler:
+    set-user-role:
       user-role-successfully-changed-message: 'Ваша роль изменена на: %s'
       failed-to-change-user-role-message: 'Невозможно сменить роль на такую же, как у вас.'
 
-    assign-role-handler:
+    assign-role:
       message: 'Выберите новую роль:'
 
-    get-all-students-handler:
+    get-all-students:
       start: 'Список зарегистрированных студентов:'
       no-students: 'Зарегистрированные студенты отсутствуют в системе.'
 
-    get-all-subscriptions-handler:
+    get-all-subscriptions:
       no-family-subscriptions: 'В вашей семье нет активных абонементов.'
       no-teacher-subscriptions: 'Нет активных абонементов, в которых вы являетесь преподавателем.'
       no-student-subscriptions: 'Нет активных абонементов, в которых вы являетесь студентом.'
@@ -179,11 +179,11 @@ messages:
         Дата начала: %s,
         Дата завершения: %s
 
-    get-all-teachers-handler:
+    get-all-teachers:
       start: 'Список зарегистрированных преподавателей:'
       no-teachers: 'Зарегистрированные преподаватели отсутствуют в системе.'
 
-    get-all-unfinished-tasks-handler:
+    get-all-unfinished-tasks:
       start: 'Список предстоящих (невыполненных) ИДЗ:'
       task-info-pattern: |
         Тема занятия: %s
@@ -192,26 +192,26 @@ messages:
       task-link-pattern: '[Ссылка к ИДЗ](%s)'
       no-tasks: 'Предстоящие (невыполненные) ИДЗ отсутствуют.'
 
-    show-comment-for-parent-handler:
+    show-comment-for-parent:
       data-pattern: 'Комментарий для родителя: %s'
 
-    show-homework-comment-handler:
+    show-homework-comment:
       data-pattern: 'Комментарий учителя (домашнее задание): %s'
 
-    show-mark-handler:
+    show-mark:
       data-pattern: 'Оценка за занятие: %s'
 
-    data-menu-handler:
+    data-menu:
       message: 'Вы перешли в раздел РАБОТА С ДАННЫМИ'
 
-    get-statistics-menu-handler:
+    get-statistics-menu:
       message: 'Вы перешли в раздел СТАТИСТИКА'
 
-    start-handler:
+    start:
       greeting: 'Добро пожаловать, %s. Ваша роль: %s'
 
-    to-main-menu-handler:
+    to-main-menu:
       message: 'Вы вернулись в ГЛАВНОЕ МЕНЮ'
 
-    work-with-subscriptions-handler:
+    work-with-subscriptions:
       message: 'Вы перешли в раздел РАБОТА С АБОНЕМЕНТАМИ'

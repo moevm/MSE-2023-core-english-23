@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DataMenuHandler implements Handler {
 
-    @Value("${messages.handlers.data-menu-handler.message}")
+    @Value("${messages.handlers.data-menu.message}")
     private String message;
 
     private final ReplyKeyboardMaker replyKeyboardMaker;

@@ -3,6 +3,7 @@ package core.english.mse2023.handler.impl.menu.inline;
 import core.english.mse2023.aop.annotation.handler.AllRegisteredRoles;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.component.InlineKeyboardMaker;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -52,7 +53,7 @@ public class MainMenuLessonHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.MAIN_MENU_LESSON;
     }
 }

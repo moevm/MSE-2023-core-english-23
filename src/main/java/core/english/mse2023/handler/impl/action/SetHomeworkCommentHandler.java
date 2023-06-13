@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.interactiveHandler.SetHomeworkCommentDTO;
@@ -18,6 +19,7 @@ import core.english.mse2023.state.setHomeworkComment.SetHomeworkCommentState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -37,8 +39,14 @@ import java.util.UUID;
 @TeacherRole
 @RequiredArgsConstructor
 public class SetHomeworkCommentHandler implements InteractiveHandler {
-    private static final String START_TEXT = "Введите следующим сообщением текст комментария (ссылку на домашнее задание).";
-    private static final String SUCCESS_TEXT = "Комментарий успешно сохранен.";
+
+    @Value("${messages.handlers.set-homework-comment.start}")
+    private String startText;
+
+    @Value("${messages.handlers.set-homework-comment.success}")
+    private String successText;
+
+
     private final LessonService lessonService;
 
     // This cache works in manual mode. It means - no evictions was configured
@@ -69,14 +77,14 @@ public class SetHomeworkCommentHandler implements InteractiveHandler {
 
         message = SendMessage.builder()
                 .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .text(START_TEXT)
+                .text(startText)
                 .build();
 
         return List.of(message, new AnswerCallbackQuery(update.getCallbackQuery().getId()));
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.SET_HOMEWORK_COMMENT;
     }
 
@@ -106,7 +114,7 @@ public class SetHomeworkCommentHandler implements InteractiveHandler {
         // Sending buttons with students. Data from them will be used in the next state
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(SUCCESS_TEXT)
+                .text(successText)
                 .build();
 
         return List.of(sendMessage);

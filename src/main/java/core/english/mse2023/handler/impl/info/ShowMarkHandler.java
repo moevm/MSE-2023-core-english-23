@@ -1,6 +1,7 @@
 package core.english.mse2023.handler.impl.info;
 import core.english.mse2023.aop.annotation.handler.*;
 import core.english.mse2023.component.MessageTextMaker;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -10,6 +11,7 @@ import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -28,7 +30,9 @@ import java.util.UUID;
 @InlineButtonType
 @RequiredArgsConstructor
 public class ShowMarkHandler implements Handler {
-    private static final String DATA_PATTERN = "Оценка за занятие: %s";
+
+    @Value("${messages.handlers.show-mark.data-pattern}")
+    private String dataPattern;
 
     private final LessonService lessonService;
 
@@ -48,14 +52,14 @@ public class ShowMarkHandler implements Handler {
         return List.of(
                 SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(String.format(DATA_PATTERN, mark) + messageTextMaker.moreLessonInfoPatternMessageText(lesson))
+                        .text(String.format(dataPattern, mark) + messageTextMaker.moreLessonInfoPatternMessageText(lesson))
                         .build(),
                 new AnswerCallbackQuery(update.getCallbackQuery().getId())
         );
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.SHOW_MARK;
     }
 }

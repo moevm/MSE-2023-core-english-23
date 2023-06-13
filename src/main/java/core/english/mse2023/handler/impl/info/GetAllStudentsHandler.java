@@ -2,7 +2,9 @@ package core.english.mse2023.handler.impl.info;
 
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
@@ -11,6 +13,7 @@ import core.english.mse2023.service.UserService;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -26,9 +29,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetAllStudentsHandler implements Handler {
 
-    private static final String START_TEXT = "Список зарегистрированных студентов:";
-    private static final String NO_STUDENTS_TEXT = "Зарегистрированные студенты отсутствуют в системе.";
-    private static final String USER_DATA_PATTERN = "%s%s";
+    @Value("${messages.handlers.get-all-students.start}")
+    private String startText;
+
+    @Value("${messages.handlers.get-all-students.no-students}")
+    private String noStudentsText;
+
+    private final MessageTextMaker messageTextMaker;
 
     private final UserService service;
 
@@ -42,12 +49,12 @@ public class GetAllStudentsHandler implements Handler {
         if (students.isEmpty()) {
             sendMessage = SendMessage.builder()
                     .chatId(update.getMessage().getChatId().toString())
-                    .text(NO_STUDENTS_TEXT)
+                    .text(noStudentsText)
                     .build();
         } else {
             sendMessage = SendMessage.builder()
                     .chatId(update.getMessage().getChatId().toString())
-                    .text(START_TEXT)
+                    .text(startText)
                     .replyMarkup(getStudentsButtons(students))
                     .build();
         }
@@ -66,10 +73,7 @@ public class GetAllStudentsHandler implements Handler {
                             InlineButtonCommand.GET_MORE_USER_INFO.getCommand(),
                             student.getTelegramId(),
                             0,
-                            String.format(USER_DATA_PATTERN,
-                                    (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
-                                    student.getName() // Student's name (always present)
-                            )
+                            messageTextMaker.userDataPatternMessageText(student.getName(), student.getLastName())
                     ))
                     .row();
         }
@@ -79,7 +83,7 @@ public class GetAllStudentsHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.GET_ALL_STUDENTS;
     }
 }

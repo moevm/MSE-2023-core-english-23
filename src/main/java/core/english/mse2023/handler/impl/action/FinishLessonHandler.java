@@ -5,6 +5,7 @@ import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.component.MessageTextMaker;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -15,9 +16,9 @@ import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -36,7 +37,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FinishLessonHandler implements Handler {
 
-    private static final String ALREADY_FINISHED_TEXT = "Урок не может быть повторно завершен!";
+    @Value("${messages.handlers.finish-lesson.already-finished}")
+    private String alreadyFinishedText;
+
     private final InlineKeyboardMaker inlineKeyboardMaker;
     private final MessageTextMaker messageTextMaker;
 
@@ -70,7 +73,7 @@ public class FinishLessonHandler implements Handler {
         } catch (LessonAlreadyFinishedException exception) {
             messages.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(ALREADY_FINISHED_TEXT)
+                    .text(alreadyFinishedText)
                     .build());
         }
 
@@ -80,7 +83,7 @@ public class FinishLessonHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.FINISH_LESSON;
     }
 }

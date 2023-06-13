@@ -2,6 +2,7 @@ package core.english.mse2023.service.impl;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.dto.ThymeleafLessonDTO;
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonInfo;
@@ -38,16 +39,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PDFServiceImpl implements PDFService {
 
-    private static final String USER_DATA_PATTERN = "%s%s";
-
-
     private final ResourceLoader resourceLoader;
 
 
     private final LessonService lessonService;
 
+    private final MessageTextMaker messageTextMaker;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 
     @Override
@@ -74,7 +73,7 @@ public class PDFServiceImpl implements PDFService {
         for (Lesson lesson : lessons) {
             ThymeleafLessonDTO lessonDTO = ThymeleafLessonDTO.builder()
                     .topic(lesson.getTopic())
-                    .date(dateFormat.format(lesson.getDate()))
+                    .date(dateTimeFormat.format(lesson.getDate()))
                     .status(lesson.getStatus().toString())
                     .build();
             lessonDTOS.add(lessonDTO);
@@ -96,12 +95,10 @@ public class PDFServiceImpl implements PDFService {
         Context context = new Context();
         context.setVariable(
                 "student",
-                String.format(USER_DATA_PATTERN,
-                        (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
-                        student.getName() // Student's name (always present)
-                ));
-        context.setVariable("startDate", dateFormat.format(startDate));
-        context.setVariable("endDate", dateFormat.format(endDate));
+                messageTextMaker.userDataPatternMessageText(student.getName(), student.getLastName())
+                );
+        context.setVariable("startDate", dateTimeFormat.format(startDate));
+        context.setVariable("endDate", dateTimeFormat.format(endDate));
         context.setVariable("lessons", lessonDTOS);
         context.setVariable("marksPieChartIsEmpty", markData.isEmpty());
         context.setVariable("marksPieChart", marksPieChartString);

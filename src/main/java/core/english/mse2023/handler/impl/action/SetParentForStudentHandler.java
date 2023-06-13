@@ -6,6 +6,7 @@ import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.interactiveHandler.SetParentForStudentDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -22,6 +23,7 @@ import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -29,7 +31,6 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.ArrayList;
@@ -42,11 +43,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SetParentForStudentHandler implements InteractiveHandler {
 
-    private static final String CHOOSE_STUDENT_TEXT = "Выберите ученика:";
-    private static final String STUDENTS_NOT_FOUND = "Учеников в системе не найдено.";
-    private static final String CHOOSE_PARENT_TEXT = "Выберите родителя:";
-    private static final String PARENTS_NOT_FOUND = "Родителей в системе не найдено.";
-    private static final String SUCCESS_TEXT = "Для ученика \"%s\" успешно установлен родитель \"%s\"";
+    @Value("${messages.handlers.set-parent-for-student.choose-student}")
+    private String chooseStudentText;
+
+    @Value("${messages.handlers.set-parent-for-student.choose-parent}")
+    private String chooseParentText;
+
+    @Value("${messages.handlers.set-parent-for-student.success}")
+    private String successText;
+
+    @Value("${messages.handlers.set-parent-for-student.students-not-found}")
+    private String studentsNotFound;
+
+    @Value("${messages.handlers.set-parent-for-student.parents-not-found}")
+    private String parentsNotFound;
+
 
     private final MessageTextMaker messageTextMaker;
 
@@ -78,7 +89,7 @@ public class SetParentForStudentHandler implements InteractiveHandler {
             stateMachine.stop();
             SendMessage message = SendMessage.builder()
                     .chatId(update.getMessage().getChatId().toString())
-                    .text(STUDENTS_NOT_FOUND)
+                    .text(studentsNotFound)
                     .build();
 
             return List.of(message);
@@ -86,7 +97,7 @@ public class SetParentForStudentHandler implements InteractiveHandler {
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(CHOOSE_STUDENT_TEXT)
+                .text(chooseStudentText)
                 .replyMarkup(getUsersButtons(students, stateMachine.getState().getId().getIndex()))
                 .build();
 
@@ -120,15 +131,16 @@ public class SetParentForStudentHandler implements InteractiveHandler {
                 stateMachine.stop();
                 actions.add(SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(PARENTS_NOT_FOUND)
+                        .text(parentsNotFound)
                         .build());
             } else {
                 actions.add(SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(CHOOSE_PARENT_TEXT)
+                        .text(chooseParentText)
                         .replyMarkup(getUsersButtons(parents, stateMachine.getState().getId().getIndex()))
                         .build());
             }
+
             actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
         } else if (stateMachine.getState().getId() == SetParentForStudentState.PARENT_CHOOSING) {
 
@@ -140,16 +152,10 @@ public class SetParentForStudentHandler implements InteractiveHandler {
 
             actions.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(String.format(SUCCESS_TEXT,
-                            messageTextMaker.userDataPatternMessageText(
-                                    (family.getStudent().getLastName() != null) ? (family.getStudent().getLastName() + " ") : "", // Student's last name if present
-                                    family.getStudent().getName() // Student's name (always present)
-                            ),
-                            messageTextMaker.userDataPatternMessageText(
-                                    (family.getParent().getLastName() != null) ? (family.getParent().getLastName() + " ") : "", // Parent's last name if present
-                                    family.getParent().getName() // Parent's name (always present)
-                            )
-                            ))
+                    .text(String.format(successText,
+                            messageTextMaker.userDataPatternMessageText(family.getStudent().getName(), family.getStudent().getLastName()),
+                            messageTextMaker.userDataPatternMessageText(family.getParent().getName(), family.getParent().getLastName())
+                    ))
                     .build());
             actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
 
@@ -171,10 +177,7 @@ public class SetParentForStudentHandler implements InteractiveHandler {
                             ButtonCommand.SET_PARENT_FOR_STUDENT.getCommand(),
                             user.getTelegramId(),
                             stateIndex,
-                            messageTextMaker.userDataPatternMessageText(
-                                    (user.getLastName() != null) ? (user.getLastName() + " ") : "", // Student's last name if present
-                                    user.getName() // Student's name (always present)
-                            )
+                            messageTextMaker.userDataPatternMessageText(user.getName(), user.getLastName())
                     ))
                     .row();
         }
@@ -184,7 +187,7 @@ public class SetParentForStudentHandler implements InteractiveHandler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.SET_PARENT_FOR_STUDENT;
     }
 

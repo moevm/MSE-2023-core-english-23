@@ -4,8 +4,8 @@ import core.english.mse2023.exception.NoSuchUserException;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.resolver.Resolver;
 import core.english.mse2023.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -19,11 +19,12 @@ import java.util.stream.Collectors;
 @Component
 public class Gateway {
 
+    @Value("${messages.gateway.failed-to-identify}")
+    private String failedToIdentifyText;
+
     private final UserService userService;
 
     private final Map<UserRole, Resolver> resolvers;
-
-    private static final String FAILED_TO_IDENTIFY_TEXT = "Не удалось найти вас в системе. Напишите /start для начала работы или свяжитесь со службой поддержки.";
 
 
     public Gateway(UserService userService, List<Resolver> resolvers) {
@@ -57,7 +58,7 @@ public class Gateway {
             } catch (NoSuchUserException exception) {
                 reply = List.of(SendMessage.builder()
                         .chatId(update.getMessage().getChatId().toString())
-                        .text(FAILED_TO_IDENTIFY_TEXT)
+                        .text(failedToIdentifyText)
                         .build());
             }
         }

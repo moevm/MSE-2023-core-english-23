@@ -5,6 +5,7 @@ import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.ParentRole;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.component.MessageTextMaker;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -14,6 +15,7 @@ import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -32,7 +34,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShowCommentForParentHandler implements Handler {
 
-    private static final String DATA_PATTERN = "Комментарий для родителя: %s";
+    @Value("${messages.handlers.show-comment-for-parent.data-pattern}")
+    private String dataPattern;
+
     private final MessageTextMaker messageTextMaker;
     private final LessonService lessonService;
 
@@ -50,14 +54,14 @@ public class ShowCommentForParentHandler implements Handler {
         return List.of(
                 SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(String.format(DATA_PATTERN, comment) + messageTextMaker.moreLessonInfoPatternMessageText(lesson))
+                        .text(String.format(dataPattern, comment) + messageTextMaker.moreLessonInfoPatternMessageText(lesson))
                         .build(),
                 new AnswerCallbackQuery(update.getCallbackQuery().getId())
         );
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.SHOW_COMMENT_FOR_PARENT;
     }
 }

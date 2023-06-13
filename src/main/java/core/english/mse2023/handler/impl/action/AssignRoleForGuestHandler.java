@@ -6,6 +6,7 @@ import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.interactiveHandler.AssignRoleForGuestDTO;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -21,6 +22,7 @@ import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -41,13 +43,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AssignRoleForGuestHandler implements InteractiveHandler {
 
-    private static final String CHOOSE_GUEST_TEXT = "Выберите гостя:";
+    @Value("${messages.handlers.assign-role-for-guest.choose-guest}")
+    private String chooseGuestText;
 
-    private static final String GUESTS_NOT_FOUND = "Незарегистрированных пользователей в системе не найдено.";
+    @Value("${messages.handlers.assign-role-for-guest.guests-not-found}")
+    private String guestsNotFoundText;
 
-    private static final String CHOOSE_ROLE_TEXT = "Выберите новую роль гостю:";
+    @Value("${messages.handlers.assign-role-for-guest.choose-role}")
+    private String chooseRoleText;
 
-    private static final String SUCCESS_TEXT = "Для пользователя \"%s\" успешно установлена роль \"%s\"";
+    @Value("${messages.handlers.assign-role-for-guest.success}")
+    private String successText;
+
+
     private final MessageTextMaker messageTextMaker;
 
     private final UserService userService;
@@ -78,14 +86,14 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
             stateMachine.stop();
             SendMessage message = SendMessage.builder()
                     .chatId(update.getMessage().getChatId().toString())
-                    .text(GUESTS_NOT_FOUND)
+                    .text(guestsNotFoundText)
                     .build();
             return List.of(message);
         }
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(CHOOSE_GUEST_TEXT)
+                .text(chooseGuestText)
                 .replyMarkup(getGuestsButtons(guests, stateMachine.getState().getId().getIndex()))
                 .build();
         return List.of(message);
@@ -118,7 +126,7 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
 
             actions.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(CHOOSE_ROLE_TEXT)
+                    .text(chooseRoleText)
                     .replyMarkup(getRolesButtons(stateMachine.getState().getId().getIndex()))
                     .build());
             actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
@@ -132,11 +140,8 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
 
             actions.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(String.format(SUCCESS_TEXT,
-                            messageTextMaker.userDataPatternMessageText(
-                                    (user.getLastName() != null) ? (user.getLastName() + " ") : "", // Student's last name if present
-                                    user.getName() // Student's name (always present)
-                            ),
+                    .text(String.format(successText,
+                            messageTextMaker.userDataPatternMessageText(user.getName(), user.getLastName()),
                             user.getRole().getString()
                     ))
                     .build());
@@ -160,10 +165,7 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
                             ButtonCommand.ASSIGN_ROLE_FOR_GUEST.getCommand(),
                             user.getTelegramId(),
                             stateIndex,
-                            messageTextMaker.userDataPatternMessageText(
-                                    (user.getLastName() != null) ? (user.getLastName() + " ") : "", // Student's last name if present
-                                    user.getName() // Student's name (always present)
-                            )
+                            messageTextMaker.userDataPatternMessageText(user.getName(), user.getLastName())
                     ))
                     .row();
         }
@@ -193,7 +195,7 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.ASSIGN_ROLE_FOR_GUEST;
     }
 

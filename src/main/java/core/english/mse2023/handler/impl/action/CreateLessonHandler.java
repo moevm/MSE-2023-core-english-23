@@ -4,12 +4,16 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
+import core.english.mse2023.aop.annotation.handler.TeacherRole;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.interactiveHandler.LessonCreationDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.handler.InteractiveHandler;
+import core.english.mse2023.model.Subscription;
+import core.english.mse2023.model.dictionary.SubscriptionStatus;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import core.english.mse2023.service.SubscriptionService;
@@ -18,6 +22,7 @@ import core.english.mse2023.state.createLesson.LessonCreationState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -25,7 +30,6 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -37,26 +41,28 @@ import java.util.stream.Collectors;
 @Component
 @InlineButtonType
 @AdminRole
+@TeacherRole
 @RequiredArgsConstructor
 public class CreateLessonHandler implements InteractiveHandler {
-    private static final String START_TEXT = "Для создания нового урока заполните и отправьте форму с данными " +
-            "\\(каждое поле на новой строке в одном сообщении в том же порядке\\)\\. Пример:\n%s";
 
-    private static final String DATA_FORM_TEXT = """
-            `date: 20\\.03\\.2023`
-            `topic: Topic of lesson`
-            `link: https://example.link.com`
-            """;
+    @Value("${messages.handlers.create-lesson.start}")
+    private String startText;
 
-    private static final String SUCCESS_TEXT = "Новый урок добавлен.";
+    @Value("${messages.handlers.create-lesson.data-form}")
+    private String dataFormText;
 
-    private final Cache<String, LessonCreationDTO> lessonCreationCache = Caffeine.newBuilder()
-            .build();
+    @Value("${messages.handlers.create-lesson.subscription-not-active}")
+    private String subscriptionNotActiveText;
+
+    @Value("${messages.handlers.create-lesson.success}")
+    private String successText;
+
+    private final Cache<String, LessonCreationDTO> lessonCreationCache = Caffeine.newBuilder().build();
 
     private final LessonService lessonService;
     private final SubscriptionService subscriptionService;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     @Qualifier("lessonCreationStateMachineFactory")
     private final StateMachineFactory<LessonCreationState, LessonCreationEvent> stateMachineFactory;
@@ -64,13 +70,28 @@ public class CreateLessonHandler implements InteractiveHandler {
     @Override
     public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
+        InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
+
+        Subscription subscription = subscriptionService.getSubscriptionById(UUID.fromString(buttonData.getData()));
+
+        if (subscription.getStatus() != SubscriptionStatus.ACTIVE) {
+            SendMessage message;
+
+            message = SendMessage.builder()
+                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                    .text(subscriptionNotActiveText)
+                    .build();
+
+            return List.of(message);
+        }
+
         StateMachine<LessonCreationState, LessonCreationEvent> stateMachine =
                 stateMachineFactory.getStateMachine();
         stateMachine.start();
-        InlineButtonDTO buttonData = InlineButtonDTOEncoder.decode(update.getCallbackQuery().getData());
+
         LessonCreationDTO dto = LessonCreationDTO.builder()
                 .stateMachine(stateMachine)
-                .subscription(subscriptionService.getSubscriptionById(UUID.fromString(buttonData.getData())))
+                .subscription(subscription)
                 .build();
 
         lessonCreationCache.put(update.getCallbackQuery().getFrom().getId().toString(), dto);
@@ -80,7 +101,7 @@ public class CreateLessonHandler implements InteractiveHandler {
 
         message = SendMessage.builder()
                 .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .text(String.format(START_TEXT, DATA_FORM_TEXT))
+                .text(String.format(startText, dataFormText))
                 .build();
 
         message.setParseMode(ParseMode.MARKDOWNV2);
@@ -104,6 +125,7 @@ public class CreateLessonHandler implements InteractiveHandler {
             log.error("Update method has been called, but interactive handler has the wrong state. User id: {}", update.getMessage().getFrom().getId());
             throw new IllegalStateException(String.format("DATE_CHOOSING state expected. Current state: %s", stateMachine.getState().toString()));
         }
+        stateMachine.sendEvent(LessonCreationEvent.CHOOSE_DATE);
         stateMachine.sendEvent(LessonCreationEvent.CHOOSE_TOPIC);
         stateMachine.sendEvent(LessonCreationEvent.CHOOSE_LINK);
 
@@ -114,7 +136,7 @@ public class CreateLessonHandler implements InteractiveHandler {
         // Sending buttons with students. Data from them will be used in the next state
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(SUCCESS_TEXT)
+                .text(successText)
                 .build();
 
         return List.of(sendMessage);
@@ -142,7 +164,7 @@ public class CreateLessonHandler implements InteractiveHandler {
                         dto.setDate(new Timestamp(parsedDate.getTime()));
                     } catch (ParseException e) {
                         throw new IllegalUserInputException("Wrong parameters!");
-                        }
+                    }
                 }
                 case "topic" -> dto.setTopic(data.get(key));
                 case "link" -> dto.setLink(data.get(key));
@@ -186,7 +208,7 @@ public class CreateLessonHandler implements InteractiveHandler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.CREATE_LESSON;
     }
 

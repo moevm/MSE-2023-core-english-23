@@ -3,12 +3,15 @@ package core.english.mse2023.handler.impl.info;
 import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -21,16 +24,17 @@ import java.util.List;
 @Component
 @AllRoles
 @TextCommandType
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AssignRoleHandler implements Handler {
 
-    private static final String MESSAGE = "Выберите новую роль:";
+    @Value("${messages.handlers.assign-role.message}")
+    private String message;
 
     @Override
     public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
         return List.of(SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(MESSAGE)
+                .text(message)
                 .replyMarkup(getRolesButtons())
                 .build());
     }
@@ -55,7 +59,7 @@ public class AssignRoleHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.ASSIGN_ROLE;
     }
 

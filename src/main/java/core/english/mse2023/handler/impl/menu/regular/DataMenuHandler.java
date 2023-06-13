@@ -4,9 +4,11 @@ import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,10 +20,12 @@ import java.util.List;
 @Component
 @TextCommandType
 @AdminRole
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DataMenuHandler implements Handler {
 
-    private static final String MESSAGE = "Вы перешли в раздел РАБОТА С ДАННЫМИ";
+    @Value("${messages.handlers.data-menu.message}")
+    private String message;
+
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override
@@ -29,13 +33,13 @@ public class DataMenuHandler implements Handler {
 
         return List.of(SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(MESSAGE)
+                .text(message)
                 .replyMarkup(replyKeyboardMaker.getDataMenu())
                 .build());
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.DATA;
     }
 }

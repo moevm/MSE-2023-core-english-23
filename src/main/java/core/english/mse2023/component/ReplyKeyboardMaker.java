@@ -127,9 +127,6 @@ public class ReplyKeyboardMaker {
                 ButtonCommand.GET_ALL_SUBSCRIPTIONS.getDescription()
         ))));
         keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
-                ButtonCommand.CREATE_SUBSCRIPTION.getDescription()
-        ))));
-        keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
                 ButtonCommand.TO_MAIN_MENU.getDescription()
         ))));
 

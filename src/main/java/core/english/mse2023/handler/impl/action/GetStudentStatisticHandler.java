@@ -5,7 +5,9 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.lowagie.text.DocumentException;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.interactiveHandler.GetStudentStatisticDTO;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -24,6 +26,7 @@ import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -33,7 +36,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.io.*;
@@ -55,18 +57,24 @@ import java.time.format.*;
 @Slf4j
 public class GetStudentStatisticHandler implements InteractiveHandler {
 
-    private static final String PDF_TEMPLATE_NAME = "thymeleaf_template";
+    @Value("${statistics.student.pdf-template-name}")
+    private String pdfTemplateName;
 
-    private static final String USER_DATA_PATTERN = "%s%s";
+    @Value("${messages.handlers.get-student-statistic.choose-student-query}")
+    private String chooseStudentQueryText;
 
-    private static final String CHOOSE_STUDENT_QUERY_TEXT = "Выберите ученика для которого нужно сгенерировать статистику:";
-    private static final String STUDENTS_NOT_FOUND = "Учеников в системе не найдено.";
-    private static final String ENTER_INTERVAL_QUERY_TEXT = "Укажите промежуток для получения статистики по приведенному шаблону:\n%s";
-    private static final String DATA_FORM_TEXT = """
-            `startDate: 11\\.03\\.2023`
-            `endDate: 30\\.04\\.2023`
-            """;
-    private static final String COMPLETE_TEXT = "Сгенерированный файл статистики";
+    @Value("${messages.handlers.get-student-statistic.enter-interval-query}")
+    private String enterIntervalQueryText;
+
+    @Value("${messages.handlers.get-student-statistic.data-form}")
+    private String dataFormText;
+
+    @Value("${messages.handlers.get-student-statistic.complete}")
+    private String completeText;
+
+    @Value("${messages.handlers.get-student-statistic.students-not-found}")
+    private String studentsNotFound;
+
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -77,6 +85,7 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
     @Qualifier("getStudentStatisticStateMachineFactory")
     private final StateMachineFactory<GetStudentStatisticState, GetStudentStatisticEvent> stateMachineFactory;
 
+    private final MessageTextMaker messageTextMaker;
 
     private final SubscriptionService subscriptionService;
     private final PDFService pdfService;
@@ -104,7 +113,7 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
             stateMachine.stop();
             SendMessage message = SendMessage.builder()
                     .chatId(update.getMessage().getChatId().toString())
-                    .text(STUDENTS_NOT_FOUND)
+                    .text(studentsNotFound)
                     .build();
 
             return List.of(message);
@@ -112,7 +121,7 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(CHOOSE_STUDENT_QUERY_TEXT)
+                .text(chooseStudentQueryText)
                 .replyMarkup(getStudentsButtons(subscriptionsWithTeacher, stateMachine.getState().getId().getIndex()))
                 .build();
 
@@ -150,7 +159,7 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
 
                 SendMessage message = SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(String.format(ENTER_INTERVAL_QUERY_TEXT, DATA_FORM_TEXT))
+                        .text(String.format(enterIntervalQueryText, dataFormText))
                         .build();
 
                 message.setParseMode(ParseMode.MARKDOWNV2);
@@ -237,10 +246,7 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
                             ButtonCommand.STUDENT_STATISTICS.getCommand(),
                             subscription.getId().toString(),
                             stateIndex,
-                            String.format(USER_DATA_PATTERN,
-                                    (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
-                                    student.getName() // Student's name (always present)
-                            )
+                            messageTextMaker.userDataPatternMessageText(student.getName(), student.getLastName())
                     ))
                     .row();
         }
@@ -252,7 +258,7 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
     private SendDocument createPDFDocument(GetStudentStatisticDTO getStudentStatisticDTO, String chatId) throws DocumentException, IOException {
 
         InputStream generatedPDF = pdfService.generateStudentStatisticsPDF(
-                PDF_TEMPLATE_NAME,
+                pdfTemplateName,
                 getStudentStatisticDTO.getStudentSubscription(),
                 getStudentStatisticDTO.getStartDate(),
                 getStudentStatisticDTO.getEndDate()
@@ -263,13 +269,13 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
         return SendDocument.builder()
                 .chatId(chatId)
                 .document(inputFile)
-                .caption(COMPLETE_TEXT)
+                .caption(completeText)
                 .build();
     }
 
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.STUDENT_STATISTICS;
     }
 

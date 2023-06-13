@@ -2,8 +2,10 @@ package core.english.mse2023.resolver;
 
 import core.english.mse2023.cache.CacheData;
 import core.english.mse2023.cache.CacheManager;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
+import core.english.mse2023.exception.NoSuchCommandException;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 public abstract class Resolver {
 
     private final CacheManager cacheManager;
-    private final Map<BotCommand, Handler> textCommandHandlers;
+    private final Map<Command, Handler> textCommandHandlers;
     private final Map<String, Handler> inlineButtonsHandlers;
 
     private static final String NO_COMMAND_MESSAGE_TEXT = "Введенный текст не является командой или у вас недостаточно прав для ее использования.";
@@ -41,14 +43,13 @@ public abstract class Resolver {
     }
 
     private Handler getHandler(String command) {
-        BotCommand searchingCommand = new BotCommand();
-        for (BotCommand botCommand : textCommandHandlers.keySet()) {
+        for (Command botCommand : textCommandHandlers.keySet()) {
             if (botCommand.getCommand().equals(command) || botCommand.getDescription().equals(command)) {
-                searchingCommand = botCommand;
-                break;
+                return textCommandHandlers.get(botCommand);
             }
         }
-        return textCommandHandlers.get(searchingCommand);
+
+        throw new NoSuchCommandException();
     }
 
     public List<PartialBotApiMethod<?>> resolve(Update update, UserRole role) {
@@ -58,9 +59,8 @@ public abstract class Resolver {
 
             String command = update.getMessage().getText();
 
-            Handler handler = getHandler(command);
-
-            if (handler != null) {
+            try {
+                Handler handler = getHandler(command);
 
                 if (handler instanceof InteractiveHandler interactiveHandler) {
 
@@ -73,8 +73,7 @@ public abstract class Resolver {
                 } else {
                     reply = handler.handle(update, role);
                 }
-
-            } else {
+            } catch (NoSuchCommandException noSuchCommandException) {
                 // If the message is not a command
 
                 // Checking if any command is in progress for this user
@@ -90,8 +89,6 @@ public abstract class Resolver {
                             .text(NO_COMMAND_MESSAGE_TEXT)
                             .build());
                 }
-
-
             }
 
         } else if (update.hasCallbackQuery()) {

@@ -2,7 +2,7 @@ package core.english.mse2023.component;
 
 import core.english.mse2023.model.Lesson;
 import core.english.mse2023.model.LessonInfo;
-import core.english.mse2023.model.dictionary.UserRole;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -10,56 +10,49 @@ import java.text.SimpleDateFormat;
 @Component
 public class MessageTextMaker {
 
-    public String userDataPatternMessageText(String lastName, String name) {
+    @Value("${messages.text-maker.lesson-info-pattern}")
+    private String lessonInfoPatternText;
+
+    @Value("${messages.text-maker.more-lesson-info-pattern}")
+    private String moreLessonInfoPatternText;
+
+    @Value("${messages.text-maker.data-missing}")
+    private String dataMissingText;
+
+    @Value("${messages.text-maker.link-pattern}")
+    private String linkPatternText;
+
+
+    public String userDataPatternMessageText(String name, String lastName) {
         String messageTemplate = "%s%s";
 
-        return String.format(messageTemplate, lastName, name);
+        return String.format(messageTemplate,
+                (lastName != null) ? (lastName + " ") : "",
+                name
+        );
     }
 
     public String lessonInfoPatternMessageText(Lesson lesson, LessonInfo lessonInfo) {
 
-        String messageTemplate = """
-                Данные об уроке
-                Тема: %s
-                Статус: %s
-                Дата проведения: %s
-                Оценка: %s
-                Ссылка: %s
-                """;
-
-        String NO_DATA_TEXT = "Не установлена";
-
-        String LINK_PATTERN = "[Перейти](%s)";
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd\\.MM\\.yyyy");
 
-        return String.format(messageTemplate,
-                lesson.getTopic() == null ? NO_DATA_TEXT : lesson.getTopic(),
+        return String.format(lessonInfoPatternText,
+                lesson.getTopic() == null ? dataMissingText : lesson.getTopic(),
                 lesson.getStatus().toString(),
-                lesson.getDate() == null ? NO_DATA_TEXT : dateFormat.format(lesson.getDate()),
-                lessonInfo.getScore() == null ? NO_DATA_TEXT : lessonInfo.getScore(),
-                lesson.getLink() == null ? NO_DATA_TEXT : String.format(LINK_PATTERN, lesson.getLink())
+                lesson.getDate() == null ? dataMissingText : dateFormat.format(lesson.getDate()),
+                lessonInfo.getScore() == null ? dataMissingText : lessonInfo.getScore(),
+                lesson.getLink() == null ? dataMissingText : String.format(linkPatternText, lesson.getLink())
         );
     }
 
     public String moreLessonInfoPatternMessageText(Lesson lesson) {
 
-        String messageTemplate = """
-                
-                
-                Урок: %s
-                Статус: %s
-                Дата проведения: %s
-                """;
-
-        String NO_DATA_TEXT = "Не установлена";
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        return String.format(messageTemplate,
-                lesson.getTopic() == null ? NO_DATA_TEXT : lesson.getTopic(),
+        return String.format(moreLessonInfoPatternText,
+                lesson.getTopic() == null ? dataMissingText : lesson.getTopic(),
                 lesson.getStatus().toString(),
-                lesson.getDate() == null ? NO_DATA_TEXT : dateFormat.format(lesson.getDate())
+                lesson.getDate() == null ? dataMissingText : dateFormat.format(lesson.getDate())
         );
     }
 }

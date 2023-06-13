@@ -4,6 +4,7 @@ package core.english.mse2023.handler.impl.action;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.aop.annotation.handler.TeacherRole;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -13,6 +14,7 @@ import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -30,7 +32,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SetMarkMenuHandler implements Handler {
 
-    private static final String MESSAGE = "Выберите оценку:";
+    @Value("${messages.handlers.set-mark-menu.message}")
+    private String message;
 
     @Override
     public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
@@ -38,7 +41,7 @@ public class SetMarkMenuHandler implements Handler {
 
         return List.of(SendMessage.builder()
                 .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .text(MESSAGE)
+                .text(message)
                 .replyMarkup(getMarkButtons(inlineButtonDTO.getData()))
                 .build());
     }
@@ -88,7 +91,7 @@ public class SetMarkMenuHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.SET_MARK_MENU;
     }
 

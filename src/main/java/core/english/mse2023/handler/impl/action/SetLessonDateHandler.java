@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.dto.interactiveHandler.SetLessonDateDTO;
@@ -21,6 +22,7 @@ import core.english.mse2023.state.setLessonDate.SetLessonDateState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -45,22 +47,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetLessonDateHandler implements InteractiveHandler {
 
-    private static final String START_TEXT = """
-            Для того, чтобы установить дату проведения урока, введите ее согласно данному формату:
-            
-            %s
-            
-            Обратите внимание, что дата проведения не должна выходить за пределы абонимента:
-                Начало абонимента: %s
-                Конец абонимента: %s
-            """;
+    @Value("${messages.handlers.set-lesson-date.start}")
+    private String startText;
 
-    private static final String DATA_FORM_TEXT = "`27\\.03\\.2023`";
+    @Value("${messages.handlers.set-lesson-date.data-form}")
+    private String dataFormText;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    private static final SimpleDateFormat dateOutputFormat = new SimpleDateFormat("dd\\.MM\\.yyyy");
+    @Value("${messages.handlers.set-lesson-date.success}")
+    private String successText;
 
-    private static final String SUCCESS_TEXT = "Дата проведения урока \"%s\" упешно установлена.";
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    private static final SimpleDateFormat dateOutputFormat = new SimpleDateFormat("dd\\.MM\\.yyyy HH:mm");
 
 
     private final LessonService lessonService;
@@ -99,7 +96,7 @@ public class SetLessonDateHandler implements InteractiveHandler {
 
         message = SendMessage.builder()
                 .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .text(String.format(START_TEXT, DATA_FORM_TEXT, dateOutputFormat.format(subscription.getStartDate()), dateOutputFormat.format(subscription.getEndDate())))
+                .text(String.format(startText, dataFormText, dateOutputFormat.format(subscription.getStartDate()), dateOutputFormat.format(subscription.getEndDate())))
                 .parseMode(ParseMode.MARKDOWNV2)
                 .build();
 
@@ -144,14 +141,14 @@ public class SetLessonDateHandler implements InteractiveHandler {
 
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(String.format(SUCCESS_TEXT, lesson.getTopic()))
+                .text(String.format(successText, lesson.getTopic()))
                 .build();
 
         return List.of(sendMessage, notificationMessage);
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.SET_LESSON_DATE;
     }
 

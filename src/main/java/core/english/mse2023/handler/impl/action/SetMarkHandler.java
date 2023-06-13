@@ -13,6 +13,7 @@ import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -30,7 +31,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetMarkHandler implements Handler {
 
-    private final static String MESSAGE = "Занятию установлена оценка: %s";
+    @Value("${messages.handlers.set-mark.message}")
+    private String message;
+
     private final LessonService lessonService;
 
     @Override
@@ -44,7 +47,7 @@ public class SetMarkHandler implements Handler {
 
         return List.of(SendMessage.builder()
                 .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                .text(String.format(MESSAGE, mark))
+                .text(String.format(message, mark))
                 .build());
     }
 

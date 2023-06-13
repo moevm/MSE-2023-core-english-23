@@ -10,6 +10,7 @@ import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -29,16 +30,17 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class GetAllUnfinishedTasksHandler implements Handler {
 
-    private static final String START_TEXT = "Список предстоящих (невыполненных) ИДЗ:";
+    @Value("${messages.handlers.get-all-unfinished-tasks.start}")
+    private String startText;
 
-    private static final String TASK_INFO_PATTERN = """
-            Тема занятия: %s
-            Дата проведения: %s
-            Задание: %s
-            """;
+    @Value("${messages.handlers.get-all-unfinished-tasks.task-info-pattern}")
+    private String taskInfoPattern;
 
-    private static final String TASK_LINK_PATTERN = "[Ссылка к ИДЗ](%s)";
-    private static final String NO_TASKS_TEXT = "Предстоящие (невыполненные) ИДЗ отсутствуют.";
+    @Value("${messages.handlers.get-all-unfinished-tasks.task-link-pattern}")
+    private String taskLinkPattern;
+
+    @Value("${messages.handlers.get-all-unfinished-tasks.no-tasks}")
+    private String noTasksText;
 
     private static final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
     private Pattern urlPattern;
@@ -67,12 +69,12 @@ public class GetAllUnfinishedTasksHandler implements Handler {
         if (lessonInfos.isEmpty()) {
             messages.add(SendMessage.builder()
                     .chatId(chatId)
-                    .text(NO_TASKS_TEXT)
+                    .text(noTasksText)
                     .build());
         } else {
             messages.add(SendMessage.builder()
                     .chatId(chatId)
-                    .text(START_TEXT)
+                    .text(startText)
                     .build());
         }
 
@@ -84,13 +86,13 @@ public class GetAllUnfinishedTasksHandler implements Handler {
 
             if (isURL(lessonInfo.getTeacherComment())) {
                 dateText = prepareForMarkup(dateText);
-                linkString = String.format(TASK_LINK_PATTERN, lessonInfo.getTeacherComment());
+                linkString = String.format(taskLinkPattern, lessonInfo.getTeacherComment());
                 parseMode = ParseMode.MARKDOWNV2;
             }
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
-                    .text(String.format(TASK_INFO_PATTERN,
+                    .text(String.format(taskInfoPattern,
                             lessonInfo.getLesson().getTopic(),
                             dateText,
                             linkString

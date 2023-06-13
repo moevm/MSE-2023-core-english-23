@@ -3,6 +3,7 @@ package core.english.mse2023.handler.impl.action;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import core.english.mse2023.aop.annotation.handler.AdminRole;
+import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
@@ -25,6 +26,7 @@ import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Component;
@@ -46,19 +48,15 @@ import java.util.stream.Collectors;
 @Component
 @TextCommandType
 @AdminRole
+@TeacherRole
 @RequiredArgsConstructor
 public class CreateSubscriptionHandler implements InteractiveHandler {
 
-    private final MessageTextMaker messageTextMaker;
+    @Value("${messages.handlers.create-subscription.start}")
+    private String startText;
 
-    private static final String START_TEXT = "Для создания нового абонемента заполните и отправьте форму с данными " +
-            "\\(каждое поле на новой строке в одном сообщении в том же порядке\\)\\. Пример:\n%s";
-
-    private static final String DATA_FORM_TEXT = """
-            `startDate: 11\\.03\\.2023`
-            `endDate: 30\\.04\\.2023`
-            `lessonAmount: 7`
-            """;
+    @Value("${messages.handlers.create-subscription.data-form}")
+    private String dataFormText;
 
     private static final String STUDENT_CHOOSE_TEXT = "Далее выберите студента, с которым будут проводиться занятия:";
     private static final String TEACHER_CHOOSE_TEXT = "Также выберите учителя, который будет проводить занятия:";
@@ -70,8 +68,9 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             .build();
 
     private final UserService userService;
-
     private final SubscriptionService subscriptionService;
+
+    private final MessageTextMaker messageTextMaker;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -98,7 +97,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
         message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(String.format(START_TEXT, DATA_FORM_TEXT))
+                .text(String.format(startText, dataFormText))
                 .build();
 
         message.setParseMode(ParseMode.MARKDOWNV2);
@@ -254,10 +253,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
                             getCommandObject().getCommand(),
                             student.getTelegramId(),
                             state.getIndex(),
-                            messageTextMaker.userDataPatternMessageText(
-                                    (student.getLastName() != null) ? (student.getLastName() + " ") : "", // Student's last name if present
-                                    student.getName() // Student's name (always present)
-                            )
+                            messageTextMaker.userDataPatternMessageText(student.getName(), student.getLastName())
                     ))
                     .row();
         }
@@ -278,10 +274,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
                             getCommandObject().getCommand(),
                             teacher.getTelegramId(),
                             state.getIndex(),
-                            messageTextMaker.userDataPatternMessageText(
-                                    (teacher.getLastName() != null) ? (teacher.getLastName() + " ") : "", // Student's last name if present
-                                    teacher.getName() // Student's name (always present)
-                            )
+                            messageTextMaker.userDataPatternMessageText(teacher.getName(), teacher.getLastName())
                     ))
                     .row();
         }

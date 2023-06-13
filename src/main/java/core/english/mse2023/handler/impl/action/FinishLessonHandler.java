@@ -16,6 +16,7 @@ import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -36,7 +37,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FinishLessonHandler implements Handler {
 
-    private static final String ALREADY_FINISHED_TEXT = "Урок не может быть повторно завершен!";
+    @Value("${messages.handlers.finish-lesson.already-finished}")
+    private String alreadyFinishedText;
+
     private final InlineKeyboardMaker inlineKeyboardMaker;
     private final MessageTextMaker messageTextMaker;
 
@@ -70,7 +73,7 @@ public class FinishLessonHandler implements Handler {
         } catch (LessonAlreadyFinishedException exception) {
             messages.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(ALREADY_FINISHED_TEXT)
+                    .text(alreadyFinishedText)
                     .build());
         }
 

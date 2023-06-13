@@ -9,6 +9,8 @@ import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -21,10 +23,12 @@ import java.util.List;
 @TextCommandType
 @AdminRole
 @TeacherRole
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GetStatisticsMenuHandler implements Handler {
 
-    private static final String MESSAGE = "Вы перешли в раздел СТАТИСТИКА";
+    @Value("${messages.handlers.get-statistics-menu.message}")
+    private String message;
+
     private final ReplyKeyboardMaker replyKeyboardMaker;
 
     @Override
@@ -32,7 +36,7 @@ public class GetStatisticsMenuHandler implements Handler {
 
         return List.of(SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(MESSAGE)
+                .text(message)
                 .replyMarkup(replyKeyboardMaker.getStatisticsMenu(userRole))
                 .build());
     }

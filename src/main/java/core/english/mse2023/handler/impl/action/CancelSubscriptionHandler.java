@@ -2,6 +2,7 @@ package core.english.mse2023.handler.impl.action;
 
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
+import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
@@ -11,6 +12,7 @@ import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -24,12 +26,17 @@ import java.util.UUID;
 
 @Component
 @AdminRole
+@TeacherRole
 @InlineButtonType
 @RequiredArgsConstructor
 public class CancelSubscriptionHandler implements Handler {
 
-    private final static String DONE_TEXT = "Абонемент отменён.";
-    private final static String ALREADY_CANCELED_TEXT = "Невозможно отменить абонемент. Он уже неактивен.";
+    @Value("${messages.handlers.cancel-subscription.done}")
+    private String doneText;
+
+    @Value("${messages.handlers.cancel-subscription.already-canceled}")
+    private String alreadyCanceledText;
+
 
     private final SubscriptionService subscriptionService;
 
@@ -47,7 +54,7 @@ public class CancelSubscriptionHandler implements Handler {
 
             SendMessage message = SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(DONE_TEXT)
+                    .text(doneText)
                     .build();
 
             actions.add(message);
@@ -55,7 +62,7 @@ public class CancelSubscriptionHandler implements Handler {
         } catch (SubscriptionAlreadyCanceledException e) {
             SendMessage message = SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(ALREADY_CANCELED_TEXT)
+                    .text(alreadyCanceledText)
                     .build();
 
             actions.add(message);

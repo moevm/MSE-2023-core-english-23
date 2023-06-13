@@ -3,6 +3,7 @@ package core.english.mse2023.handler.impl.info;
 import core.english.mse2023.aop.annotation.handler.AllRegisteredRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.InlineKeyboardMaker;
+import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
@@ -11,6 +12,7 @@ import core.english.mse2023.model.dictionary.SubscriptionStatus;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -27,24 +29,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetAllSubscriptionsHandler implements Handler {
 
-    private static final String NO_FAMILY_SUBSCRIPTIONS_TEXT = "В вашей семье нет активных абонементов.";
-    private static final String NO_TEACHER_SUBSCRIPTIONS_TEXT = "Нет активных абонементов, в которых вы являетесь преподавателем.";
-    private static final String NO_STUDENT_SUBSCRIPTIONS_TEXT = "Нет активных абонементов, в которых вы являетесь студентом.";
-    private static final String NO_SUBSCRIPTIONS_TEXT = "В системе нет активных абонементов.";
+    @Value("${messages.handlers.get-all-subscriptions.no-family-subscriptions}")
+    private String noFamilySubscriptionsText;
 
-    private static final String DATA_PATTERN = """
-            Тип: %s
-            Статус: %s
-            Уроков осталось: %d
-                        
-            Учитель: %s
-            Студент: %s
-                        
-            Дата начала: %s,
-            Дата завершения: %s
-            """;
+    @Value("${messages.handlers.get-all-subscriptions.no-teacher-subscriptions}")
+    private String noTeacherSubscriptionsText;
 
-    private static final String USER_DATA_PATTERN = "%s%s";
+    @Value("${messages.handlers.get-all-subscriptions.no-student-subscriptions}")
+    private String noStudentSubscriptionsText;
+
+    @Value("${messages.handlers.get-all-subscriptions.no-subscriptions}")
+    private String noSubscriptionsText;
+
+    @Value("${messages.handlers.get-all-subscriptions.data-pattern}")
+    private String dataPattern;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -52,6 +50,7 @@ public class GetAllSubscriptionsHandler implements Handler {
     private final SubscriptionService subscriptionService;
 
     private final InlineKeyboardMaker inlineKeyboardMaker;
+    private final MessageTextMaker messageTextMaker;
 
     @Override
     public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
@@ -82,22 +81,22 @@ public class GetAllSubscriptionsHandler implements Handler {
             if (userRole == UserRole.PARENT) {
                 return List.of(SendMessage.builder()
                         .chatId(chatId)
-                        .text(NO_FAMILY_SUBSCRIPTIONS_TEXT)
+                        .text(noFamilySubscriptionsText)
                         .build());
             } else if (userRole == UserRole.TEACHER) {
                 return List.of(SendMessage.builder()
                         .chatId(chatId)
-                        .text(NO_TEACHER_SUBSCRIPTIONS_TEXT)
+                        .text(noTeacherSubscriptionsText)
                         .build());
             } else if (userRole == UserRole.STUDENT) {
                 return List.of(SendMessage.builder()
                         .chatId(chatId)
-                        .text(NO_STUDENT_SUBSCRIPTIONS_TEXT)
+                        .text(noStudentSubscriptionsText)
                         .build());
             } else {
                 return List.of(SendMessage.builder()
                         .chatId(chatId)
-                        .text(NO_SUBSCRIPTIONS_TEXT)
+                        .text(noSubscriptionsText)
                         .build());
             }
 
@@ -112,18 +111,12 @@ public class GetAllSubscriptionsHandler implements Handler {
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
-                    .text(String.format(DATA_PATTERN,
+                    .text(String.format(dataPattern,
                             subscription.getType(),
                             subscription.getStatus(),
                             subscription.getLessonsRest(),
-                            String.format(USER_DATA_PATTERN,
-                                    (subscription.getTeacher().getLastName() != null) ? (subscription.getTeacher().getLastName() + " ") : "", // Teacher's last name if present
-                                    subscription.getTeacher().getName() // Teacher's name (always present)
-                            ),
-                            String.format(USER_DATA_PATTERN,
-                                    (subscription.getStudent().getLastName() != null) ? (subscription.getStudent().getLastName() + " ") : "", // Student's last name if present
-                                    subscription.getStudent().getName() // Student's name (always present)
-                            ),
+                            messageTextMaker.userDataPatternMessageText(subscription.getTeacher().getName(), subscription.getTeacher().getLastName()),
+                            messageTextMaker.userDataPatternMessageText(subscription.getStudent().getName(), subscription.getStudent().getLastName()),
                             dateFormat.format(subscription.getStartDate()),
                             dateFormat.format(subscription.getEndDate())
                     ))

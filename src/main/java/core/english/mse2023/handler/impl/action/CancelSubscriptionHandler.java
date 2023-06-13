@@ -2,7 +2,7 @@ package core.english.mse2023.handler.impl.action;
 
 import core.english.mse2023.aop.annotation.handler.AdminRole;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
-import core.english.mse2023.aop.annotation.handler.TeacherRole;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -73,7 +73,7 @@ public class CancelSubscriptionHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.CANCEL_SUBSCRIPTION;
     }
 }

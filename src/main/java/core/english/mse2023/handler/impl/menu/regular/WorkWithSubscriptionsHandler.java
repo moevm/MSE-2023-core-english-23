@@ -4,6 +4,7 @@ import core.english.mse2023.aop.annotation.handler.TeacherRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class WorkWithSubscriptionsHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.WORK_WITH_SUBSCRIPTIONS;
     }
 }

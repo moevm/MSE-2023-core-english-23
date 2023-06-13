@@ -4,6 +4,7 @@ import core.english.mse2023.aop.annotation.handler.AllRegisteredRoles;
 import core.english.mse2023.aop.annotation.handler.InlineButtonType;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.component.MessageTextMaker;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -63,7 +64,7 @@ public class GetMoreLessonInfoHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.GET_MORE_LESSON_INFO;
     }
 }

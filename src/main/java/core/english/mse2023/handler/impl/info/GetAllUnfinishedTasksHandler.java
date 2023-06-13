@@ -4,6 +4,7 @@ import core.english.mse2023.aop.annotation.handler.StudentRole;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.InlineKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.LessonInfo;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -117,7 +118,7 @@ public class GetAllUnfinishedTasksHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.GET_ALL_UNFINISHED_TASKS;
     }
 }

@@ -2,6 +2,7 @@ package core.english.mse2023.handler.impl.info;
 
 import core.english.mse2023.aop.annotation.handler.*;
 import core.english.mse2023.component.MessageTextMaker;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.constant.InlineButtonCommand;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
@@ -58,7 +59,7 @@ public class ShowHomeworkCommentHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return InlineButtonCommand.SHOW_HOMEWORK_COMMENT;
     }
 }

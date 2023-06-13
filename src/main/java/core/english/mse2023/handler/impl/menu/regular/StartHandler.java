@@ -4,6 +4,7 @@ import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.ReplyKeyboardMaker;
 import core.english.mse2023.constant.ButtonCommand;
+import core.english.mse2023.constant.Command;
 import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
@@ -53,7 +54,7 @@ public class StartHandler implements Handler {
     }
 
     @Override
-    public BotCommand getCommandObject() {
+    public Command getCommandObject() {
         return ButtonCommand.START;
     }
 }

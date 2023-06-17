@@ -92,6 +92,7 @@ messages:
         `topic: Topic of lesson`
         `link: https://example.link.com`
       subscription-not-active: 'Подписка, для которой вы пытаетесь добавить урок, уже не активна.'
+      success: 'Новый урок добавлен.'
 
     create-subscription:
       start: |
@@ -101,6 +102,9 @@ messages:
         `startDate: 11\.03\.2023`
         `endDate: 30\.04\.2023`
         `lessonAmount: 7`
+      student-choose: 'Далее выберите студента, с которым будут проводиться занятия:'
+      teacher-choose: 'Также выберите учителя, который будет проводить занятия:'
+      success: 'Новый абонемент и требуемые уроки созданы.'
 
     finish-lesson:
       already-finished: 'Урок не может быть повторно завершен!'
@@ -114,6 +118,7 @@ messages:
         `startDate: 11\.03\.2023`
         `endDate: 30\.04\.2023`
       complete: 'Сгенерированный файл статистики'
+      students-not-found: 'Учеников в системе не найдено.'
 
     set-comment-for-parent:
       start: 'Введите следующим сообщением текст комментария для родителя.'
@@ -151,6 +156,8 @@ messages:
       choose-student: 'Выберите ученика:'
       choose-parent: 'Выберите родителя:'
       success: 'Для ученика "%s" успешно установлен родитель "%s"'
+      students-not-found: 'Учеников в системе не найдено.'
+      parents-not-found: 'Родителей в системе не найдено.'
 
     set-user-role:
       user-role-successfully-changed-message: 'Ваша роль изменена на: %s'

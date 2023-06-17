@@ -35,7 +35,6 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.sql.Timestamp;
@@ -58,10 +57,14 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
     @Value("${messages.handlers.create-subscription.data-form}")
     private String dataFormText;
 
-    private static final String STUDENT_CHOOSE_TEXT = "Далее выберите студента, с которым будут проводиться занятия:";
-    private static final String TEACHER_CHOOSE_TEXT = "Также выберите учителя, который будет проводить занятия:";
+    @Value("${messages.handlers.create-subscription.student-choose}")
+    private String studentChooseText;
 
-    private static final String SUCCESS_TEXT = "Новый абонемент и требуемые уроки созданы.";
+    @Value("${messages.handlers.create-subscription.teacher-choose}")
+    private String teacherChooseText;
+
+    @Value("${messages.handlers.create-subscription.success}")
+    private String successText;
 
     // This cache works in manual mode. It means - no evictions was configured
     private final Cache<String, SubscriptionCreationDTO> subscriptionCreationCache = Caffeine.newBuilder()
@@ -141,7 +144,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
             // Sending buttons with students. Data from them will be used in the next state
             SendMessage sendMessage = SendMessage.builder()
                     .chatId(update.getMessage().getChatId().toString())
-                    .text(STUDENT_CHOOSE_TEXT)
+                    .text(studentChooseText)
                     .replyMarkup(getStudentsButtons(userService.getAllStudents(), stateMachine.getState().getId()))
                     .build();
 
@@ -161,7 +164,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
                 SendMessage sendMessage = SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                        .text(SUCCESS_TEXT)
+                        .text(successText)
                         .build();
 
                 messages.add(sendMessage);
@@ -170,7 +173,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
                 SendMessage sendMessage = SendMessage.builder()
                         .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
                         .replyMarkup(getTeachersButtons(userService.getAllTeachers(), stateMachine.getState().getId()))
-                        .text(TEACHER_CHOOSE_TEXT)
+                        .text(teacherChooseText)
                         .build();
 
                 messages.add(sendMessage);
@@ -187,7 +190,7 @@ public class CreateSubscriptionHandler implements InteractiveHandler {
 
             SendMessage sendMessage = SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(SUCCESS_TEXT)
+                    .text(successText)
                     .build();
 
             messages.add(sendMessage);

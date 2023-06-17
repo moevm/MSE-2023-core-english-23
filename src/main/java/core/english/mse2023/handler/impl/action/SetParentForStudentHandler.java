@@ -31,7 +31,6 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.ArrayList;
@@ -52,6 +51,13 @@ public class SetParentForStudentHandler implements InteractiveHandler {
 
     @Value("${messages.handlers.set-parent-for-student.success}")
     private String successText;
+
+    @Value("${messages.handlers.set-parent-for-student.students-not-found}")
+    private String studentsNotFound;
+
+    @Value("${messages.handlers.set-parent-for-student.parents-not-found}")
+    private String parentsNotFound;
+
 
     private final MessageTextMaker messageTextMaker;
 
@@ -78,6 +84,16 @@ public class SetParentForStudentHandler implements InteractiveHandler {
         setParentForStudentCache.put(update.getMessage().getFrom().getId().toString(), dto);
 
         List<User> students = userService.getAllStudents();
+
+        if (students.isEmpty()) {
+            stateMachine.stop();
+            SendMessage message = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(studentsNotFound)
+                    .build();
+
+            return List.of(message);
+        }
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
@@ -111,11 +127,20 @@ public class SetParentForStudentHandler implements InteractiveHandler {
 
             List<User> parents = userService.getAllParents();
 
-            actions.add(SendMessage.builder()
-                    .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
-                    .text(chooseParentText)
-                    .replyMarkup(getUsersButtons(parents, stateMachine.getState().getId().getIndex()))
-                    .build());
+            if (parents.isEmpty()) {
+                stateMachine.stop();
+                actions.add(SendMessage.builder()
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                        .text(parentsNotFound)
+                        .build());
+            } else {
+                actions.add(SendMessage.builder()
+                        .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
+                        .text(chooseParentText)
+                        .replyMarkup(getUsersButtons(parents, stateMachine.getState().getId().getIndex()))
+                        .build());
+            }
+
             actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
         } else if (stateMachine.getState().getId() == SetParentForStudentState.PARENT_CHOOSING) {
 

@@ -3,7 +3,6 @@ package core.english.mse2023.handler;
 import core.english.mse2023.exception.IllegalUserInputException;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.state.subcription.SubscriptionCreationState;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 

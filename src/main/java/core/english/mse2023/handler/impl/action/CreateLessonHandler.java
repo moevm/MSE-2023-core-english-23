@@ -30,7 +30,6 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -55,10 +54,10 @@ public class CreateLessonHandler implements InteractiveHandler {
     @Value("${messages.handlers.create-lesson.subscription-not-active}")
     private String subscriptionNotActiveText;
 
-    private static final String SUCCESS_TEXT = "Новый урок добавлен.";
+    @Value("${messages.handlers.create-lesson.success}")
+    private String successText;
 
-    private final Cache<String, LessonCreationDTO> lessonCreationCache = Caffeine.newBuilder()
-            .build();
+    private final Cache<String, LessonCreationDTO> lessonCreationCache = Caffeine.newBuilder().build();
 
     private final LessonService lessonService;
     private final SubscriptionService subscriptionService;
@@ -137,7 +136,7 @@ public class CreateLessonHandler implements InteractiveHandler {
         // Sending buttons with students. Data from them will be used in the next state
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(SUCCESS_TEXT)
+                .text(successText)
                 .build();
 
         return List.of(sendMessage);

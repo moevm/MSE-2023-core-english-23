@@ -80,19 +80,31 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
 
         assignRoleForGuestCache.put(update.getMessage().getFrom().getId().toString(), dto);
 
-        List<User> students = userService.getAllGuests();
+        List<User> guests = userService.getAllGuests();
+
+        if (guests.isEmpty()) {
+            stateMachine.stop();
+            SendMessage message = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(guestsNotFoundText)
+                    .build();
+            return List.of(message);
+        }
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
-                .text(students.isEmpty() ? guestsNotFoundText : chooseGuestText)
-                .replyMarkup(getGuestsButtons(students, stateMachine.getState().getId().getIndex()))
+                .text(chooseGuestText)
+                .replyMarkup(getGuestsButtons(guests, stateMachine.getState().getId().getIndex()))
                 .build();
-
         return List.of(message);
     }
 
     @Override
     public List<PartialBotApiMethod<?>> update(Update update, UserRole role) throws IllegalUserInputException, IllegalStateException {
+        if (update.getCallbackQuery() == null) {
+            return new ArrayList<>();
+        }
+
         AssignRoleForGuestDTO dto = assignRoleForGuestCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
 
         if (dto == null) {

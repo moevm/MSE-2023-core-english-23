@@ -6,7 +6,6 @@ import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.dictionary.UserRole;
 import lombok.Getter;
 import lombok.Setter;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -40,17 +39,7 @@ public class CacheData {
     public List<PartialBotApiMethod<?>> updateData(Update update, UserRole role) {
         List<PartialBotApiMethod<?>> sendMessageList;
         try {
-            String userId = null;
-
-            if (update.hasMessage()) {
-                userId = update.getMessage().getFrom().getId().toString();
-            } else if (update.hasCallbackQuery()) {
-                userId = update.getCallbackQuery().getFrom().getId().toString();
-            }
-
-            if (userId == null) {
-                throw new UnexpectedUpdateType("Cannot get user id since update doesn't have message or callback query.");
-            }
+            String userId = getUserId(update);
 
             sendMessageList = handler.update(update, role);
 
@@ -84,6 +73,50 @@ public class CacheData {
         }
 
         return sendMessageList;
+    }
+
+    public List<PartialBotApiMethod<?>> handleData(Update update, UserRole role) {
+        List<PartialBotApiMethod<?>> sendMessageList;
+        try {
+            String userId = getUserId(update);
+
+            sendMessageList = handler.handle(update, role);
+
+            if (!hasFinished) {
+                if (handler.hasFinished(userId)) {
+                    handler.removeFromCacheBy(userId);
+                    hasFinished = true;
+                } else {
+                    currentStateIndex = handler.getCurrentStateIndex(userId);
+                }
+            }
+
+        } catch (Exception exception) {
+            SendMessage message = new SendMessage();
+            setChatId(message, update);
+
+            message.setText("Ошибка.");
+
+            sendMessageList = List.of(message);
+        }
+
+        return sendMessageList;
+    }
+
+    private String getUserId(Update update) {
+        String userId = null;
+
+        if (update.hasMessage()) {
+            userId = update.getMessage().getFrom().getId().toString();
+        } else if (update.hasCallbackQuery()) {
+            userId = update.getCallbackQuery().getFrom().getId().toString();
+        }
+
+        if (userId == null) {
+            throw new UnexpectedUpdateType("Cannot get user id since update doesn't have message or callback query.");
+        }
+
+        return userId;
     }
 
     private void setChatId(SendMessage message, Update update) {

@@ -36,7 +36,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.io.*;
@@ -73,6 +72,9 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
     @Value("${messages.handlers.get-student-statistic.complete}")
     private String completeText;
 
+    @Value("${messages.handlers.get-student-statistic.students-not-found}")
+    private String studentsNotFound;
+
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -106,6 +108,16 @@ public class GetStudentStatisticHandler implements InteractiveHandler {
 
 
         List<Subscription> subscriptionsWithTeacher = subscriptionService.getAllSubscriptionsWithTeacher(teacherTelegramId);
+
+        if (subscriptionsWithTeacher.isEmpty()) {
+            stateMachine.stop();
+            SendMessage message = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(studentsNotFound)
+                    .build();
+
+            return List.of(message);
+        }
 
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())

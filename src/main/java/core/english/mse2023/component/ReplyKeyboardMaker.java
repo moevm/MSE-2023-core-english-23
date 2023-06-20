@@ -42,7 +42,6 @@ public class ReplyKeyboardMaker {
             }
             case ADMIN -> {
                 KeyboardRow row = new KeyboardRow();
-                row.add(new KeyboardButton(ButtonCommand.STATISTICS.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.DATA.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
                 keyboard.add(row);
@@ -66,20 +65,6 @@ public class ReplyKeyboardMaker {
                 throw new IllegalUserRoleForMenu("Statistics menu cannot be accessed by student or parent.");
             }
             case TEACHER -> {
-                keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
-                        ButtonCommand.STUDENT_STATISTICS.getDescription()
-                ))));
-                keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
-                        ButtonCommand.TO_MAIN_MENU.getDescription()
-                ))));
-            }
-            case ADMIN -> {
-                keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
-                        ButtonCommand.SCHOOL_STATISTICS.getDescription()
-                ))));
-                keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
-                        ButtonCommand.TEACHER_STATISTICS.getDescription()
-                ))));
                 keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
                         ButtonCommand.STUDENT_STATISTICS.getDescription()
                 ))));

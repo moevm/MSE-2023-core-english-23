@@ -118,6 +118,11 @@ public class UserServiceImpl implements UserService {
 
         Family family = familyRepository.getByStudent(student);
 
+        if (family == null) {
+            family = new Family();
+            family.setStudent(student);
+        }
+
         family.setParent(parent);
 
         return family;

@@ -16,7 +16,6 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public class GetAllUnfinishedTasksHandler implements Handler {
     private static final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
     private Pattern urlPattern;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 
     private final InlineKeyboardMaker inlineKeyboardMaker;
@@ -56,6 +55,9 @@ public class GetAllUnfinishedTasksHandler implements Handler {
     public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
 
         List<LessonInfo> lessonInfos = lessonService.getAllLessonInfosWithUnfinishedTask();
+
+        String telegramId = update.getMessage().getFrom().getId().toString();
+        lessonInfos.removeIf((lessonInfo -> !lessonInfo.getLesson().getSubscription().getStudent().getTelegramId().equals(telegramId)));
 
         urlPattern = Pattern.compile(URL_REGEX);
 
@@ -79,7 +81,6 @@ public class GetAllUnfinishedTasksHandler implements Handler {
         }
 
         for (LessonInfo lessonInfo : lessonInfos) {
-
             String dateText = dateFormat.format(lessonInfo.getLesson().getDate());
             String linkString = lessonInfo.getTeacherComment();
             String parseMode = null;

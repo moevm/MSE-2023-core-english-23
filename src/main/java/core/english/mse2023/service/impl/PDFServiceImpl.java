@@ -81,7 +81,7 @@ public class PDFServiceImpl implements PDFService {
             LessonInfo lessonInfo = lessonService.getLessonInfoByLessonId(lesson.getId());
 
             if (lessonInfo.getScore() != null) {
-                String key = "Оценка \"" + (lessonInfo.getScore() - 2) + "\"";
+                String key = "Оценка \"" + (lessonInfo.getScore()) + "\"";
                 if (!markData.containsKey(key)) {
                     markData.put(key, 1);
                 } else {

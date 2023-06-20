@@ -12,7 +12,6 @@ import core.english.mse2023.model.dictionary.UserRole;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,10 +114,10 @@ public abstract class Resolver {
                     if (handler instanceof InteractiveHandler interactiveHandler) {
 
                         CacheData commandData = new CacheData(interactiveHandler);
-                        cacheManager.cache(update.getMessage().getFrom().getId().toString(), commandData);
+                        cacheManager.cache(update.getCallbackQuery().getFrom().getId().toString(), commandData);
 
                         reply = commandData.handleData(update, role);
-                        cacheManager.triggerTimeBasedEvictionChecker(update.getMessage().getFrom().getId().toString());
+                        cacheManager.triggerTimeBasedEvictionChecker(update.getCallbackQuery().getFrom().getId().toString());
 
                     } else {
                         reply = handler.handle(update, role);

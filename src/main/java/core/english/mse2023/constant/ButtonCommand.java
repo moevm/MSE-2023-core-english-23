@@ -25,7 +25,7 @@ public enum ButtonCommand implements Command {
     SET_PARENT_FOR_STUDENT("/setParentForStudent", "Назначить родителя ученику"),
 
     GET_ALL_SUBSCRIPTIONS("/getAllSubscriptions", "Вывести абонементы"),
-    GET_ALL_UNFINISHED_TASKS("/getAllUnfinishedTasks", "Вывести предстоящие ИДЗ"),
+    GET_ALL_UNFINISHED_TASKS("/getAllUnfinishedTasks", "Вывести предстоящие ДЗ"),
 
     CREATE_SUBSCRIPTION("/createSubscription", "Создать абонемент"),
     WORK_WITH_SUBSCRIPTIONS("/workWithSubscriptions", "Работа с абонементами");

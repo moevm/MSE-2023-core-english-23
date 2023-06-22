@@ -8,8 +8,8 @@ public enum InlineButtonCommand implements Command {
 
     SET_LESSON_ATTENDED("/setLessonAttended", "Посетил"),
     SET_LESSON_SKIPPED("/setLessonSkipped", "Пропустил"),
-    SET_HOMEWORK_COMPLETED("/setHomeworkCompleted", "ИДЗ сделано"),
-    SET_HOMEWORK_NOT_COMPLETED("/setHomeworkNotCompleted", "ИДЗ не сделано"),
+    SET_HOMEWORK_COMPLETED("/setHomeworkCompleted", "ДЗ сделано"),
+    SET_HOMEWORK_NOT_COMPLETED("/setHomeworkNotCompleted", "ДЗ не сделано"),
     MAIN_MENU_LESSON("/mainMenuLesson", "◄ Назад в главное меню ◄"),
     GET_ATTENDANCE_MENU("/getAttendanceMenu", "Отметить посещение"),
 

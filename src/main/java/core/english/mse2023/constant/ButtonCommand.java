@@ -1,7 +1,5 @@
 package core.english.mse2023.constant;
 
-import lombok.Getter;
-
 public enum ButtonCommand implements Command {
 
     START("/start", "Start"),
@@ -16,8 +14,8 @@ public enum ButtonCommand implements Command {
     STUDENT_STATISTICS("/studentStatistics", "Статистика по ученику"),
 
     DATA("/data", "Работа с данными"),
-    ASSIGN_ROLE("/assignRole", "Назначить роль"),
-    ASSIGN_ROLE_FOR_GUEST("/assignRoleForGuest", "Назначить роль гостю"),
+    ASSIGN_ROLE_DEV("/assignRole", "Назначить роль"),
+    ASSIGN_ROLE("/assignRole", "Назначить роль пользователю"),
 
     GET_ALL_TEACHERS("/getAllTeachers", "Все учителя"),
     GET_ALL_STUDENTS("/getAllStudents", "Все студенты"),

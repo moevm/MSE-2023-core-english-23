@@ -24,31 +24,31 @@ public class ReplyKeyboardMaker {
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton(ButtonCommand.GET_ALL_UNFINISHED_TASKS.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.GET_ALL_SUBSCRIPTIONS.getDescription()));
-                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
+                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE_DEV.getDescription()));
                 keyboard.add(row);
             }
             case PARENT -> {
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton(ButtonCommand.GET_ALL_SUBSCRIPTIONS.getDescription()));
-                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
+                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE_DEV.getDescription()));
                 keyboard.add(row);
             }
             case TEACHER -> {
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton(ButtonCommand.STATISTICS.getDescription()));
                 row.add(new KeyboardButton(ButtonCommand.WORK_WITH_SUBSCRIPTIONS.getDescription()));
-                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
+                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE_DEV.getDescription()));
                 keyboard.add(row);
             }
             case ADMIN -> {
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton(ButtonCommand.DATA.getDescription()));
-                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
+                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE_DEV.getDescription()));
                 keyboard.add(row);
             }
             case GUEST -> {
                 KeyboardRow row = new KeyboardRow();
-                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE.getDescription()));
+                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE_DEV.getDescription()));
                 keyboard.add(row);
             }
         }
@@ -93,7 +93,7 @@ public class ReplyKeyboardMaker {
                 ButtonCommand.GET_ALL_SUBSCRIPTIONS.getDescription()
         ))));
         keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
-                ButtonCommand.ASSIGN_ROLE_FOR_GUEST.getDescription()
+                ButtonCommand.ASSIGN_ROLE.getDescription()
         ))));
         keyboard.add(new KeyboardRow(List.of(new KeyboardButton(
                 ButtonCommand.CREATE_SUBSCRIPTION.getDescription()

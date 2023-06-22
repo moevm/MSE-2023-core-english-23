@@ -17,7 +17,6 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +25,12 @@ import java.util.List;
 @AllRoles
 @InlineButtonType
 @RequiredArgsConstructor
-public class SetUserRoleHandler implements Handler {
+public class AssignRoleDevHandler implements Handler {
 
-    @Value("${messages.handlers.set-user-role.user-role-successfully-changed-message}")
+    @Value("${messages.handlers.assign-role-dev.user-role-successfully-changed-message}")
     private String userRoleSuccessfullyChangedMessageText;
 
-    @Value("${messages.handlers.set-user-role.failed-to-change-user-role-message}")
+    @Value("${messages.handlers.assign-role-dev.failed-to-change-user-role-message}")
     private String failedToChangeUserRoleMessageText;
 
     private final ReplyKeyboardMaker replyKeyboardMaker;

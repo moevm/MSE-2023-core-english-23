@@ -68,11 +68,12 @@ messages:
       lesson-topic: 'Урок №%s'
 
   handlers:
-    assign-role-for-guest:
-      choose-guest: 'Выберите гостя:'
-      guests-not-found: 'Незарегистрированных пользователей в системе не найдено.'
-      choose-role: 'Выберите новую роль гостю:'
+    assign-role:
+      choose-guest: 'Выберите пользователя:'
+      guests-not-found: 'Пользователей в системе не найдено.'
+      choose-role: 'Выберите новую роль пользователю:'
       success: 'Для пользователя "%s" успешно установлена роль "%s"'
+      user-pattern-with-role: '%s [%s]'
 
     cancel-lesson:
       done: 'Урок отменён.'
@@ -159,11 +160,11 @@ messages:
       students-not-found: 'Учеников в системе не найдено.'
       parents-not-found: 'Родителей в системе не найдено.'
 
-    set-user-role:
+    assign-role-dev:
       user-role-successfully-changed-message: 'Ваша роль изменена на: %s'
       failed-to-change-user-role-message: 'Невозможно сменить роль на такую же, как у вас.'
 
-    assign-role:
+    assign-role-menu:
       message: 'Выберите новую роль:'
 
     get-all-students:

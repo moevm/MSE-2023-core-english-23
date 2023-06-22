@@ -1,4 +1,4 @@
-package core.english.mse2023.handler.impl.info;
+package core.english.mse2023.handler.impl.menu.inline;
 
 import core.english.mse2023.aop.annotation.handler.AllRoles;
 import core.english.mse2023.aop.annotation.handler.TextCommandType;
@@ -9,14 +9,12 @@ import core.english.mse2023.handler.Handler;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.List;
@@ -25,9 +23,9 @@ import java.util.List;
 @AllRoles
 @TextCommandType
 @RequiredArgsConstructor
-public class AssignRoleHandler implements Handler {
+public class AssignRoleMenuHandler implements Handler {
 
-    @Value("${messages.handlers.assign-role.message}")
+    @Value("${messages.handlers.assign-role-menu.message}")
     private String message;
 
     @Override
@@ -60,7 +58,7 @@ public class AssignRoleHandler implements Handler {
 
     @Override
     public Command getCommandObject() {
-        return ButtonCommand.ASSIGN_ROLE;
+        return ButtonCommand.ASSIGN_ROLE_DEV;
     }
 
 

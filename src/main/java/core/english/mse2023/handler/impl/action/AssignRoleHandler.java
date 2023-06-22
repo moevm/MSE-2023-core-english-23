@@ -7,7 +7,7 @@ import core.english.mse2023.aop.annotation.handler.TextCommandType;
 import core.english.mse2023.component.MessageTextMaker;
 import core.english.mse2023.constant.ButtonCommand;
 import core.english.mse2023.constant.Command;
-import core.english.mse2023.dto.interactiveHandler.AssignRoleForGuestDTO;
+import core.english.mse2023.dto.interactiveHandler.AssignRoleDTO;
 import core.english.mse2023.dto.InlineButtonDTO;
 import core.english.mse2023.encoder.InlineButtonDTOEncoder;
 import core.english.mse2023.exception.IllegalUserInputException;
@@ -15,8 +15,8 @@ import core.english.mse2023.handler.InteractiveHandler;
 import core.english.mse2023.model.User;
 import core.english.mse2023.model.dictionary.UserRole;
 import core.english.mse2023.service.UserService;
-import core.english.mse2023.state.assignRoleForGuest.AssignRoleForGuestEvent;
-import core.english.mse2023.state.assignRoleForGuest.AssignRoleForGuestState;
+import core.english.mse2023.state.assignRoleForGuest.AssignRoleEvent;
+import core.english.mse2023.state.assignRoleForGuest.AssignRoleState;
 import core.english.mse2023.util.builder.InlineKeyboardBuilder;
 import core.english.mse2023.util.utilities.TelegramInlineButtonsUtils;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,6 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.ArrayList;
@@ -41,19 +40,22 @@ import java.util.List;
 @TextCommandType
 @AdminRole
 @RequiredArgsConstructor
-public class AssignRoleForGuestHandler implements InteractiveHandler {
+public class AssignRoleHandler implements InteractiveHandler {
 
-    @Value("${messages.handlers.assign-role-for-guest.choose-guest}")
+    @Value("${messages.handlers.assign-role.choose-guest}")
     private String chooseGuestText;
 
-    @Value("${messages.handlers.assign-role-for-guest.guests-not-found}")
-    private String guestsNotFoundText;
+    @Value("${messages.handlers.assign-role.guests-not-found}")
+    private String usersNotFoundText;
 
-    @Value("${messages.handlers.assign-role-for-guest.choose-role}")
+    @Value("${messages.handlers.assign-role.choose-role}")
     private String chooseRoleText;
 
-    @Value("${messages.handlers.assign-role-for-guest.success}")
+    @Value("${messages.handlers.assign-role.success}")
     private String successText;
+
+    @Value("${messages.handlers.assign-role.user-pattern-with-role}")
+    private String userPatternWithRole;
 
 
     private final MessageTextMaker messageTextMaker;
@@ -61,32 +63,32 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
     private final UserService userService;
 
     // This cache works in manual mode. It means - no evictions was configured
-    private final Cache<String, AssignRoleForGuestDTO> assignRoleForGuestCache = Caffeine.newBuilder()
+    private final Cache<String, AssignRoleDTO> assignRoleCache = Caffeine.newBuilder()
             .build();
 
-    @Qualifier("assignRoleForGuestStateMachineFactory")
-    private final StateMachineFactory<AssignRoleForGuestState, AssignRoleForGuestEvent> stateMachineFactory;
+    @Qualifier("assignRoleStateMachineFactory")
+    private final StateMachineFactory<AssignRoleState, AssignRoleEvent> stateMachineFactory;
 
 
     @Override
     public List<PartialBotApiMethod<?>> handle(Update update, UserRole userRole) {
-        StateMachine<AssignRoleForGuestState, AssignRoleForGuestEvent> stateMachine =
+        StateMachine<AssignRoleState, AssignRoleEvent> stateMachine =
                 stateMachineFactory.getStateMachine();
         stateMachine.start();
 
-        AssignRoleForGuestDTO dto = AssignRoleForGuestDTO.builder()
+        AssignRoleDTO dto = AssignRoleDTO.builder()
                 .stateMachine(stateMachine)
                 .build();
 
-        assignRoleForGuestCache.put(update.getMessage().getFrom().getId().toString(), dto);
+        assignRoleCache.put(update.getMessage().getFrom().getId().toString(), dto);
 
-        List<User> guests = userService.getAllGuests();
+        List<User> users = userService.getAllUsersExceptOne(update.getMessage().getFrom().getId().toString());
 
-        if (guests.isEmpty()) {
+        if (users.isEmpty()) {
             stateMachine.stop();
             SendMessage message = SendMessage.builder()
                     .chatId(update.getMessage().getChatId().toString())
-                    .text(guestsNotFoundText)
+                    .text(usersNotFoundText)
                     .build();
             return List.of(message);
         }
@@ -94,7 +96,7 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
                 .text(chooseGuestText)
-                .replyMarkup(getGuestsButtons(guests, stateMachine.getState().getId().getIndex()))
+                .replyMarkup(getUsersButtons(users, stateMachine.getState().getId().getIndex()))
                 .build();
         return List.of(message);
     }
@@ -105,7 +107,7 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
             return new ArrayList<>();
         }
 
-        AssignRoleForGuestDTO dto = assignRoleForGuestCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
+        AssignRoleDTO dto = assignRoleCache.getIfPresent(update.getCallbackQuery().getFrom().getId().toString());
 
         if (dto == null) {
             log.error("DTO instance wasn't created yet! Cannot continue. User id: {}", update.getCallbackQuery().getFrom().getId());
@@ -118,11 +120,11 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
 
         List<PartialBotApiMethod<?>> actions = new ArrayList<>();
 
-        if (stateMachine.getState().getId() == AssignRoleForGuestState.GUEST_CHOOSING) {
+        if (stateMachine.getState().getId() == AssignRoleState.USER_CHOOSING) {
 
             dto.setChosenGuest(inlineButtonDTO.getData());
 
-            stateMachine.sendEvent(AssignRoleForGuestEvent.CHOOSE_GUEST);
+            stateMachine.sendEvent(AssignRoleEvent.CHOOSE_USER);
 
             actions.add(SendMessage.builder()
                     .chatId(update.getCallbackQuery().getMessage().getChatId().toString())
@@ -130,11 +132,11 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
                     .replyMarkup(getRolesButtons(stateMachine.getState().getId().getIndex()))
                     .build());
             actions.add(new AnswerCallbackQuery(update.getCallbackQuery().getId()));
-        } else if (stateMachine.getState().getId() == AssignRoleForGuestState.ROLE_CHOOSING) {
+        } else if (stateMachine.getState().getId() == AssignRoleState.ROLE_CHOOSING) {
 
             dto.setChosenRole(inlineButtonDTO.getData());
 
-            stateMachine.sendEvent(AssignRoleForGuestEvent.CHOOSE_ROLE);
+            stateMachine.sendEvent(AssignRoleEvent.CHOOSE_ROLE);
 
             User user = userService.setRoleForUser(dto.getChosenGuest(), UserRole.valueOf(dto.getChosenRole()));
 
@@ -155,17 +157,20 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
         return actions;
     }
 
-    private InlineKeyboardMarkup getGuestsButtons(List<User> users, int stateIndex) {
+    private InlineKeyboardMarkup getUsersButtons(List<User> users, int stateIndex) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardBuilder builder = InlineKeyboardBuilder.instance();
 
         for (User user : users) {
             builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                            ButtonCommand.ASSIGN_ROLE_FOR_GUEST.getCommand(),
+                            ButtonCommand.ASSIGN_ROLE.getCommand(),
                             user.getTelegramId(),
                             stateIndex,
-                            messageTextMaker.userDataPatternMessageText(user.getName(), user.getLastName())
+                            String.format(userPatternWithRole,
+                                    messageTextMaker.userDataPatternMessageText(user.getName(), user.getLastName()),
+                                    user.getRole().getString()
+                            )
                     ))
                     .row();
         }
@@ -181,7 +186,7 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
 
         for (UserRole role : UserRole.values()) {
             builder.button(TelegramInlineButtonsUtils.createInlineButton(
-                            ButtonCommand.ASSIGN_ROLE_FOR_GUEST.getCommand(),
+                            ButtonCommand.ASSIGN_ROLE.getCommand(),
                             role.toString(),
                             stateIndex,
                             role.getString()
@@ -196,18 +201,18 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
 
     @Override
     public Command getCommandObject() {
-        return ButtonCommand.ASSIGN_ROLE_FOR_GUEST;
+        return ButtonCommand.ASSIGN_ROLE;
     }
 
     @Override
     public void removeFromCacheBy(String id) {
-        if (assignRoleForGuestCache.getIfPresent(id) != null)
-            assignRoleForGuestCache.invalidate(id);
+        if (assignRoleCache.getIfPresent(id) != null)
+            assignRoleCache.invalidate(id);
     }
 
     @Override
     public boolean hasFinished(String id) {
-        var dto = assignRoleForGuestCache.getIfPresent(id);
+        var dto = assignRoleCache.getIfPresent(id);
 
         boolean result = true;
 
@@ -220,7 +225,7 @@ public class AssignRoleForGuestHandler implements InteractiveHandler {
 
     @Override
     public int getCurrentStateIndex(String id) {
-        var dto = assignRoleForGuestCache.getIfPresent(id);
+        var dto = assignRoleCache.getIfPresent(id);
 
         int result = -1;
 

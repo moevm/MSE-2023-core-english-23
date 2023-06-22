@@ -1,7 +1,7 @@
 package core.english.mse2023.dto.interactiveHandler;
 
-import core.english.mse2023.state.assignRoleForGuest.AssignRoleForGuestEvent;
-import core.english.mse2023.state.assignRoleForGuest.AssignRoleForGuestState;
+import core.english.mse2023.state.assignRoleForGuest.AssignRoleEvent;
+import core.english.mse2023.state.assignRoleForGuest.AssignRoleState;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,11 +12,11 @@ import org.springframework.statemachine.StateMachine;
 @Getter
 @Setter
 @Builder
-public class AssignRoleForGuestDTO {
+public class AssignRoleDTO {
 
     private String chosenGuest;
 
     private String chosenRole;
 
-    private StateMachine<AssignRoleForGuestState, AssignRoleForGuestEvent> stateMachine;
+    private StateMachine<AssignRoleState, AssignRoleEvent> stateMachine;
 }

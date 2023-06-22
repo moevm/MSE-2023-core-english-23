@@ -48,8 +48,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllGuests() {
-        return userRepository.findAllByRole(UserRole.GUEST);
+    @Transactional
+    public List<User> getAllUsersExceptOne(String telegramId) {
+        List<User> users = userRepository.findAll();
+
+        users.removeIf(user -> user.getTelegramId().equals(telegramId));
+
+        return users;
     }
 
     @Override

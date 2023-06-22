@@ -38,10 +38,11 @@ public interface UserService {
     List<User> getAllParents();
 
     /**
-     * Gets all Guests in database
-     * @return All guests
+     * Gets all Users in database except one
+     * @param telegramId Telegram ID to ignore
+     * @return All users with one
      */
-    List<User> getAllGuests();
+    List<User> getAllUsersExceptOne(String telegramId);
 
 
     /**

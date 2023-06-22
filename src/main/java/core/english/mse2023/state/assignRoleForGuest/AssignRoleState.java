@@ -1,13 +1,13 @@
 package core.english.mse2023.state.assignRoleForGuest;
 
-public enum AssignRoleForGuestState {
-    GUEST_CHOOSING(0),
+public enum AssignRoleState {
+    USER_CHOOSING(0),
     ROLE_CHOOSING(1),
     FINISHED(2);
 
     private final int index;
 
-    AssignRoleForGuestState(int index) {
+    AssignRoleState(int index) {
         this.index = index;
     }
 

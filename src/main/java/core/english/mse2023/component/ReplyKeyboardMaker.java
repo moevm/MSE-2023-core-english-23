@@ -46,11 +46,6 @@ public class ReplyKeyboardMaker {
                 row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE_DEV.getDescription()));
                 keyboard.add(row);
             }
-            case GUEST -> {
-                KeyboardRow row = new KeyboardRow();
-                row.add(new KeyboardButton(ButtonCommand.ASSIGN_ROLE_DEV.getDescription()));
-                keyboard.add(row);
-            }
         }
 
         return getReplyKeyboardMarkup(keyboard);

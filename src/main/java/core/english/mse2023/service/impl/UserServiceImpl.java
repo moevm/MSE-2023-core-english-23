@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
                 .name(firstName)
                 .lastName(lastName)
                 .telegramId(telegramId)
-                .role(UserRole.GUEST)
+                .role(UserRole.STUDENT)
                 .chatId(chatId)
                 .build();
 

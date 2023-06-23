@@ -45,7 +45,7 @@ public class Gateway {
 
                 reply = resolvers.get(userRole).resolve(update, userRole);
             } catch (NoSuchUserException exception) {
-                reply = resolvers.get(UserRole.GUEST).resolve(update, UserRole.GUEST);
+                reply = resolvers.get(UserRole.STUDENT).resolve(update, UserRole.STUDENT);
             }
         } else if(update.hasCallbackQuery()) {
 

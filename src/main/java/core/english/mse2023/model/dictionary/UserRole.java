@@ -4,8 +4,7 @@ public enum UserRole {
     STUDENT("Ученик"),
     PARENT("Родитель"),
     TEACHER("Учитель"),
-    ADMIN("Админ"),
-    GUEST("Гость");
+    ADMIN("Админ");
 
     private final String string;
 
@@ -16,9 +15,4 @@ public enum UserRole {
     public String getString() {
         return string;
     }
-
-    /*@Override
-    public String toString() {
-        return string;
-    }*/
 }
